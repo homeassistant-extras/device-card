@@ -1,17 +1,16 @@
 import { hasProblem } from '@delegates/utils/has-problem';
-import { isPetKit } from '@delegates/utils/is-petkit';
-import { getPetKitUnit } from '@delegates/utils/petkit-unit';
+import { getDevice } from '@delegates/utils/petkit-unit';
 import type { HomeAssistant } from '@hass/types';
 import { pet } from '@html/pet';
 import { renderSection } from '@html/section';
 import { styles } from '@theme/styles';
-import type { Config, PetKitUnit } from '@type/config';
+import type { Config, Device } from '@type/config';
 import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 import { version } from '../../package.json';
 const equal = require('fast-deep-equal');
 
-export class PetKitDevice extends LitElement {
+export class DeviceCard extends LitElement {
   /**
    * Card configuration object
    */
@@ -22,7 +21,7 @@ export class PetKitDevice extends LitElement {
    * PetKit Unit information
    */
   @state()
-  protected _unit!: PetKitUnit;
+  protected _unit!: Device;
 
   /**
    * Home Assistant instance
@@ -39,7 +38,7 @@ export class PetKitDevice extends LitElement {
   constructor() {
     super();
     console.info(
-      `%c🐱 Poat's Tools: petkit-device-card - ${version}`,
+      `%c🐱 Poat's Tools: device-card-card - ${version}`,
       'color: #CFC493;',
     );
   }
@@ -68,7 +67,7 @@ export class PetKitDevice extends LitElement {
   set hass(hass: HomeAssistant) {
     this._hass = hass;
 
-    const unit = getPetKitUnit(hass, this._config);
+    const unit = getDevice(hass, this._config);
 
     if (unit && !equal(unit, this._unit)) {
       this._unit = unit;
@@ -77,11 +76,11 @@ export class PetKitDevice extends LitElement {
 
   // card configuration
   static getConfigElement() {
-    return document.createElement('petkit-device-editor');
+    return document.createElement('device-card-editor');
   }
 
   public static async getStubConfig(hass: HomeAssistant): Promise<Config> {
-    const device = Object.values(hass.devices).find(isPetKit);
+    const device = Object.values(hass.devices)[0];
 
     return {
       device_id: device?.id || '',
@@ -99,7 +98,7 @@ export class PetKitDevice extends LitElement {
 
     if (
       this._unit.model === 'Pet PET' &&
-      this._config.features?.includes('cute_lil_kitty')
+      this._config.features?.includes('entity_picture')
     ) {
       return pet(this._unit);
     }
@@ -113,10 +112,6 @@ export class PetKitDevice extends LitElement {
             <span>${this._config.title || this._unit.name}</span>
             <span class="model">${this._unit.model}</span>
           </div>
-          <img
-            class="logo"
-            src="https://brands.home-assistant.io/petkit/dark_icon.png"
-          />
         </div>
 
         ${renderSection(

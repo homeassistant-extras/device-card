@@ -1,6 +1,6 @@
 import * as deviceRetriever from '@delegates/retrievers/device';
 import * as cardEntities from '@delegates/utils/card-entities';
-import { getPetKitUnit } from '@delegates/utils/petkit-unit';
+import { getDevice } from '@delegates/utils/petkit-unit';
 import * as domainUtils from '@hass/common/entity/compute_domain';
 import type { HomeAssistant } from '@hass/types';
 import type { Config, EntityInformation } from '@type/config';
@@ -53,15 +53,15 @@ export default () => {
       computeDomainStub.restore();
     });
 
-    describe('getPetKitUnit', () => {
+    describe('getDevice', () => {
       it('should return undefined if device not found', () => {
         getDeviceStub.returns(undefined);
-        const result = getPetKitUnit(mockHass, mockConfig);
+        const result = getDevice(mockHass, mockConfig);
         expect(result).to.be.undefined;
       });
 
       it('should initialize unit with device name and model', () => {
-        const result = getPetKitUnit(mockHass, mockConfig);
+        const result = getDevice(mockHass, mockConfig);
         expect(result).to.not.be.undefined;
         expect(result?.name).to.equal('PetKit Feeder');
         expect(result?.model).to.equal('Feeder Plus Pro');
@@ -73,7 +73,7 @@ export default () => {
           name: null,
         });
 
-        const result = getPetKitUnit(mockHass, mockConfig);
+        const result = getDevice(mockHass, mockConfig);
         expect(result?.name).to.equal('PetKit Device');
       });
 
@@ -118,7 +118,7 @@ export default () => {
 
         getDeviceEntitiesStub.returns(mockEntities);
 
-        const result = getPetKitUnit(mockHass, mockConfig);
+        const result = getDevice(mockHass, mockConfig);
 
         expect(result?.sensors).to.have.length(2);
         expect(result?.controls).to.have.length(1);
@@ -160,7 +160,7 @@ export default () => {
 
         getDeviceEntitiesStub.returns(mockEntities);
 
-        const result = getPetKitUnit(mockHass, mockConfig);
+        const result = getDevice(mockHass, mockConfig);
 
         expect(result?.problemEntities).to.have.length(1);
         expect(result?.problemEntities[0]!.entity_id).to.equal(
@@ -188,7 +188,7 @@ export default () => {
 
         getDeviceEntitiesStub.returns(mockEntities);
 
-        const result = getPetKitUnit(mockHass, mockConfig);
+        const result = getDevice(mockHass, mockConfig);
 
         expect(result?.problemEntities).to.have.length(1);
         expect(result?.problemEntities[0]!.entity_id).to.equal(
@@ -243,7 +243,7 @@ export default () => {
 
         getDeviceEntitiesStub.returns(mockEntities);
 
-        const result = getPetKitUnit(mockHass, mockConfig);
+        const result = getDevice(mockHass, mockConfig);
 
         expect(result?.controls).to.have.length(4);
         expect(result?.sensors).to.have.length(1);

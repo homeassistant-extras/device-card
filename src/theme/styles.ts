@@ -1,7 +1,7 @@
 import { css } from 'lit';
 
 /**
- * Static CSS styles for the PetKit Device Card
+ * Static CSS styles for the Device Card
  * Defines the grid layout and styling for all card elements
  */
 export const styles = css`

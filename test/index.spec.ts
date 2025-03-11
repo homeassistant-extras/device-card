@@ -27,12 +27,12 @@ describe('index.ts', () => {
     delete require.cache[require.resolve('@/index.ts')];
   });
 
-  it('should register both petkit-device and editor custom elements', () => {
+  it('should register both device-card and editor custom elements', () => {
     require('@/index.ts');
     expect(customElementsStub.calledTwice).to.be.true;
-    expect(customElementsStub.firstCall.args[0]).to.equal('petkit-device');
+    expect(customElementsStub.firstCall.args[0]).to.equal('device-card');
     expect(customElementsStub.secondCall.args[0]).to.equal(
-      'petkit-device-editor',
+      'device-card-editor',
     );
   });
 
@@ -48,12 +48,11 @@ describe('index.ts', () => {
 
     expect(window.customCards).to.have.lengthOf(1);
     expect(window.customCards[0]).to.deep.equal({
-      type: 'petkit-device',
-      name: 'PetKit Device',
-      description: 'A card to summarize the status of a PetKit Device.',
+      type: 'device-card',
+      name: 'Device Card',
+      description: 'A card to summarize the status of a Device.',
       preview: true,
-      documentationURL:
-        'https://github.com/homeassistant-extras/petkit-device-cards',
+      documentationURL: 'https://github.com/homeassistant-extras/device-card',
     });
   });
 

@@ -1,12 +1,12 @@
 import { hasProblem } from '@delegates/utils/has-problem';
 import * as stateActiveModule from '@hass/common/entity/state_active';
-import type { EntityInformation, PetKitUnit } from '@type/config';
+import type { Device, EntityInformation } from '@type/config';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 
 export default () => {
   describe('has-problem.ts', () => {
-    let mockUnit: PetKitUnit;
+    let mockUnit: Device;
     let stateActiveStub: sinon.SinonStub;
 
     beforeEach(() => {
@@ -119,7 +119,7 @@ export default () => {
     });
 
     it('should handle undefined unit gracefully', () => {
-      const result = hasProblem(undefined as unknown as PetKitUnit);
+      const result = hasProblem(undefined as unknown as Device);
 
       // Since TypeScript won't allow this at compile time,
       // this is more of a runtime check for robustness

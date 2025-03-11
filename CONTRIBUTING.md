@@ -47,27 +47,27 @@ If you have a suggestion for improving the project, we'd love to hear it. Please
 
 ### Prerequisites
 
-Before getting started with petkit-device-cards, ensure your runtime environment meets the following requirements:
+Before getting started with device-card, ensure your runtime environment meets the following requirements:
 
 - **Programming Language:** TypeScript
 - **Package Manager:** Npm
 
 ### Installation
 
-Install petkit-device-cards using one of the following methods:
+Install device-card using one of the following methods:
 
 **Build from source:**
 
-1. Clone the petkit-device-cards repository:
+1. Clone the device-card repository:
 
 ```sh
-❯ git clone https://github.com/homeassistant-extras/petkit-device-cards
+❯ git clone https://github.com/homeassistant-extras/device-card
 ```
 
 2. Navigate to the project directory:
 
 ```sh
-❯ cd petkit-device-cards
+❯ cd device-card
 ```
 
 3. Install the project dependencies:

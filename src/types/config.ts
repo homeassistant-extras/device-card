@@ -23,15 +23,16 @@ export interface Config {
 }
 
 /** Features to enable or disable functionality */
-export type Features = 'cute_lil_kitty';
+export type Features = 'entity_picture';
 
 /**
  * Represents the states of various sensors in a Z-Wave device
  */
-export interface PetKitUnit {
+export interface Device {
   /** The name of the device */
   name?: string;
 
+  /** The model of the device */
   model?: string;
 
   /** Entities used to control the unit */

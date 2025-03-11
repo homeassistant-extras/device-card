@@ -1,7 +1,7 @@
-import type { PetKitUnit } from '@type/config';
+import type { Device } from '@type/config';
 import { html } from 'lit';
 
-export const pet = (unit: PetKitUnit) => {
+export const pet = (unit: Device) => {
   const cat = unit.sensors.find(
     (sensor) => sensor.translation_key === 'pet_last_use_date',
   );

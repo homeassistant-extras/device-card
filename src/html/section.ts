@@ -1,4 +1,4 @@
-import type { PetKitDevice } from '@cards/card';
+import type { DeviceCard } from '@cards/card';
 import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
 import type { Config, EntityInformation } from '@type/config';
@@ -11,11 +11,7 @@ import { stateContent } from './state-content';
  * @param {string} sectionTitle - The title of the section to toggle
  * @param {Event} e - The click event
  */
-const toggleSection = (
-  element: PetKitDevice,
-  sectionTitle: string,
-  e: Event,
-) => {
+const toggleSection = (element: DeviceCard, sectionTitle: string, e: Event) => {
   const expandedSections = element.expandedSections;
 
   element.expandedSections = {
@@ -25,7 +21,7 @@ const toggleSection = (
 };
 
 export const renderSection = (
-  element: PetKitDevice,
+  element: DeviceCard,
   hass: HomeAssistant,
   config: Config,
   title: string,

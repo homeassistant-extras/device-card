@@ -9,14 +9,10 @@ const SCHEMA: HaFormSchema[] = [
   {
     name: 'device_id',
     selector: {
-      device: {
-        filter: {
-          integration: 'petkit',
-        },
-      },
+      device: {},
     },
     required: true,
-    label: `PetKit Device`,
+    label: `Device`,
   },
   {
     name: 'title',
@@ -46,8 +42,8 @@ const SCHEMA: HaFormSchema[] = [
         mode: 'list',
         options: [
           {
-            label: 'Use Pet Portrait',
-            value: 'cute_lil_kitty',
+            label: 'Use Entity Picture',
+            value: 'entity_picture',
           },
         ],
       },
@@ -55,7 +51,7 @@ const SCHEMA: HaFormSchema[] = [
   },
 ];
 
-export class PetKitDeviceEditor extends LitElement {
+export class DeviceCardEditor extends LitElement {
   /**
    * Card configuration object
    */

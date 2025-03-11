@@ -1,13 +1,13 @@
 import { pet } from '@html/pet';
 import { fixture } from '@open-wc/testing-helpers';
-import type { EntityInformation, PetKitUnit } from '@type/config';
+import type { Device, EntityInformation } from '@type/config';
 import { expect } from 'chai';
 import { type TemplateResult } from 'lit';
 
 export default () => {
   describe('pet.ts', () => {
     // Common test variables
-    let mockUnit: PetKitUnit;
+    let mockUnit: Device;
     let mockSensors: EntityInformation[];
 
     beforeEach(() => {
@@ -70,7 +70,7 @@ export default () => {
 
     it('should handle missing pet sensor', async () => {
       // Create a unit without the pet_last_use_date sensor
-      const unitWithoutPet: PetKitUnit = {
+      const unitWithoutPet: Device = {
         ...mockUnit,
         sensors: [mockSensors[1]!], // Only include the non-pet sensor
       };
@@ -94,7 +94,7 @@ export default () => {
 
     it('should handle empty sensors array', async () => {
       // Create a unit with an empty sensors array
-      const emptyUnit: PetKitUnit = {
+      const emptyUnit: Device = {
         ...mockUnit,
         sensors: [],
       };

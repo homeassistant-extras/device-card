@@ -1,13 +1,12 @@
-import { PetKitDevice } from '@/cards/card';
+import { DeviceCard } from '@/cards/card';
 import * as problemUtils from '@delegates/utils/has-problem';
-import * as petKitUtils from '@delegates/utils/is-petkit';
-import * as petKitUnitUtils from '@delegates/utils/petkit-unit';
+import * as deviceUtils from '@delegates/utils/petkit-unit';
 import type { HomeAssistant } from '@hass/types';
 import * as petModule from '@html/pet';
 import * as sectionRenderer from '@html/section';
 import { fixture } from '@open-wc/testing-helpers';
 import { styles } from '@theme/styles';
-import type { PetKitUnit } from '@type/config';
+import type { Device } from '@type/config';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -15,23 +14,22 @@ import { version } from '../../package.json';
 
 export default () => {
   describe('card.ts', () => {
-    let card: PetKitDevice;
+    let card: DeviceCard;
     let mockHass: HomeAssistant;
-    let mockUnit: PetKitUnit;
+    let mockUnit: Device;
     let consoleInfoStub: sinon.SinonStub;
     let hasProblemStub: sinon.SinonStub;
     let isPetKitStub: sinon.SinonStub;
-    let getPetKitUnitStub: sinon.SinonStub;
+    let getDeviceStub: sinon.SinonStub;
     let renderSectionStub: sinon.SinonStub;
 
     beforeEach(() => {
       consoleInfoStub = stub(console, 'info');
       hasProblemStub = stub(problemUtils, 'hasProblem');
-      isPetKitStub = stub(petKitUtils, 'isPetKit');
-      getPetKitUnitStub = stub(petKitUnitUtils, 'getPetKitUnit');
+      getDeviceStub = stub(deviceUtils, 'getDevice');
       renderSectionStub = stub(sectionRenderer, 'renderSection');
 
-      card = new PetKitDevice();
+      card = new DeviceCard();
       mockHass = {
         devices: {
           device_1: {
@@ -96,8 +94,7 @@ export default () => {
 
       // Configure stubs
       hasProblemStub.returns(false);
-      isPetKitStub.returns(true);
-      getPetKitUnitStub.returns(mockUnit);
+      getDeviceStub.returns(mockUnit);
       renderSectionStub.returns(html`<div class="section">Mock Section</div>`);
 
       card.setConfig({ device_id: 'device_1' });
@@ -107,8 +104,7 @@ export default () => {
     afterEach(() => {
       consoleInfoStub.restore();
       hasProblemStub.restore();
-      isPetKitStub.restore();
-      getPetKitUnitStub.restore();
+      getDeviceStub.restore();
       renderSectionStub.restore();
     });
 
@@ -120,7 +116,7 @@ export default () => {
         // Assert that it was called with the expected arguments
         expect(
           consoleInfoStub.calledWithExactly(
-            `%c🐱 Poat's Tools: petkit-device-card - ${version}`,
+            `%c🐱 Poat's Tools: device-card-card - ${version}`,
             'color: #CFC493;',
           ),
         ).to.be.true;
@@ -143,20 +139,19 @@ export default () => {
     });
 
     describe('hass property setter', () => {
-      it('should call getPetKitUnit with hass and config', () => {
+      it('should call getDevice with hass and config', () => {
         card.hass = mockHass as HomeAssistant;
-        expect(getPetKitUnitStub.calledWith(mockHass, card['_config'])).to.be
-          .true;
+        expect(getDeviceStub.calledWith(mockHass, card['_config'])).to.be.true;
       });
 
-      it('should update unit when getPetKitUnit returns a new value', () => {
+      it('should update unit when getDevice returns a new value', () => {
         const newUnit = { ...mockUnit, name: 'Updated Device' };
-        getPetKitUnitStub.returns(newUnit);
+        getDeviceStub.returns(newUnit);
         card.hass = mockHass as HomeAssistant;
         expect(card['_unit']).to.equal(newUnit);
       });
 
-      it('should not update unit if getPetKitUnit returns identical data', () => {
+      it('should not update unit if getDevice returns identical data', () => {
         // First call to set initial unit
         card.hass = mockHass as HomeAssistant;
         const originalUnit = card['_unit'];
@@ -166,13 +161,13 @@ export default () => {
         expect(card['_unit']).to.equal(originalUnit);
       });
 
-      it('should not update unit if getPetKitUnit returns undefined', () => {
+      it('should not update unit if getDevice returns undefined', () => {
         // First set a valid unit
         card.hass = mockHass as HomeAssistant;
         const originalUnit = card['_unit'];
 
         // Then test with undefined return value
-        getPetKitUnitStub.returns(undefined);
+        getDeviceStub.returns(undefined);
         card.hass = mockHass as HomeAssistant;
         expect(card['_unit']).to.equal(originalUnit);
       });
@@ -180,7 +175,7 @@ export default () => {
 
     describe('styles', () => {
       it('should return expected styles', () => {
-        const actual = PetKitDevice.styles;
+        const actual = DeviceCard.styles;
         expect(actual).to.deep.equal(styles);
       });
     });
@@ -260,15 +255,15 @@ export default () => {
         ).to.be.true;
       });
 
-      it('should render pet component when model is Pet PET and cute_lil_kitty feature is enabled', () => {
+      it('should render pet component when model is Pet PET and entity_picture feature is enabled', () => {
         // Setup mock for pet function
         const petStub = stub(petModule, 'pet');
         petStub.returns(html`<div class="mock-pet">Pet Component</div>`);
 
-        // Configure the card with the cute_lil_kitty feature
+        // Configure the card with the entity_picture feature
         card.setConfig({
           device_id: 'device_1',
-          features: ['cute_lil_kitty'],
+          features: ['entity_picture'],
         });
 
         // Set up the unit with Pet PET model
@@ -292,11 +287,11 @@ export default () => {
       });
 
       // Add another test to verify the normal path
-      it('should not render pet component when model is Pet PET but cute_lil_kitty feature is not enabled', () => {
+      it('should not render pet component when model is Pet PET but entity_picture feature is not enabled', () => {
         // Setup mock for pet function
         const petStub = stub(petModule, 'pet');
 
-        // Configure the card without the cute_lil_kitty feature
+        // Configure the card without the entity_picture feature
         card.setConfig({
           device_id: 'device_1',
           features: [],
@@ -320,37 +315,25 @@ export default () => {
     });
 
     describe('getConfigElement()', () => {
-      it('should return a petkit-device-editor element', () => {
-        const element = PetKitDevice.getConfigElement();
+      it('should return a device-card-editor element', () => {
+        const element = DeviceCard.getConfigElement();
         expect(element).to.be.an('HTMLElement');
-        expect(element.tagName.toLowerCase()).to.equal('petkit-device-editor');
+        expect(element.tagName.toLowerCase()).to.equal('device-card-editor');
       });
 
       it('should return a new element instance each time', () => {
-        const element1 = PetKitDevice.getConfigElement();
-        const element2 = PetKitDevice.getConfigElement();
+        const element1 = DeviceCard.getConfigElement();
+        const element2 = DeviceCard.getConfigElement();
         expect(element1).to.not.equal(element2);
       });
     });
 
     describe('getStubConfig()', () => {
-      it('should return config with PetKit device id', async () => {
-        // Reset stub to ensure it returns true for the first device
-        isPetKitStub.resetBehavior();
-        isPetKitStub.returns(true);
-
-        const config = await PetKitDevice.getStubConfig(mockHass);
+      it('should return config with device id', async () => {
+        const config = await DeviceCard.getStubConfig(mockHass);
         expect(config).to.be.an('object');
         expect(config).to.have.property('device_id');
         expect(config.device_id).to.equal('device_1');
-      });
-
-      it('should return empty device_id if no PetKit devices found', async () => {
-        isPetKitStub.resetBehavior();
-        isPetKitStub.returns(false);
-
-        const config = await PetKitDevice.getStubConfig(mockHass);
-        expect(config.device_id).to.equal('');
       });
     });
   });

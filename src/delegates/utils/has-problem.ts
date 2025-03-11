@@ -1,7 +1,7 @@
 import { stateActive } from '@hass/common/entity/state_active';
-import type { PetKitUnit } from '@type/config';
+import type { Device } from '@type/config';
 
-export const hasProblem = (unit: PetKitUnit): boolean =>
+export const hasProblem = (unit: Device): boolean =>
   unit
     ? unit.problemEntities.some((entity) => {
         if (entity.translation_key === 'desiccant_left_days') {

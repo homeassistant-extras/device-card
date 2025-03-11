@@ -1,4 +1,4 @@
-import { PetKitDeviceEditor } from '@/cards/editor';
+import { DeviceCardEditor } from '@/cards/editor';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import type { Config } from '@type/config';
@@ -8,7 +8,7 @@ import { stub } from 'sinon';
 
 export default () => {
   describe('editor.ts', () => {
-    let card: PetKitDeviceEditor;
+    let card: DeviceCardEditor;
     let hass: HomeAssistant;
     let dispatchStub: sinon.SinonStub;
 
@@ -20,7 +20,7 @@ export default () => {
         entities: {},
         devices: {},
       } as HomeAssistant;
-      card = new PetKitDeviceEditor();
+      card = new DeviceCardEditor();
       dispatchStub = stub(card, 'dispatchEvent');
 
       card.hass = hass;
@@ -32,7 +32,7 @@ export default () => {
 
     describe('initialization', () => {
       it('should be defined', () => {
-        expect(card).to.be.instanceOf(PetKitDeviceEditor);
+        expect(card).to.be.instanceOf(DeviceCardEditor);
       });
 
       it('should have default properties', () => {
@@ -90,14 +90,10 @@ export default () => {
           {
             name: 'device_id',
             selector: {
-              device: {
-                filter: {
-                  integration: 'petkit',
-                },
-              },
+              device: {},
             },
             required: true,
-            label: `PetKit Device`,
+            label: `Device`,
           },
           {
             name: 'title',
@@ -127,8 +123,8 @@ export default () => {
                 mode: 'list',
                 options: [
                   {
-                    label: 'Use Pet Portrait',
-                    value: 'cute_lil_kitty',
+                    label: 'Use Entity Picture',
+                    value: 'entity_picture',
                   },
                 ],
               },

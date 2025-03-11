@@ -1,20 +1,20 @@
-import { getDevice } from '@delegates/retrievers/device';
+import { getDevice as getHassDevice } from '@delegates/retrievers/device';
 import { computeDomain } from '@hass/common/entity/compute_domain';
 import type { HomeAssistant } from '@hass/types';
-import type { Config, PetKitUnit } from '@type/config';
+import type { Config, Device } from '@type/config';
 import { getDeviceEntities } from './card-entities';
 
 /**
  * Get the PetKit unit information
  * @param {HomeAssistant} hass - Home Assistant instance
  * @param {Config} config - Card configuration
- * @returns {PetKitUnit | undefined} - PetKit unit information
+ * @returns {Device | undefined} - PetKit unit information
  */
-export const getPetKitUnit = (
+export const getDevice = (
   hass: HomeAssistant,
   config: Config,
-): PetKitUnit | undefined => {
-  const unit: PetKitUnit = {
+): Device | undefined => {
+  const unit: Device = {
     sensors: [],
     controls: [],
     diagnostics: [],
@@ -22,7 +22,7 @@ export const getPetKitUnit = (
     problemEntities: [],
   };
 
-  const device = getDevice(hass, config.device_id);
+  const device = getHassDevice(hass, config.device_id);
   if (!device) {
     return undefined;
   }

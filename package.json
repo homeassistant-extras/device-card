@@ -1,11 +1,11 @@
 {
-  "name": "petkit-device-cards",
+  "name": "device-card",
   "version": "0.2.1",
   "author": "Patrick Masters",
   "license": "ISC",
   "description": "Custom card Home Assistant to show info about your PetKit devices.",
   "source": "src/index.ts",
-  "module": "dist/petkit-device-cards.js",
+  "module": "dist/device-card.js",
   "targets": {
     "module": {
       "includeNodeModules": true
