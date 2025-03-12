@@ -1,4 +1,5 @@
 import { getState } from '@delegates/retrievers/state';
+import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/config';
 
@@ -20,11 +21,14 @@ export const getDeviceEntities = (
         state.attributes.friendly_name === deviceName
           ? deviceName
           : state.attributes.friendly_name.replace(deviceName, '');
+      const active = stateActive(state);
       return {
         entity_id: entity.entity_id,
         category: entity.entity_category,
         state: state.state,
         translation_key: entity.translation_key,
+        isProblemEntity: state.attributes.device_class === 'problem',
+        isActive: active,
         attributes: {
           ...state.attributes,
           friendly_name: name,

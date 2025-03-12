@@ -19,6 +19,8 @@ export default () => {
           state_class: 'measurement',
           unit_of_measurement: '%',
         },
+        isActive: false,
+        isProblemEntity: false,
       } as EntityInformation;
     });
 
@@ -147,87 +149,6 @@ export default () => {
       // Verify inner fill class
       const fillElement = el.querySelector('.percent-gauge-fill');
       expect(fillElement).to.exist;
-    });
-
-    // New tests for the desiccant_left_days translation key
-    it('should convert desiccant_left_days to percentage correctly', async () => {
-      // Setup entity with desiccant_left_days and a value of 15 days (should be 50%)
-      mockEntity.translation_key = 'desiccant_left_days';
-      mockEntity.state = '15';
-
-      const result = percentBar(mockEntity);
-      const el = await fixture(result as TemplateResult);
-
-      const fillElement = el.querySelector('.percent-gauge-fill');
-      expect(fillElement).to.exist;
-      expect((fillElement as HTMLElement).style.width).to.equal('50%');
-    });
-
-    it('should apply correct color class for desiccant_left_days', async () => {
-      mockEntity.translation_key = 'desiccant_left_days';
-
-      // Test low class (below 30% => less than 9 days)
-      mockEntity.state = '6';
-      let result = percentBar(mockEntity);
-      let el = await fixture(result as TemplateResult);
-
-      let fillElement = el.querySelector('.percent-gauge-fill');
-      expect(fillElement?.classList.contains('low')).to.be.true;
-      expect((fillElement as HTMLElement).style.width).to.equal('20%');
-
-      // Test medium class (between 30% and 60% => between 9 and 18 days)
-      mockEntity.state = '12';
-      result = percentBar(mockEntity);
-      el = await fixture(result as TemplateResult);
-
-      fillElement = el.querySelector('.percent-gauge-fill');
-      expect(fillElement?.classList.contains('medium')).to.be.true;
-      expect((fillElement as HTMLElement).style.width).to.equal('40%');
-
-      // Test high class (above 60% => more than 18 days)
-      mockEntity.state = '24';
-      result = percentBar(mockEntity);
-      el = await fixture(result as TemplateResult);
-
-      fillElement = el.querySelector('.percent-gauge-fill');
-      expect(fillElement?.classList.contains('high')).to.be.true;
-      expect((fillElement as HTMLElement).style.width).to.equal('80%');
-    });
-
-    it('should handle zero and maximum values for desiccant_left_days', async () => {
-      mockEntity.translation_key = 'desiccant_left_days';
-
-      // Test 0 days remaining
-      mockEntity.state = '0';
-      let result = percentBar(mockEntity);
-      let el = await fixture(result as TemplateResult);
-
-      let fillElement = el.querySelector('.percent-gauge-fill');
-      expect(fillElement?.classList.contains('low')).to.be.true;
-      expect((fillElement as HTMLElement).style.width).to.equal('0%');
-
-      // Test 30 days (maximum/full)
-      mockEntity.state = '30';
-      result = percentBar(mockEntity);
-      el = await fixture(result as TemplateResult);
-
-      fillElement = el.querySelector('.percent-gauge-fill');
-      expect(fillElement?.classList.contains('high')).to.be.true;
-      expect((fillElement as HTMLElement).style.width).to.equal('100%');
-    });
-
-    it('should handle values above 30 days for desiccant_left_days', async () => {
-      mockEntity.translation_key = 'desiccant_left_days';
-
-      // Test more than 30 days (should cap at 100%)
-      mockEntity.state = '45';
-      const result = percentBar(mockEntity);
-      const el = await fixture(result as TemplateResult);
-
-      const fillElement = el.querySelector('.percent-gauge-fill');
-      expect(fillElement?.classList.contains('high')).to.be.true;
-      expect((fillElement as HTMLElement).style.width).to.equal('150%');
-      // Note: This might be a bug in the implementation if values over 30 should be capped at 100%
     });
   });
 };

@@ -5,10 +5,10 @@ import type { Config, Device } from '@type/config';
 import { getDeviceEntities } from './card-entities';
 
 /**
- * Get the PetKit unit information
+ * Get the device information
  * @param {HomeAssistant} hass - Home Assistant instance
  * @param {Config} config - Card configuration
- * @returns {Device | undefined} - PetKit unit information
+ * @returns {Device | undefined} - device information
  */
 export const getDevice = (
   hass: HomeAssistant,
@@ -19,7 +19,6 @@ export const getDevice = (
     controls: [],
     diagnostics: [],
     configurations: [],
-    problemEntities: [],
   };
 
   const hassDevice = getHassDevice(hass, config.device_id);
@@ -27,7 +26,7 @@ export const getDevice = (
     return undefined;
   }
 
-  device.name = hassDevice.name || 'PetKit Device';
+  device.name = hassDevice.name || 'Device';
   device.model = [
     hassDevice.manufacturer,
     hassDevice.model,
@@ -43,11 +42,6 @@ export const getDevice = (
     } else if (entity.category === 'config') {
       device.configurations.push(entity);
     } else {
-      // track our problem entities
-      if (entity.attributes.device_class === 'problem') {
-        device.problemEntities.push(entity);
-      }
-
       const domain = computeDomain(entity.entity_id);
       if (['text', 'button', 'switch', 'select'].includes(domain)) {
         device.controls.push(entity);

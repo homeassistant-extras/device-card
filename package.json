@@ -3,7 +3,7 @@
   "version": "0.2.1",
   "author": "Patrick Masters",
   "license": "ISC",
-  "description": "Custom card Home Assistant to show info about your PetKit devices.",
+  "description": "Custom Home Assistant card to show info about your devices.",
   "source": "src/index.ts",
   "module": "dist/device-card.js",
   "targets": {

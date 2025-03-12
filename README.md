@@ -48,15 +48,16 @@ A custom card for Home Assistant that provides a comprehensive overview of any d
 
 ### Problem Detection
 
-- Automatically detects entities labeled as "problem" in the device
+- Automatically detects entities labeled as "problem" in the device based on their `device_class`
 - Visual indication when problems are detected (card border turns red)
 - Easy identification of issues requiring attention
+- Problem entities show a green or red indicator to their left
 
 ![problem-detection](assets/problems.png)
 
 ### Entity Pictures
 
-With an optional flag, you can showcase entity pictures when available.
+With an optional flag, you can showcase entity pictures when available. There must exist an entity with an `entity_picture` attribute.
 
 ![entity-pictures](assets/portraits.png)
 
@@ -180,6 +181,7 @@ features:
 - **🐛 [Report Issues](https://github.com/homeassistant-extras/device-card/issues)**: Submit bugs found or log feature requests for the `device-card` project.
 - **💡 [Submit Pull Requests](https://github.com/homeassistant-extras/device-card/blob/main/CONTRIBUTING.md)**: Review open PRs, and submit your own PRs.
 - **📣 [Check out discord](https://discord.gg/F28wupKC)**: Need further help, have ideas, want to chat?
+- **🃏 [Check out my other cards!](https://github.com/orgs/homeassistant-extras/repositories)** Maybe you have an integration that I made cards for.
 
 <details closed>
 <summary>Contributing Guidelines</summary>

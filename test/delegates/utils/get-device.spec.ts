@@ -8,7 +8,7 @@ import { expect } from 'chai';
 import { stub } from 'sinon';
 
 export default () => {
-  describe('petkit-unit.ts', () => {
+  describe('get-device.ts', () => {
     let mockHass: HomeAssistant;
     let mockConfig: Config;
     let getDeviceStub: sinon.SinonStub;
@@ -74,7 +74,7 @@ export default () => {
         });
 
         const result = getDevice(mockHass, mockConfig);
-        expect(result?.name).to.equal('PetKit Device');
+        expect(result?.name).to.equal('Device');
       });
 
       it('should categorize entities correctly', () => {
@@ -85,6 +85,8 @@ export default () => {
             attributes: { device_class: 'battery' },
             category: undefined,
             translation_key: undefined,
+            isActive: false,
+            isProblemEntity: false,
           },
           {
             entity_id: 'switch.petkit_power',
@@ -92,6 +94,8 @@ export default () => {
             attributes: {},
             category: undefined,
             translation_key: undefined,
+            isActive: false,
+            isProblemEntity: false,
           },
           {
             entity_id: 'sensor.petkit_problem',
@@ -99,6 +103,8 @@ export default () => {
             attributes: { device_class: 'problem' },
             category: undefined,
             translation_key: undefined,
+            isActive: false,
+            isProblemEntity: false,
           },
           {
             entity_id: 'text.petkit_config',
@@ -106,6 +112,8 @@ export default () => {
             attributes: {},
             category: 'config',
             translation_key: undefined,
+            isActive: false,
+            isProblemEntity: false,
           },
           {
             entity_id: 'sensor.petkit_diagnostic',
@@ -113,6 +121,8 @@ export default () => {
             attributes: {},
             category: 'diagnostic',
             translation_key: undefined,
+            isActive: false,
+            isProblemEntity: false,
           },
         ];
 
@@ -124,7 +134,6 @@ export default () => {
         expect(result?.controls).to.have.length(1);
         expect(result?.diagnostics).to.have.length(1);
         expect(result?.configurations).to.have.length(1);
-        expect(result?.problemEntities).to.have.length(1);
 
         // Verify correct categorization
         expect(result?.sensors[0]!.entity_id).to.equal('sensor.petkit_battery');
@@ -134,65 +143,6 @@ export default () => {
         );
         expect(result?.configurations[0]!.entity_id).to.equal(
           'text.petkit_config',
-        );
-        expect(result?.problemEntities[0]!.entity_id).to.equal(
-          'sensor.petkit_problem',
-        );
-      });
-
-      it('should identify problem entities based on device_class', () => {
-        const mockEntities: EntityInformation[] = [
-          {
-            entity_id: 'sensor.normal_sensor',
-            state: 'ok',
-            attributes: {},
-            category: undefined,
-            translation_key: undefined,
-          },
-          {
-            entity_id: 'sensor.problem_sensor',
-            state: 'warning',
-            attributes: { device_class: 'problem' },
-            category: undefined,
-            translation_key: undefined,
-          },
-        ];
-
-        getDeviceEntitiesStub.returns(mockEntities);
-
-        const result = getDevice(mockHass, mockConfig);
-
-        expect(result?.problemEntities).to.have.length(1);
-        expect(result?.problemEntities[0]!.entity_id).to.equal(
-          'sensor.problem_sensor',
-        );
-      });
-
-      it('should identify problem entities based on translation_key for desiccant_left_days', () => {
-        const mockEntities: EntityInformation[] = [
-          {
-            entity_id: 'sensor.normal_sensor',
-            state: 'ok',
-            attributes: {},
-            category: undefined,
-            translation_key: undefined,
-          },
-          {
-            entity_id: 'sensor.desiccant_days',
-            state: '5',
-            attributes: {},
-            category: undefined,
-            translation_key: 'desiccant_left_days',
-          },
-        ];
-
-        getDeviceEntitiesStub.returns(mockEntities);
-
-        const result = getDevice(mockHass, mockConfig);
-
-        expect(result?.problemEntities).to.have.length(1);
-        expect(result?.problemEntities[0]!.entity_id).to.equal(
-          'sensor.desiccant_days',
         );
       });
 
@@ -210,6 +160,8 @@ export default () => {
             attributes: {},
             category: undefined,
             translation_key: undefined,
+            isActive: false,
+            isProblemEntity: false,
           },
           {
             entity_id: 'button.control',
@@ -217,6 +169,8 @@ export default () => {
             attributes: {},
             category: undefined,
             translation_key: undefined,
+            isActive: false,
+            isProblemEntity: false,
           },
           {
             entity_id: 'switch.control',
@@ -224,6 +178,8 @@ export default () => {
             attributes: {},
             category: undefined,
             translation_key: undefined,
+            isActive: false,
+            isProblemEntity: false,
           },
           {
             entity_id: 'select.control',
@@ -231,6 +187,8 @@ export default () => {
             attributes: {},
             category: undefined,
             translation_key: undefined,
+            isActive: false,
+            isProblemEntity: false,
           },
           {
             entity_id: 'sensor.data',
@@ -238,6 +196,8 @@ export default () => {
             attributes: {},
             category: undefined,
             translation_key: undefined,
+            isActive: false,
+            isProblemEntity: false,
           },
         ];
 

@@ -340,7 +340,7 @@ export default () => {
       await fixture(result as TemplateResult);
 
       // Should be called only for the percentage entity
-      expect(percentBarStub.callCount).to.equal(2);
+      expect(percentBarStub.callCount).to.equal(1);
       expect(percentBarStub.firstCall.args[0].entity_id).to.equal(
         'sensor.test_percentage',
       );
@@ -392,41 +392,12 @@ export default () => {
       expect(mockElement.expandedSections['Test Section']).to.be.true;
     });
 
-    // New test for the desiccant_left_days translation_key condition
-    it('should show percentBar for entities with desiccant_left_days translation_key', async () => {
-      const result = renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        mockEntities,
-      );
-
-      await fixture(result as TemplateResult);
-
-      // Verify percentBar was called for both percentage entity and desiccant entity
-      expect(percentBarStub.callCount).to.equal(2);
-
-      // First call should be for the percentage sensor
-      expect(percentBarStub.getCall(0).args[0].entity_id).to.equal(
-        'sensor.test_percentage',
-      );
-
-      // Second call should be for the desiccant entity with translation_key
-      expect(percentBarStub.getCall(1).args[0].entity_id).to.equal(
-        'sensor.desiccant_left',
-      );
-      expect(percentBarStub.getCall(1).args[0].translation_key).to.equal(
-        'desiccant_left_days',
-      );
-    });
-
     it('should not show percentBar for entities without proper conditions', async () => {
       // Create a new array with only entities that shouldn't display percent bars
       const nonPercentEntities = [
         mockEntities[2], // light.test_light
         mockEntities[3], // binary_sensor.problem
-      ];
+      ] as EntityInformation[];
 
       const result = renderSection(
         mockElement,

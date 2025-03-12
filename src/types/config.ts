@@ -46,9 +46,6 @@ export interface Device {
 
   /** The configurations of the device */
   configurations: EntityInformation[];
-
-  /** The problem entities of the device */
-  problemEntities: EntityInformation[];
 }
 
 export interface EntityInformation extends EntityState {
@@ -57,6 +54,12 @@ export interface EntityInformation extends EntityState {
 
   /** Translation key */
   translation_key: string | undefined;
+
+  /** Whether this entity is a problem entity */
+  isProblemEntity: boolean;
+
+  /** Whether this entity is active */
+  isActive: boolean;
 }
 
 export interface EntityState {

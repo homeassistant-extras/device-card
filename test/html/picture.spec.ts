@@ -20,6 +20,8 @@ export default () => {
           friendly_name: 'Pet Last Use',
           entity_picture: 'https://example.com/pet.jpg',
         },
+        isActive: false,
+        isProblemEntity: false,
       } as EntityInformation;
 
       // Create other mock sensors
@@ -30,12 +32,14 @@ export default () => {
         attributes: {
           friendly_name: 'Status',
         },
+        isActive: false,
+        isProblemEntity: false,
       } as EntityInformation;
 
       // Combine sensors into an array
       mockSensors = [petSensor, otherSensor];
 
-      // Create mock PetKit unit
+      // Create mock device
       mockUnit = {
         name: "Fluffy's Feeder",
         model: 'PetKit V1 123',
@@ -43,7 +47,6 @@ export default () => {
         controls: [],
         diagnostics: [],
         configurations: [],
-        problemEntities: [],
       };
     });
 

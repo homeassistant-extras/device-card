@@ -108,31 +108,40 @@ export const styles = css`
     height: 22px;
   }
 
-  /* Style for the status colors */
+  /* Container for a row */
+  .row {
+    position: relative;
+    border-radius: 3px;
+  }
 
+  /* Style for the status colors */
+  .row.status-ok {
+    border-left: 2px solid var(--success-color);
+  }
   .status-ok {
     --primary-text-color: var(--success-color);
   }
 
+  .row.status-warning {
+    border-left: 2px solid var(--warning-color);
+  }
   .status-warning {
     --primary-text-color: var(--warning-color);
   }
 
+  .row.status-error {
+    border-left: 2px solid var(--error-color);
+  }
   .status-error {
     --primary-text-color: var(--error-color);
-  }
-
-  /* Container for a row */
-  .row {
-    position: relative;
   }
 
   /* Style for the percentage bar that goes below the state-card-content */
   .percent-gauge {
     position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 100%;
+    bottom: 1px;
+    left: 10px;
+    width: 98%;
     height: 4px;
     background-color: var(--divider-color, #333);
     overflow: hidden;

@@ -40,7 +40,7 @@ export default () => {
         },
       } as any as HomeAssistant;
 
-      // Create mock PetKit unit
+      // Create mock device
       mockUnit = {
         name: 'PetKit Feeder',
         model: 'Feeder Plus Pro',
@@ -51,6 +51,8 @@ export default () => {
             translation_key: undefined,
             state: '75',
             attributes: { device_class: 'battery' },
+            isActive: false,
+            isProblemEntity: false,
           },
         ],
         controls: [
@@ -60,6 +62,8 @@ export default () => {
             translation_key: undefined,
             state: 'on',
             attributes: {},
+            isActive: false,
+            isProblemEntity: false,
           },
         ],
         diagnostics: [
@@ -69,6 +73,8 @@ export default () => {
             translation_key: undefined,
             state: 'ok',
             attributes: {},
+            isActive: false,
+            isProblemEntity: false,
           },
         ],
         configurations: [
@@ -78,15 +84,8 @@ export default () => {
             translation_key: undefined,
             state: 'default',
             attributes: {},
-          },
-        ],
-        problemEntities: [
-          {
-            entity_id: 'sensor.petkit_problem',
-            category: undefined,
-            translation_key: undefined,
-            state: 'off',
-            attributes: { device_class: 'problem' },
+            isActive: false,
+            isProblemEntity: false,
           },
         ],
       };

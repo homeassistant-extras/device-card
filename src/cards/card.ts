@@ -70,8 +70,6 @@ export class DeviceCard extends LitElement {
     const device = getDevice(hass, this._config);
 
     if (device && !equal(device, this._device)) {
-      // todo remove
-      console.log('device', device);
       this._device = device;
     }
   }

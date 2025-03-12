@@ -81,6 +81,10 @@ export default () => {
         expect(getState(mockHass, 'light.missing')).to.be.undefined;
       });
 
+      it('should return undefined for missing entity id', () => {
+        expect(getState(mockHass, undefined)).to.be.undefined;
+      });
+
       it('should return state for existing entity', () => {
         const state = getState(mockHass, 'light.test');
         expect(state).to.exist;

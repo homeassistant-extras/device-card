@@ -1,5 +1,4 @@
 import type { DeviceCard } from '@cards/card';
-import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
 import type { Config, EntityInformation } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';
@@ -53,20 +52,19 @@ export const renderSection = (
         : nothing}
     </div>
     ${displayEntities.map((entity) => {
-      let className: string | undefined;
+      let statusClassName: string | undefined;
 
-      if (entity.attributes.device_class === 'problem') {
+      if (entity.isProblemEntity) {
         // add color to problem class based on state
-        const active = stateActive(entity);
-        className = active ? 'status-error' : 'status-ok';
+        statusClassName = entity.isActive ? 'status-error' : 'status-ok';
       }
 
       const showBar =
         entity.attributes.state_class === 'measurement' &&
         entity.attributes.unit_of_measurement === '%';
 
-      return html`<div class="row">
-        ${stateContent(hass, entity, className)}
+      return html`<div class="${['row', statusClassName].join(' ')}">
+        ${stateContent(hass, entity, statusClassName)}
         ${showBar ? percentBar(entity) : nothing}
       </div>`;
     })}
