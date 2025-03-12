@@ -14,7 +14,7 @@ export const getDevice = (
   hass: HomeAssistant,
   config: Config,
 ): Device | undefined => {
-  const unit: Device = {
+  const device: Device = {
     sensors: [],
     controls: [],
     diagnostics: [],
@@ -22,38 +22,41 @@ export const getDevice = (
     problemEntities: [],
   };
 
-  const device = getHassDevice(hass, config.device_id);
-  if (!device) {
+  const hassDevice = getHassDevice(hass, config.device_id);
+  if (!hassDevice) {
     return undefined;
   }
 
-  unit.name = device.name || 'PetKit Device';
-  unit.model = `${device.model} ${device.model_id}`;
+  device.name = hassDevice.name || 'PetKit Device';
+  device.model = [
+    hassDevice.manufacturer,
+    hassDevice.model,
+    hassDevice.model_id,
+  ]
+    .filter((s) => s)
+    .join(' ');
 
-  const entities = getDeviceEntities(hass, device.id, device.name);
+  const entities = getDeviceEntities(hass, hassDevice.id, hassDevice.name);
   entities.forEach((entity) => {
     if (entity.category === 'diagnostic') {
-      unit.diagnostics.push(entity);
+      device.diagnostics.push(entity);
     } else if (entity.category === 'config') {
-      unit.configurations.push(entity);
+      device.configurations.push(entity);
     } else {
       // track our problem entities
-      if (
-        entity.attributes.device_class === 'problem' ||
-        entity.translation_key === 'desiccant_left_days'
-      ) {
-        unit.problemEntities.push(entity);
+      if (entity.attributes.device_class === 'problem') {
+        device.problemEntities.push(entity);
       }
 
       const domain = computeDomain(entity.entity_id);
       if (['text', 'button', 'switch', 'select'].includes(domain)) {
-        unit.controls.push(entity);
+        device.controls.push(entity);
       } else {
         // everything else is a sensor
-        unit.sensors.push(entity);
+        device.sensors.push(entity);
       }
     }
   });
 
-  return unit;
+  return device;
 };

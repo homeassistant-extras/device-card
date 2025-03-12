@@ -7,6 +7,7 @@ import type { RegistryEntry } from './registry';
 export interface DeviceRegistryEntry extends RegistryEntry {
   id: string;
   identifiers: [string, string][];
+  manufacturer: string | null;
   model: string | null;
   model_id: string | null;
   name: string | null;

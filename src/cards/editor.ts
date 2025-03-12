@@ -15,39 +15,57 @@ const SCHEMA: HaFormSchema[] = [
     label: `Device`,
   },
   {
-    name: 'title',
-    required: false,
-    label: 'Card Title',
-    selector: {
-      text: {},
-    },
-  },
-  {
-    name: 'preview_count',
-    required: false,
-    label: 'Preview Count',
-    selector: {
-      text: {
-        type: 'number',
+    name: 'content',
+    label: 'Content',
+    type: 'expandable',
+    flatten: true,
+    icon: 'mdi:text-short',
+    schema: [
+      {
+        name: 'title',
+        required: false,
+        label: 'Card Title',
+        selector: {
+          text: {},
+        },
       },
-    },
+      {
+        name: 'preview_count',
+        required: false,
+        label: 'Preview Count',
+        selector: {
+          text: {
+            type: 'number' as 'number',
+          },
+        },
+      },
+    ],
   },
   {
     name: 'features',
     label: 'Features',
-    required: false,
-    selector: {
-      select: {
-        multiple: true,
-        mode: 'list',
-        options: [
-          {
-            label: 'Use Entity Picture',
-            value: 'entity_picture',
+    type: 'expandable',
+    flatten: true,
+    icon: 'mdi:list-box',
+    schema: [
+      {
+        name: 'features',
+        label: 'Enable Features',
+        required: false,
+        selector: {
+          select: {
+            multiple: true,
+            mode: 'list' as 'list',
+            options: [
+              {
+                label: 'Use Entity Picture',
+                value: 'entity_picture',
+              },
+            ],
           },
-        ],
+        },
       },
-    },
+    ],
   },
 ];
 

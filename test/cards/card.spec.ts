@@ -1,8 +1,8 @@
 import { DeviceCard } from '@/cards/card';
+import * as deviceUtils from '@delegates/utils/get-device';
 import * as problemUtils from '@delegates/utils/has-problem';
-import * as deviceUtils from '@delegates/utils/petkit-unit';
 import type { HomeAssistant } from '@hass/types';
-import * as petModule from '@html/pet';
+import * as pictureModule from '@html/picture';
 import * as sectionRenderer from '@html/section';
 import { fixture } from '@open-wc/testing-helpers';
 import { styles } from '@theme/styles';
@@ -19,7 +19,6 @@ export default () => {
     let mockUnit: Device;
     let consoleInfoStub: sinon.SinonStub;
     let hasProblemStub: sinon.SinonStub;
-    let isPetKitStub: sinon.SinonStub;
     let getDeviceStub: sinon.SinonStub;
     let renderSectionStub: sinon.SinonStub;
 
@@ -148,28 +147,28 @@ export default () => {
         const newUnit = { ...mockUnit, name: 'Updated Device' };
         getDeviceStub.returns(newUnit);
         card.hass = mockHass as HomeAssistant;
-        expect(card['_unit']).to.equal(newUnit);
+        expect(card['_device']).to.equal(newUnit);
       });
 
       it('should not update unit if getDevice returns identical data', () => {
         // First call to set initial unit
         card.hass = mockHass as HomeAssistant;
-        const originalUnit = card['_unit'];
+        const originalUnit = card['_device'];
 
         // Second call should not update unit since it's identical
         card.hass = mockHass as HomeAssistant;
-        expect(card['_unit']).to.equal(originalUnit);
+        expect(card['_device']).to.equal(originalUnit);
       });
 
       it('should not update unit if getDevice returns undefined', () => {
         // First set a valid unit
         card.hass = mockHass as HomeAssistant;
-        const originalUnit = card['_unit'];
+        const originalUnit = card['_device'];
 
         // Then test with undefined return value
         getDeviceStub.returns(undefined);
         card.hass = mockHass as HomeAssistant;
-        expect(card['_unit']).to.equal(originalUnit);
+        expect(card['_device']).to.equal(originalUnit);
       });
     });
 
@@ -182,7 +181,7 @@ export default () => {
 
     describe('rendering', () => {
       it('should render nothing if no unit exists', () => {
-        (card as any)._unit = undefined;
+        (card as any)._device = undefined;
         const el = card.render();
         expect(el).to.equal(nothing);
       });
@@ -257,7 +256,7 @@ export default () => {
 
       it('should render pet component when model is Pet PET and entity_picture feature is enabled', () => {
         // Setup mock for pet function
-        const petStub = stub(petModule, 'pet');
+        const petStub = stub(pictureModule, 'picture');
         petStub.returns(html`<div class="mock-pet">Pet Component</div>`);
 
         // Configure the card with the entity_picture feature
@@ -267,8 +266,8 @@ export default () => {
         });
 
         // Set up the unit with Pet PET model
-        (card as any)._unit = {
-          ...card['_unit'],
+        (card as any)._device = {
+          ...card['_device'],
           model: 'Pet PET',
         };
 
@@ -277,7 +276,7 @@ export default () => {
 
         // Check that pet() was called with the correct unit
         expect(petStub.calledOnce).to.be.true;
-        expect(petStub.calledWith(card['_unit'])).to.be.true;
+        expect(petStub.calledWith(card['_device'])).to.be.true;
 
         // Check that the result of pet() was returned
         expect(result).to.not.equal(nothing);
@@ -289,7 +288,7 @@ export default () => {
       // Add another test to verify the normal path
       it('should not render pet component when model is Pet PET but entity_picture feature is not enabled', () => {
         // Setup mock for pet function
-        const petStub = stub(petModule, 'pet');
+        const petStub = stub(pictureModule, 'picture');
 
         // Configure the card without the entity_picture feature
         card.setConfig({
@@ -298,8 +297,8 @@ export default () => {
         });
 
         // Set up the unit with Pet PET model
-        (card as any)._unit = {
-          ...card['_unit'],
+        (card as any)._device = {
+          ...card['_device'],
           model: 'Pet PET',
         };
 

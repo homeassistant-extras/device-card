@@ -1,5 +1,5 @@
 import percentSpec from './percent.spec';
-import petSpec from './pet.spec';
+import petSpec from './picture.spec';
 import sectionSpec from './section.spec';
 import stateContentSpec from './state-content.spec';
 

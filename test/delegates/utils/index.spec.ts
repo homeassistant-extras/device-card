@@ -1,6 +1,6 @@
 import cardEntitiesSpec from './card-entities.spec';
+import deviceSpec from './get-device';
 import hasProblemSpec from './has-problem.spec';
-import deviceSpec from './petkit-unit.spec';
 
 export default () => {
   describe('utils', () => {

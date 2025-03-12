@@ -1,6 +1,6 @@
 import * as deviceRetriever from '@delegates/retrievers/device';
 import * as cardEntities from '@delegates/utils/card-entities';
-import { getDevice } from '@delegates/utils/petkit-unit';
+import { getDevice } from '@delegates/utils/get-device';
 import * as domainUtils from '@hass/common/entity/compute_domain';
 import type { HomeAssistant } from '@hass/types';
 import type { Config, EntityInformation } from '@type/config';

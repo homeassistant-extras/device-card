@@ -1,4 +1,4 @@
-import { pet } from '@html/pet';
+import { picture } from '@html/picture';
 import { fixture } from '@open-wc/testing-helpers';
 import type { Device, EntityInformation } from '@type/config';
 import { expect } from 'chai';
@@ -48,7 +48,7 @@ export default () => {
     });
 
     it('should render a card with pet information', async () => {
-      const result = pet(mockUnit);
+      const result = picture(mockUnit);
       const el = await fixture(result as TemplateResult);
 
       // Verify the rendered card has the correct structure
@@ -75,21 +75,17 @@ export default () => {
         sensors: [mockSensors[1]!], // Only include the non-pet sensor
       };
 
-      const result = pet(unitWithoutPet);
+      const result = picture(unitWithoutPet);
       const el = await fixture(result as TemplateResult);
 
       // Verify the card still renders
-      expect(el.tagName.toLowerCase()).to.equal('ha-card');
+      expect(el.tagName.toLowerCase()).to.equal('ha-alert');
+      expect(el.getAttribute('alert-type')).to.equal('error');
 
-      // The image should exist but have an undefined src
-      const imgElement = el.querySelector('img');
-      expect(imgElement).to.exist;
-      expect(imgElement?.getAttribute('src')).to.equal('');
-
-      // The title should still show the unit name
-      const titleElement = el.querySelector('.title span');
-      expect(titleElement).to.exist;
-      expect(titleElement?.textContent).to.equal("Fluffy's Feeder");
+      // Should have text content
+      const text = el.textContent;
+      expect(text).to.exist;
+      expect(text).to.equal('No entity picture found!');
     });
 
     it('should handle empty sensors array', async () => {
@@ -99,16 +95,17 @@ export default () => {
         sensors: [],
       };
 
-      const result = pet(emptyUnit);
+      const result = picture(emptyUnit);
       const el = await fixture(result as TemplateResult);
 
       // Verify the card still renders
-      expect(el.tagName.toLowerCase()).to.equal('ha-card');
+      expect(el.tagName.toLowerCase()).to.equal('ha-alert');
+      expect(el.getAttribute('alert-type')).to.equal('error');
 
-      // The image should exist but have an undefined src
-      const imgElement = el.querySelector('img');
-      expect(imgElement).to.exist;
-      expect(imgElement?.getAttribute('src')).to.be.equal('');
+      // Should have text content
+      const text = el.textContent;
+      expect(text).to.exist;
+      expect(text).to.equal('No entity picture found!');
     });
   });
 };

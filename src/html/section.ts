@@ -62,9 +62,8 @@ export const renderSection = (
       }
 
       const showBar =
-        (entity.attributes.state_class === 'measurement' &&
-          entity.attributes.unit_of_measurement === '%') ||
-        entity.translation_key === 'desiccant_left_days';
+        entity.attributes.state_class === 'measurement' &&
+        entity.attributes.unit_of_measurement === '%';
 
       return html`<div class="row">
         ${stateContent(hass, entity, className)}

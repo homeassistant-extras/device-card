@@ -17,18 +17,11 @@ export const styles = css`
     z-index: 1;
   }
 
-  .logo {
-    height: 60px;
-    width: 60px;
-  }
-
   .card-header {
-    padding-bottom: 12px;
+    padding: 0px 0px 10px 16px;
+    line-height: 35px;
     border-bottom: 1px solid var(--divider-color);
     margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
 
   .title {
@@ -75,10 +68,6 @@ export const styles = css`
     color: var(--secondary-text-color);
     display: flex;
     align-items: center;
-  }
-
-  .section-chevron.expanded {
-    transform: rotate(180deg);
   }
 
   .section-footer {

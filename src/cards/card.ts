@@ -1,7 +1,7 @@
+import { getDevice } from '@delegates/utils/get-device';
 import { hasProblem } from '@delegates/utils/has-problem';
-import { getDevice } from '@delegates/utils/petkit-unit';
 import type { HomeAssistant } from '@hass/types';
-import { pet } from '@html/pet';
+import { picture } from '@html/picture';
 import { renderSection } from '@html/section';
 import { styles } from '@theme/styles';
 import type { Config, Device } from '@type/config';
@@ -18,10 +18,10 @@ export class DeviceCard extends LitElement {
   private _config!: Config;
 
   /**
-   * PetKit Unit information
+   * Device information
    */
   @state()
-  protected _unit!: Device;
+  protected _device!: Device;
 
   /**
    * Home Assistant instance
@@ -67,10 +67,12 @@ export class DeviceCard extends LitElement {
   set hass(hass: HomeAssistant) {
     this._hass = hass;
 
-    const unit = getDevice(hass, this._config);
+    const device = getDevice(hass, this._config);
 
-    if (unit && !equal(unit, this._unit)) {
-      this._unit = unit;
+    if (device && !equal(device, this._device)) {
+      // todo remove
+      console.log('device', device);
+      this._device = device;
     }
   }
 
@@ -92,25 +94,22 @@ export class DeviceCard extends LitElement {
    * @returns {TemplateResult} The rendered HTML template
    */
   override render(): TemplateResult | typeof nothing {
-    if (!this._unit) {
+    if (!this._device) {
       return nothing;
     }
 
-    if (
-      this._unit.model === 'Pet PET' &&
-      this._config.features?.includes('entity_picture')
-    ) {
-      return pet(this._unit);
+    if (this._config.features?.includes('entity_picture')) {
+      return picture(this._device);
     }
 
-    const problem = hasProblem(this._unit);
+    const problem = hasProblem(this._device);
 
     return html`
       <ha-card class="${problem ? 'problem' : ''}">
         <div class="card-header">
           <div class="title">
-            <span>${this._config.title || this._unit.name}</span>
-            <span class="model">${this._unit.model}</span>
+            <span>${this._config.title || this._device.name}</span>
+            <span class="model">${this._device.model}</span>
           </div>
         </div>
 
@@ -119,28 +118,28 @@ export class DeviceCard extends LitElement {
           this._hass,
           this._config,
           'Controls',
-          this._unit.controls,
+          this._device.controls,
         )}
         ${renderSection(
           this,
           this._hass,
           this._config,
           'Configuration',
-          this._unit.configurations,
+          this._device.configurations,
         )}
         ${renderSection(
           this,
           this._hass,
           this._config,
           'Sensors',
-          this._unit.sensors,
+          this._device.sensors,
         )}
         ${renderSection(
           this,
           this._hass,
           this._config,
           'Diagnostic',
-          this._unit.diagnostics,
+          this._device.diagnostics,
         )}
       </ha-card>
     `;
