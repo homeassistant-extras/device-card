@@ -69,6 +69,12 @@ With an optional flag, you can showcase entity pictures when available. There mu
 
 ![expanded](assets/expanded.png)
 
+### Entity Attributes
+
+- Click an entity to expand it and show it's attributes
+
+![attributes](assets/attributes.png)
+
 ### Visual Styling
 
 - Consistent with Home Assistant design language
@@ -128,18 +134,27 @@ The card will automatically:
 
 ## Configuration Options
 
-| Name          | Type   | Default      | Description                                                  |
-| ------------- | ------ | ------------ | ------------------------------------------------------------ |
-| device_id     | string | **Required** | The Home Assistant device ID for your device                 |
-| title         | string | Device name  | Optional custom title for the card                           |
-| preview_count | number | All items    | Number of items to preview before showing "Show More" button |
-| features      | list   | See below    | Optional flags to toggle different features                  |
+| Name             | Type   | Default      | Description                                                  |
+| ---------------- | ------ | ------------ | ------------------------------------------------------------ |
+| device_id        | string | **Required** | The Home Assistant device ID for your device                 |
+| title            | string | Device name  | Optional custom title for the card                           |
+| preview_count    | number | All items    | Number of items to preview before showing "Show More" button |
+| exclude_sections | list   | _none_       | Sections of entities to exclude. See below.                  |
+| exclude_entities | list   | _none_       | Entities to remove from the card.                            |
+| features         | list   | See below    | Optional flags to toggle different features                  |
 
 ### Feature Options
 
 | Name           | Type | Description                        |
 | -------------- | ---- | ---------------------------------- |
 | entity_picture | flag | Show entity picture when available |
+
+### Section Exclude Options
+
+- controls
+- configurations
+- sensors
+- diagnostics
 
 ## Example Configurations
 
@@ -166,6 +181,19 @@ type: custom:device-card
 device_id: 1a2b3c4d5e6f7g8h9i0j
 features:
   - entity_picture
+```
+
+### Excluding some enities and sections
+
+```yaml
+type: custom:device-card
+device_id: 1a2b3c4d5e6f7g8h9i0j
+exclude_sections:
+  - controls
+  - configurations
+  - diagnostics
+exclude_entities:
+  - update.home_assistant_core_update
 ```
 
 ## Project Roadmap

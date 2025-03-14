@@ -112,6 +112,16 @@ export const styles = css`
   .row {
     position: relative;
     border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .row:hover {
+    background-color: var(--secondary-background-color);
+  }
+
+  .row.expanded-row {
+    margin-bottom: 8px;
   }
 
   /* Style for the status colors */
@@ -168,6 +178,47 @@ export const styles = css`
 
   .percent-gauge-fill.low {
     background-color: var(--error-color, #f44336);
+  }
+
+  /* Entity attributes section */
+  .entity-attributes {
+    padding: 4px 16px 8px;
+    margin: 0 0 4px 50px;
+    font-size: 0.9rem;
+    border-left: 1px solid var(--divider-color);
+  }
+
+  .entity-attributes-empty {
+    padding: 4px 16px 8px;
+    margin: 0 0 4px 50px;
+    color: var(--secondary-text-color);
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+
+  .attribute-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+    border-bottom: 1px dotted var(--divider-color);
+  }
+
+  .attribute-row:last-child {
+    border-bottom: none;
+  }
+
+  .attribute-key {
+    font-weight: 500;
+    color: var(--secondary-text-color);
+    flex: 1;
+  }
+
+  .attribute-value {
+    color: var(--primary-text-color);
+    flex: 2;
+    text-align: right;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   /* Kitty pics */

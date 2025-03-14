@@ -1,4 +1,5 @@
 import { DeviceCardEditor } from '@/cards/editor';
+import * as cardEntitiesModule from '@delegates/utils/card-entities';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import type { Config } from '@type/config';
@@ -11,6 +12,7 @@ export default () => {
     let card: DeviceCardEditor;
     let hass: HomeAssistant;
     let dispatchStub: sinon.SinonStub;
+    let getDeviceEntitiesStub: sinon.SinonStub;
 
     beforeEach(async () => {
       // Create mock HomeAssistant instance
@@ -23,11 +25,20 @@ export default () => {
       card = new DeviceCardEditor();
       dispatchStub = stub(card, 'dispatchEvent');
 
+      // Stub the getDeviceEntities function
+      getDeviceEntitiesStub = stub(cardEntitiesModule, 'getDeviceEntities');
+      getDeviceEntitiesStub.returns([
+        { entity_id: 'light.test_light' },
+        { entity_id: 'sensor.test_sensor' },
+        { entity_id: 'switch.test_switch' },
+      ]);
+
       card.hass = hass;
     });
 
     afterEach(() => {
       dispatchStub.restore();
+      getDeviceEntitiesStub.restore();
     });
 
     describe('initialization', () => {
@@ -76,6 +87,18 @@ export default () => {
         expect(el.outerHTML).to.equal('<ha-form></ha-form>');
       });
 
+      it('should call getDeviceEntities with correct parameters', async () => {
+        const testConfig: Config = {
+          device_id: 'device_1',
+        };
+        card.setConfig(testConfig);
+        card.render();
+
+        expect(getDeviceEntitiesStub.calledOnce).to.be.true;
+        expect(getDeviceEntitiesStub.firstCall.args[0]).to.equal(hass);
+        expect(getDeviceEntitiesStub.firstCall.args[1]).to.equal('device_1');
+      });
+
       it('should pass correct props to ha-form', async () => {
         const testConfig: Config = {
           device_id: 'device_1',
@@ -116,7 +139,36 @@ export default () => {
                 label: 'Preview Count',
                 selector: {
                   text: {
-                    type: 'number',
+                    type: 'number' as 'number',
+                  },
+                },
+              },
+              {
+                name: 'exclude_sections',
+                label: 'Sections to exclude',
+                required: false,
+                selector: {
+                  select: {
+                    multiple: true,
+                    mode: 'list' as 'list',
+                    options: [
+                      {
+                        label: 'Controls',
+                        value: 'controls',
+                      },
+                      {
+                        label: 'Configuration',
+                        value: 'configurations',
+                      },
+                      {
+                        label: 'Sensors',
+                        value: 'sensors',
+                      },
+                      {
+                        label: 'Diagnostic',
+                        value: 'diagnostics',
+                      },
+                    ],
                   },
                 },
               },
@@ -136,12 +188,27 @@ export default () => {
                 selector: {
                   select: {
                     multiple: true,
-                    mode: 'list',
+                    mode: 'list' as 'list',
                     options: [
                       {
                         label: 'Use Entity Picture',
                         value: 'entity_picture',
                       },
+                    ],
+                  },
+                },
+              },
+              {
+                name: 'exclude_entities',
+                label: 'Entities to exclude',
+                required: false,
+                selector: {
+                  entity: {
+                    multiple: true,
+                    include_entities: [
+                      'light.test_light',
+                      'sensor.test_sensor',
+                      'switch.test_switch',
                     ],
                   },
                 },
@@ -185,6 +252,8 @@ export default () => {
             device_id: 'device_1',
             title: 'Updated PetKit Device',
             preview_count: 5,
+            exclude_sections: ['controls', 'diagnostics'],
+            exclude_entities: ['sensor.test_sensor'],
           },
         };
 
@@ -198,6 +267,8 @@ export default () => {
           device_id: 'device_1',
           title: 'Updated PetKit Device',
           preview_count: 5,
+          exclude_sections: ['controls', 'diagnostics'],
+          exclude_entities: ['sensor.test_sensor'],
         });
       });
 

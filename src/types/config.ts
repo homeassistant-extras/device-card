@@ -18,6 +18,12 @@ export interface Config {
   /** How many sensors to preview */
   preview_count?: number;
 
+  /** The entities to exclude */
+  exclude_entities?: string[];
+
+  /** The sections to exclude */
+  exclude_sections?: string[];
+
   /** Options to enable disable features **/
   features?: Features[];
 }

@@ -6,7 +6,7 @@ import type { EntityInformation } from '@type/config';
 export const getDeviceEntities = (
   hass: HomeAssistant,
   deviceId: string,
-  deviceName: string | null,
+  deviceName?: string | null,
 ): EntityInformation[] => {
   const deviceEntities = Object.values(hass.entities)
     .filter((entity) => entity.device_id === deviceId)

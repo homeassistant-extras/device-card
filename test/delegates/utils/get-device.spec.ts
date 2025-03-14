@@ -215,6 +215,43 @@ export default () => {
         expect(controlIds).to.include('switch.control');
         expect(controlIds).to.include('select.control');
       });
+
+      it('should exclude entities listed in exclude_entities config', () => {
+        const mockEntities: EntityInformation[] = [
+          {
+            entity_id: 'sensor.petkit_battery',
+            state: '75',
+            attributes: { device_class: 'battery' },
+            category: undefined,
+            translation_key: undefined,
+            isActive: false,
+            isProblemEntity: false,
+          },
+          {
+            entity_id: 'sensor.petkit_temperature',
+            state: '22',
+            attributes: { device_class: 'temperature' },
+            category: undefined,
+            translation_key: undefined,
+            isActive: false,
+            isProblemEntity: false,
+          },
+        ];
+
+        getDeviceEntitiesStub.returns(mockEntities);
+
+        // Reset section exclusions
+        mockConfig.exclude_sections = [];
+
+        // Configure to exclude one of the entities
+        mockConfig.exclude_entities = ['sensor.petkit_temperature'];
+
+        const result = getDevice(mockHass, mockConfig);
+
+        // Should only have one sensor and it should be the battery, not the temperature
+        expect(result?.sensors).to.have.length(1);
+        expect(result?.sensors[0]!.entity_id).to.equal('sensor.petkit_battery');
+      });
     });
   });
 };

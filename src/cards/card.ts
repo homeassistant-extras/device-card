@@ -35,6 +35,12 @@ export class DeviceCard extends LitElement {
   @state()
   public expandedSections: Record<string, boolean> = {};
 
+  /**
+   * Track expanded state of entity attributes
+   */
+  @state()
+  public expandedEntities: Record<string, boolean> = {};
+
   constructor() {
     super();
     console.info(

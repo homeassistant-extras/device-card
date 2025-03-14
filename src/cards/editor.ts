@@ -1,3 +1,4 @@
+import { getDeviceEntities } from '@delegates/utils/card-entities';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
@@ -5,7 +6,7 @@ import type { Config } from '@type/config';
 import { html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 
-const SCHEMA: HaFormSchema[] = [
+const getSchema = (entityIds: string[]): HaFormSchema[] => [
   {
     name: 'device_id',
     selector: {
@@ -39,6 +40,35 @@ const SCHEMA: HaFormSchema[] = [
           },
         },
       },
+      {
+        name: 'exclude_sections',
+        label: 'Sections to exclude',
+        required: false,
+        selector: {
+          select: {
+            multiple: true,
+            mode: 'list' as 'list',
+            options: [
+              {
+                label: 'Controls',
+                value: 'controls',
+              },
+              {
+                label: 'Configuration',
+                value: 'configurations',
+              },
+              {
+                label: 'Sensors',
+                value: 'sensors',
+              },
+              {
+                label: 'Diagnostic',
+                value: 'diagnostics',
+              },
+            ],
+          },
+        },
+      },
     ],
   },
   {
@@ -64,6 +94,12 @@ const SCHEMA: HaFormSchema[] = [
             ],
           },
         },
+      },
+      {
+        name: 'exclude_entities',
+        label: 'Entities to exclude',
+        required: false,
+        selector: { entity: { multiple: true, include_entities: entityIds } },
       },
     ],
   },
@@ -91,11 +127,15 @@ export class DeviceCardEditor extends LitElement {
       return nothing;
     }
 
+    const entities = getDeviceEntities(this.hass, this._config.device_id).map(
+      (e) => e.entity_id,
+    );
+
     return html`
       <ha-form
         .hass=${this.hass}
         .data=${this._config}
-        .schema=${SCHEMA}
+        .schema=${getSchema(entities)}
         .computeLabel=${(s: HaFormSchema) => s.label}
         @value-changed=${this._valueChanged}
       ></ha-form>

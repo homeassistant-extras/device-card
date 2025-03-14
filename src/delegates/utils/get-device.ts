@@ -37,15 +37,31 @@ export const getDevice = (
 
   const entities = getDeviceEntities(hass, hassDevice.id, hassDevice.name);
   entities.forEach((entity) => {
+    if (config.exclude_entities?.includes(entity.entity_id)) {
+      return;
+    }
+
     if (entity.category === 'diagnostic') {
+      if (config.exclude_sections?.includes('diagnostics')) {
+        return;
+      }
       device.diagnostics.push(entity);
     } else if (entity.category === 'config') {
+      if (config.exclude_sections?.includes('configurations')) {
+        return;
+      }
       device.configurations.push(entity);
     } else {
       const domain = computeDomain(entity.entity_id);
       if (['text', 'button', 'switch', 'select'].includes(domain)) {
+        if (config.exclude_sections?.includes('controls')) {
+          return;
+        }
         device.controls.push(entity);
       } else {
+        if (config.exclude_sections?.includes('sensors')) {
+          return;
+        }
         // everything else is a sensor
         device.sensors.push(entity);
       }

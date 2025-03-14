@@ -2,7 +2,23 @@
  * https://github.com/home-assistant/frontend/blob/dev/src/data/selector.ts
  */
 
-export type Selector = DeviceSelector | SelectSelector | StringSelector;
+export type Selector =
+  | EntitySelector
+  | DeviceSelector
+  | SelectSelector
+  | StringSelector;
+
+interface EntitySelectorFilter {
+  domain?: string | readonly string[];
+}
+
+export interface EntitySelector {
+  entity: {
+    multiple?: boolean;
+    include_entities?: string[];
+    filter?: EntitySelectorFilter | readonly EntitySelectorFilter[];
+  } | null;
+}
 
 interface DeviceSelectorFilter {
   integration?: string;
