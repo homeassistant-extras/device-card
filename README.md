@@ -145,9 +145,10 @@ The card will automatically:
 
 ### Feature Options
 
-| Name           | Type | Description                        |
-| -------------- | ---- | ---------------------------------- |
-| entity_picture | flag | Show entity picture when available |
+| Name              | Type | Description                        |
+| ----------------- | ---- | ---------------------------------- |
+| entity_picture    | flag | Show entity picture when available |
+| hide_device_model | flag | Hides the device model information |
 
 ### Section Exclude Options
 

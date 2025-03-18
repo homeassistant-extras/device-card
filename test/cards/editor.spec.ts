@@ -1,4 +1,4 @@
-import { DeviceCardEditor } from '@/cards/editor';
+import { DeviceCardEditor } from '@cards/editor';
 import * as cardEntitiesModule from '@delegates/utils/card-entities';
 import type { HomeAssistant } from '@hass/types';
 import { fixture } from '@open-wc/testing-helpers';
@@ -193,6 +193,10 @@ export default () => {
                       {
                         label: 'Use Entity Picture',
                         value: 'entity_picture',
+                      },
+                      {
+                        label: 'Hide Device Model',
+                        value: 'hide_device_model',
                       },
                     ],
                   },

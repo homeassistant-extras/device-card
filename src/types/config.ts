@@ -29,7 +29,7 @@ export interface Config {
 }
 
 /** Features to enable or disable functionality */
-export type Features = 'entity_picture';
+export type Features = 'entity_picture' | 'hide_device_model';
 
 /**
  * Represents the states of various sensors in a Z-Wave device

@@ -22,6 +22,7 @@
       "@cards/*": ["./src/cards/*"],
       "@type/*": ["./src/types/*"],
       "@hass/*": ["./src/hass/*"],
+      "@config/*": ["./src/config/*"],
       "@theme/*": ["./src/theme/*"],
       "@html/*": ["./src/html/*"],
       "@delegates/*": ["./src/delegates/*"],

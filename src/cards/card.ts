@@ -1,3 +1,4 @@
+import { hasFeature } from '@config/feature';
 import { getDevice } from '@delegates/utils/get-device';
 import { hasProblem } from '@delegates/utils/has-problem';
 import type { HomeAssistant } from '@hass/types';
@@ -102,7 +103,7 @@ export class DeviceCard extends LitElement {
       return nothing;
     }
 
-    if (this._config.features?.includes('entity_picture')) {
+    if (hasFeature(this._config, 'entity_picture')) {
       return picture(this._device);
     }
 
@@ -113,7 +114,9 @@ export class DeviceCard extends LitElement {
         <div class="card-header">
           <div class="title">
             <span>${this._config.title || this._device.name}</span>
-            <span class="model">${this._device.model}</span>
+            ${hasFeature(this._config, 'hide_device_model')
+              ? nothing
+              : html`<span class="model">${this._device.model}</span>`}
           </div>
         </div>
 

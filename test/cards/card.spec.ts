@@ -1,4 +1,4 @@
-import { DeviceCard } from '@/cards/card';
+import { DeviceCard } from '@cards/card';
 import * as deviceUtils from '@delegates/utils/get-device';
 import * as problemUtils from '@delegates/utils/has-problem';
 import type { HomeAssistant } from '@hass/types';
@@ -216,6 +216,18 @@ export default () => {
         expect(modelElement?.textContent).to.equal('Feeder Plus Pro');
       });
 
+      it('should not display model information if hide_device_model set', async () => {
+        // Configure the card with the hide_device_model feature
+        card.setConfig({
+          device_id: 'device_1',
+          features: ['hide_device_model'],
+        });
+
+        const el = await fixture(card.render() as TemplateResult);
+        const modelElement = el.querySelector('.model');
+        expect(modelElement).to.be.null;
+      });
+
       it('should call renderSection for each entity category', () => {
         card.render();
         expect(renderSectionStub.callCount).to.equal(4);
@@ -253,10 +265,10 @@ export default () => {
         ).to.be.true;
       });
 
-      it('should render pet component when model is Pet PET and entity_picture feature is enabled', () => {
+      it('should render device when entity_picture feature is enabled', () => {
         // Setup mock for pet function
-        const petStub = stub(pictureModule, 'picture');
-        petStub.returns(html`<div class="mock-pet">Pet Component</div>`);
+        const deviceStub = stub(pictureModule, 'picture');
+        deviceStub.returns(html`<div class="mock-device">device</div>`);
 
         // Configure the card with the entity_picture feature
         card.setConfig({
@@ -264,51 +276,18 @@ export default () => {
           features: ['entity_picture'],
         });
 
-        // Set up the unit with Pet PET model
-        (card as any)._device = {
-          ...card['_device'],
-          model: 'Pet PET',
-        };
-
         // Render the card
         const result = card.render();
 
         // Check that pet() was called with the correct unit
-        expect(petStub.calledOnce).to.be.true;
-        expect(petStub.calledWith(card['_device'])).to.be.true;
+        expect(deviceStub.calledOnce).to.be.true;
+        expect(deviceStub.calledWith(card['_device'])).to.be.true;
 
         // Check that the result of pet() was returned
         expect(result).to.not.equal(nothing);
 
         // Restore the stub
-        petStub.restore();
-      });
-
-      // Add another test to verify the normal path
-      it('should not render pet component when model is Pet PET but entity_picture feature is not enabled', () => {
-        // Setup mock for pet function
-        const petStub = stub(pictureModule, 'picture');
-
-        // Configure the card without the entity_picture feature
-        card.setConfig({
-          device_id: 'device_1',
-          features: [],
-        });
-
-        // Set up the unit with Pet PET model
-        (card as any)._device = {
-          ...card['_device'],
-          model: 'Pet PET',
-        };
-
-        // Render the card
-        card.render();
-
-        // Check that pet() was not called
-        expect(petStub.notCalled).to.be.true;
-
-        // Restore the stub
-        petStub.restore();
+        deviceStub.restore();
       });
     });
 
