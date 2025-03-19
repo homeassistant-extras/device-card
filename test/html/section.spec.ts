@@ -1,9 +1,10 @@
 import type { HomeAssistant } from '@hass/types';
 import * as rowModule from '@html/row';
-import { renderSection } from '@html/section';
+import * as sectionModule from '@html/section';
+import { renderSection, renderSections } from '@html/section';
 import * as showMoreModule from '@html/show-more';
 import { fixture } from '@open-wc/testing-helpers';
-import type { Config, EntityInformation } from '@type/config';
+import type { Config, Device, EntityInformation } from '@type/config';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -82,234 +83,392 @@ export default () => {
       showMoreStub.restore();
     });
 
-    it('should return nothing when entities array is empty', () => {
-      const result = renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        [],
-      );
-      expect(result).to.equal(nothing);
-    });
+    describe('renderSection', () => {
+      it('should return nothing when entities array is empty', () => {
+        const result = renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          [],
+        );
+        expect(result).to.equal(nothing);
+      });
 
-    it('should return nothing when entities is undefined', () => {
-      const result = renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        undefined as any,
-      );
-      expect(result).to.equal(nothing);
-    });
+      it('should return nothing when entities is undefined', () => {
+        const result = renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          undefined as any,
+        );
+        expect(result).to.equal(nothing);
+      });
 
-    it('should render section with correct title', async () => {
-      const sectionTitle = 'Test Section';
-      const result = renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        sectionTitle,
-        mockEntities,
-      );
-      const el = await fixture(result as TemplateResult);
+      it('should render section with correct title', async () => {
+        const sectionTitle = 'Test Section';
+        const result = renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          sectionTitle,
+          mockEntities,
+        );
+        const el = await fixture(result as TemplateResult);
 
-      const titleElement = el.querySelector('.section-title');
-      expect(titleElement?.textContent).to.equal(sectionTitle);
-    });
+        const titleElement = el.querySelector('.section-title');
+        expect(titleElement?.textContent).to.equal(sectionTitle);
+      });
 
-    it('should apply appropriate section classes based on expansion state and number of items', async () => {
-      // Test with few items (no expansion needed)
-      mockConfig.preview_count = 5; // More than our 3 mock entities
-      let result = renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        mockEntities,
-      );
-      let el = await fixture(result as TemplateResult);
-      expect(el.classList.contains('few-items')).to.be.true;
-      expect(el.classList.contains('expanded')).to.be.false;
+      it('should apply appropriate section classes based on expansion state and number of items', async () => {
+        // Test with few items (no expansion needed)
+        mockConfig.preview_count = 5; // More than our 3 mock entities
+        let result = renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+        let el = await fixture(result as TemplateResult);
+        expect(el.classList.contains('few-items')).to.be.true;
+        expect(el.classList.contains('expanded')).to.be.false;
 
-      // Test with many items, expanded
-      mockConfig.preview_count = 1; // Less than our 3 mock entities
-      mockElement.expandedSections['Test Section'] = true;
-      result = renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        mockEntities,
-      );
-      el = await fixture(result as TemplateResult);
-      expect(el.classList.contains('few-items')).to.be.false;
-      expect(el.classList.contains('expanded')).to.be.true;
+        // Test with many items, expanded
+        mockConfig.preview_count = 1; // Less than our 3 mock entities
+        mockElement.expandedSections['Test Section'] = true;
+        result = renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+        el = await fixture(result as TemplateResult);
+        expect(el.classList.contains('few-items')).to.be.false;
+        expect(el.classList.contains('expanded')).to.be.true;
 
-      // Test with many items, collapsed
-      mockElement.expandedSections['Test Section'] = false;
-      result = renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        mockEntities,
-      );
-      el = await fixture(result as TemplateResult);
-      expect(el.classList.contains('few-items')).to.be.false;
-      expect(el.classList.contains('expanded')).to.be.false;
-    });
+        // Test with many items, collapsed
+        mockElement.expandedSections['Test Section'] = false;
+        result = renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+        el = await fixture(result as TemplateResult);
+        expect(el.classList.contains('few-items')).to.be.false;
+        expect(el.classList.contains('expanded')).to.be.false;
+      });
 
-    it('should call row component for each entity to display', async () => {
-      // Test with 3 entities, all displayed
-      mockConfig.preview_count = 3;
-      renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        mockEntities,
-      );
+      it('should call row component for each entity to display', async () => {
+        // Test with 3 entities, all displayed
+        mockConfig.preview_count = 3;
+        renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
 
-      // Should call row once for each entity
-      expect(rowStub.callCount).to.equal(3);
+        // Should call row once for each entity
+        expect(rowStub.callCount).to.equal(3);
 
-      // Check that row was called with the correct arguments
-      mockEntities.forEach((entity, index) => {
-        expect(rowStub.getCall(index).args[0]).to.equal(mockHass);
-        expect(rowStub.getCall(index).args[1]).to.equal(entity);
-        expect(rowStub.getCall(index).args[2]).to.equal(mockElement);
+        // Check that row was called with the correct arguments
+        mockEntities.forEach((entity, index) => {
+          expect(rowStub.getCall(index).args[0]).to.equal(mockHass);
+          expect(rowStub.getCall(index).args[1]).to.equal(entity);
+          expect(rowStub.getCall(index).args[2]).to.equal(mockElement);
+        });
+      });
+
+      it('should limit displayed entities when not expanded and preview_count is less than total', async () => {
+        // Set preview count to 2 (less than our 3 entities)
+        mockConfig.preview_count = 2;
+        mockElement.expandedSections['Test Section'] = false;
+
+        renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+
+        // Should only call row for the first 2 entities
+        expect(rowStub.callCount).to.equal(2);
+
+        // Check that row was called with the correct entities
+        expect(rowStub.firstCall.args[1]).to.equal(mockEntities[0]);
+        expect(rowStub.secondCall.args[1]).to.equal(mockEntities[1]);
+      });
+
+      it('should show all entities when expanded regardless of preview_count', async () => {
+        // Set preview count to 1 (less than our 3 entities)
+        mockConfig.preview_count = 1;
+        mockElement.expandedSections['Test Section'] = true;
+
+        renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+
+        // Should call row for all 3 entities
+        expect(rowStub.callCount).to.equal(3);
+      });
+
+      it('should call chevron component when section needs expansion', async () => {
+        // Set preview count to 1 (less than our 3 entities)
+        mockConfig.preview_count = 1;
+        mockElement.expandedSections['Test Section'] = false;
+
+        renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+
+        // Should call chevron with the correct arguments
+        expect(chevronStub.calledOnce).to.be.true;
+        expect(chevronStub.firstCall.args[0]).to.equal(mockElement);
+        expect(chevronStub.firstCall.args[1]).to.equal('Test Section');
+        expect(chevronStub.firstCall.args[2]).to.be.false; // isExpanded = false
+      });
+
+      it('should not call chevron component when no expansion is needed', async () => {
+        // Set preview count to 5 (more than our 3 entities)
+        mockConfig.preview_count = 5;
+
+        renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+
+        // Should not call chevron
+        expect(chevronStub.called).to.be.false;
+      });
+
+      it('should call showMore component when section needs expansion', async () => {
+        // Set preview count to 1 (less than our 3 entities)
+        mockConfig.preview_count = 1;
+        mockElement.expandedSections['Test Section'] = false;
+
+        renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+
+        // Should call showMore with the correct arguments
+        expect(showMoreStub.calledOnce).to.be.true;
+        expect(showMoreStub.firstCall.args[0]).to.equal(mockElement);
+        expect(showMoreStub.firstCall.args[1]).to.equal('Test Section');
+        expect(showMoreStub.firstCall.args[2]).to.equal(mockEntities);
+        expect(showMoreStub.firstCall.args[3]).to.be.false; // isExpanded = false
+        expect(showMoreStub.firstCall.args[4]).to.equal(1); // size = 1
+      });
+
+      it('should not call showMore component when no expansion is needed', async () => {
+        // Set preview count to 5 (more than our 3 entities)
+        mockConfig.preview_count = 5;
+
+        renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+
+        // Should not call showMore
+        expect(showMoreStub.called).to.be.false;
+      });
+
+      it('should initialize expandedEntities if it does not exist', async () => {
+        // Remove expandedEntities from the element
+        mockElement.expandedEntities = undefined;
+
+        renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+
+        // expandedEntities should be initialized
+        expect(mockElement.expandedEntities).to.exist;
+        expect(mockElement.expandedEntities).to.deep.equal({});
       });
     });
 
-    it('should limit displayed entities when not expanded and preview_count is less than total', async () => {
-      // Set preview count to 2 (less than our 3 entities)
-      mockConfig.preview_count = 2;
-      mockElement.expandedSections['Test Section'] = false;
+    describe('renderSections', () => {
+      let mockDevice: Device;
+      let renderSectionStub: sinon.SinonStub;
 
-      renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        mockEntities,
-      );
+      beforeEach(() => {
+        // Create mock device with sample entities for each section
+        mockDevice = {
+          controls: [{ entity_id: 'light.test' } as EntityInformation],
+          configurations: [{ entity_id: 'config.test' } as EntityInformation],
+          sensors: [{ entity_id: 'sensor.test' } as EntityInformation],
+          diagnostics: [{ entity_id: 'diagnostic.test' } as EntityInformation],
+        };
 
-      // Should only call row for the first 2 entities
-      expect(rowStub.callCount).to.equal(2);
+        // Stub renderSection function
+        renderSectionStub = stub(sectionModule, 'renderSection');
+        renderSectionStub.returns(html`<div class="mocked-section"></div>`);
+      });
 
-      // Check that row was called with the correct entities
-      expect(rowStub.firstCall.args[1]).to.equal(mockEntities[0]);
-      expect(rowStub.secondCall.args[1]).to.equal(mockEntities[1]);
-    });
+      afterEach(() => {
+        // Restore the original renderSection function
+        renderSectionStub.restore();
+      });
 
-    it('should show all entities when expanded regardless of preview_count', async () => {
-      // Set preview count to 1 (less than our 3 entities)
-      mockConfig.preview_count = 1;
-      mockElement.expandedSections['Test Section'] = true;
+      it('should render sections in default order when no custom order is specified', () => {
+        // Call the function with default config (no section_order)
+        const result = renderSections(
+          mockElement,
+          mockHass,
+          mockConfig,
+          mockDevice,
+        );
 
-      renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        mockEntities,
-      );
+        // Verify renderSection was called in the expected order
+        expect(renderSectionStub.callCount).to.equal(4);
+        expect(renderSectionStub.getCall(0).args[3]).to.equal('Controls');
+        expect(renderSectionStub.getCall(1).args[3]).to.equal('Configuration');
+        expect(renderSectionStub.getCall(2).args[3]).to.equal('Sensors');
+        expect(renderSectionStub.getCall(3).args[3]).to.equal('Diagnostic');
 
-      // Should call row for all 3 entities
-      expect(rowStub.callCount).to.equal(3);
-    });
+        // Verify return value
+        expect(result).to.have.length(4);
+      });
 
-    it('should call chevron component when section needs expansion', async () => {
-      // Set preview count to 1 (less than our 3 entities)
-      mockConfig.preview_count = 1;
-      mockElement.expandedSections['Test Section'] = false;
+      it('should render sections in custom order when section_order is specified', () => {
+        // Set custom section order
+        mockConfig.section_order = [
+          'sensors',
+          'controls',
+          'diagnostics',
+          'configurations',
+        ];
 
-      renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        mockEntities,
-      );
+        // Call the function with custom order config
+        const result = renderSections(
+          mockElement,
+          mockHass,
+          mockConfig,
+          mockDevice,
+        );
 
-      // Should call chevron with the correct arguments
-      expect(chevronStub.calledOnce).to.be.true;
-      expect(chevronStub.firstCall.args[0]).to.equal(mockElement);
-      expect(chevronStub.firstCall.args[1]).to.equal('Test Section');
-      expect(chevronStub.firstCall.args[2]).to.be.false; // isExpanded = false
-    });
+        // Verify renderSection was called in the expected custom order
+        expect(renderSectionStub.callCount).to.equal(4);
+        expect(renderSectionStub.getCall(0).args[3]).to.equal('Sensors');
+        expect(renderSectionStub.getCall(1).args[3]).to.equal('Controls');
+        expect(renderSectionStub.getCall(2).args[3]).to.equal('Diagnostic');
+        expect(renderSectionStub.getCall(3).args[3]).to.equal('Configuration');
 
-    it('should not call chevron component when no expansion is needed', async () => {
-      // Set preview count to 5 (more than our 3 entities)
-      mockConfig.preview_count = 5;
+        // Verify return value
+        expect(result).to.have.length(4);
+      });
 
-      renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        mockEntities,
-      );
+      it('should handle partial section ordering and include remaining sections at the end', () => {
+        // Set custom section order with only some sections
+        mockConfig.section_order = ['sensors'];
 
-      // Should not call chevron
-      expect(chevronStub.called).to.be.false;
-    });
+        // Call the function with partial custom order
+        const result = renderSections(
+          mockElement,
+          mockHass,
+          mockConfig,
+          mockDevice,
+        );
 
-    it('should call showMore component when section needs expansion', async () => {
-      // Set preview count to 1 (less than our 3 entities)
-      mockConfig.preview_count = 1;
-      mockElement.expandedSections['Test Section'] = false;
+        // Verify renderSection was called with specified section first, then others
+        expect(renderSectionStub.callCount).to.equal(4);
+        expect(renderSectionStub.getCall(0).args[3]).to.equal('Sensors');
 
-      renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        mockEntities,
-      );
+        // Other sections should still be included
+        const remainingCalls = [
+          renderSectionStub.getCall(1).args[3],
+          renderSectionStub.getCall(2).args[3],
+          renderSectionStub.getCall(3).args[3],
+        ];
 
-      // Should call showMore with the correct arguments
-      expect(showMoreStub.calledOnce).to.be.true;
-      expect(showMoreStub.firstCall.args[0]).to.equal(mockElement);
-      expect(showMoreStub.firstCall.args[1]).to.equal('Test Section');
-      expect(showMoreStub.firstCall.args[2]).to.equal(mockEntities);
-      expect(showMoreStub.firstCall.args[3]).to.be.false; // isExpanded = false
-      expect(showMoreStub.firstCall.args[4]).to.equal(1); // size = 1
-    });
+        expect(remainingCalls).to.include('Controls');
+        expect(remainingCalls).to.include('Configuration');
+        expect(remainingCalls).to.include('Diagnostic');
 
-    it('should not call showMore component when no expansion is needed', async () => {
-      // Set preview count to 5 (more than our 3 entities)
-      mockConfig.preview_count = 5;
+        // Verify return value
+        expect(result).to.have.length(4);
+      });
 
-      renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        mockEntities,
-      );
+      it('should handle empty section_order array and use default order', () => {
+        // Set empty section_order array
+        mockConfig.section_order = [];
 
-      // Should not call showMore
-      expect(showMoreStub.called).to.be.false;
-    });
+        // Call the function
+        const result = renderSections(
+          mockElement,
+          mockHass,
+          mockConfig,
+          mockDevice,
+        );
 
-    it('should initialize expandedEntities if it does not exist', async () => {
-      // Remove expandedEntities from the element
-      mockElement.expandedEntities = undefined;
+        // Verify renderSection was called in default order
+        expect(renderSectionStub.callCount).to.equal(4);
+        expect(renderSectionStub.getCall(0).args[3]).to.equal('Controls');
+        expect(renderSectionStub.getCall(1).args[3]).to.equal('Configuration');
+        expect(renderSectionStub.getCall(2).args[3]).to.equal('Sensors');
+        expect(renderSectionStub.getCall(3).args[3]).to.equal('Diagnostic');
 
-      renderSection(
-        mockElement,
-        mockHass,
-        mockConfig,
-        'Test Section',
-        mockEntities,
-      );
+        // Verify return value
+        expect(result).to.have.length(4);
+      });
 
-      // expandedEntities should be initialized
-      expect(mockElement.expandedEntities).to.exist;
-      expect(mockElement.expandedEntities).to.deep.equal({});
+      it('should ignore invalid section keys in section_order', () => {
+        // Set custom section order with an invalid section key
+        mockConfig.section_order = ['sensors', 'invalid_section', 'controls'];
+
+        // Call the function
+        const result = renderSections(
+          mockElement,
+          mockHass,
+          mockConfig,
+          mockDevice,
+        );
+
+        // Verify renderSection was called correctly, skipping invalid section
+        expect(renderSectionStub.callCount).to.equal(4);
+        expect(renderSectionStub.getCall(0).args[3]).to.equal('Sensors');
+        expect(renderSectionStub.getCall(1).args[3]).to.equal('Controls');
+
+        // Other sections should be included at the end
+        const remainingCalls = [
+          renderSectionStub.getCall(2).args[3],
+          renderSectionStub.getCall(3).args[3],
+        ];
+
+        expect(remainingCalls).to.include('Configuration');
+        expect(remainingCalls).to.include('Diagnostic');
+
+        // Verify return value
+        expect(result).to.have.length(4);
+      });
     });
   });
 };

@@ -69,6 +69,35 @@ const getSchema = (entityIds: string[]): HaFormSchema[] => [
           },
         },
       },
+      {
+        name: 'section_order',
+        label: 'Section display order (click in order)',
+        required: false,
+        selector: {
+          select: {
+            multiple: true,
+            mode: 'list' as 'list',
+            options: [
+              {
+                label: 'Controls',
+                value: 'controls',
+              },
+              {
+                label: 'Configuration',
+                value: 'configurations',
+              },
+              {
+                label: 'Sensors',
+                value: 'sensors',
+              },
+              {
+                label: 'Diagnostic',
+                value: 'diagnostics',
+              },
+            ],
+          },
+        },
+      },
     ],
   },
   {
@@ -158,6 +187,18 @@ export class DeviceCardEditor extends LitElement {
     const config = ev.detail.value as Config;
     if (!config.features?.length) {
       delete config.features;
+    }
+
+    if (!config.exclude_entities?.length) {
+      delete config.exclude_entities;
+    }
+
+    if (!config.exclude_sections?.length) {
+      delete config.exclude_sections;
+    }
+
+    if (!config.section_order?.length) {
+      delete config.section_order;
     }
 
     // @ts-ignore

@@ -20,13 +20,13 @@ export default () => {
     let consoleInfoStub: sinon.SinonStub;
     let hasProblemStub: sinon.SinonStub;
     let getDeviceStub: sinon.SinonStub;
-    let renderSectionStub: sinon.SinonStub;
+    let renderSectionsStub: sinon.SinonStub;
 
     beforeEach(() => {
       consoleInfoStub = stub(console, 'info');
       hasProblemStub = stub(problemUtils, 'hasProblem');
       getDeviceStub = stub(deviceUtils, 'getDevice');
-      renderSectionStub = stub(sectionRenderer, 'renderSection');
+      renderSectionsStub = stub(sectionRenderer, 'renderSections');
 
       card = new DeviceCard();
       mockHass = {
@@ -93,7 +93,7 @@ export default () => {
       // Configure stubs
       hasProblemStub.returns(false);
       getDeviceStub.returns(mockUnit);
-      renderSectionStub.returns(html`<div class="section">Mock Section</div>`);
+      renderSectionsStub.returns(html`<div class="section">Mock Section</div>`);
 
       card.setConfig({ device_id: 'device_1' });
       card.hass = mockHass as HomeAssistant;
@@ -103,7 +103,7 @@ export default () => {
       consoleInfoStub.restore();
       hasProblemStub.restore();
       getDeviceStub.restore();
-      renderSectionStub.restore();
+      renderSectionsStub.restore();
     });
 
     describe('constructor', () => {
@@ -188,7 +188,7 @@ export default () => {
       it('should render ha-card with proper sections', async () => {
         const el = await fixture(card.render() as TemplateResult);
         expect(el.tagName.toLowerCase()).to.equal('ha-card');
-        expect(el.querySelectorAll('.section')).to.have.length(4);
+        expect(el.querySelectorAll('.section')).to.have.length(1);
       });
 
       it('should add problem class when problem exists', async () => {
@@ -228,39 +228,15 @@ export default () => {
         expect(modelElement).to.be.null;
       });
 
-      it('should call renderSection for each entity category', () => {
+      it('should call renderSections', () => {
         card.render();
-        expect(renderSectionStub.callCount).to.equal(4);
+        expect(renderSectionsStub.callCount).to.equal(1);
         expect(
-          renderSectionStub.calledWith(
+          renderSectionsStub.calledWith(
             card,
             mockHass,
             card['_config'],
-            'Controls',
-          ),
-        ).to.be.true;
-        expect(
-          renderSectionStub.calledWith(
-            card,
-            mockHass,
-            card['_config'],
-            'Configuration',
-          ),
-        ).to.be.true;
-        expect(
-          renderSectionStub.calledWith(
-            card,
-            mockHass,
-            card['_config'],
-            'Sensors',
-          ),
-        ).to.be.true;
-        expect(
-          renderSectionStub.calledWith(
-            card,
-            mockHass,
-            card['_config'],
-            'Diagnostic',
+            card['_device'],
           ),
         ).to.be.true;
       });

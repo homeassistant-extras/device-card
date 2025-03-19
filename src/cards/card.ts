@@ -3,7 +3,7 @@ import { getDevice } from '@delegates/utils/get-device';
 import { hasProblem } from '@delegates/utils/has-problem';
 import type { HomeAssistant } from '@hass/types';
 import { picture } from '@html/picture';
-import { renderSection } from '@html/section';
+import { renderSections } from '@html/section';
 import { styles } from '@theme/styles';
 import type { Config, Device } from '@type/config';
 import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
@@ -120,34 +120,7 @@ export class DeviceCard extends LitElement {
           </div>
         </div>
 
-        ${renderSection(
-          this,
-          this._hass,
-          this._config,
-          'Controls',
-          this._device.controls,
-        )}
-        ${renderSection(
-          this,
-          this._hass,
-          this._config,
-          'Configuration',
-          this._device.configurations,
-        )}
-        ${renderSection(
-          this,
-          this._hass,
-          this._config,
-          'Sensors',
-          this._device.sensors,
-        )}
-        ${renderSection(
-          this,
-          this._hass,
-          this._config,
-          'Diagnostic',
-          this._device.diagnostics,
-        )}
+        ${renderSections(this, this._hass, this._config, this._device)}
       </ha-card>
     `;
   }

@@ -24,6 +24,9 @@ export interface Config {
   /** The sections to exclude */
   exclude_sections?: string[];
 
+  /** The order in which sections should be displayed */
+  section_order?: string[];
+
   /** Options to enable disable features **/
   features?: Features[];
 }

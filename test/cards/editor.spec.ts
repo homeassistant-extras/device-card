@@ -172,6 +172,35 @@ export default () => {
                   },
                 },
               },
+              {
+                name: 'section_order',
+                label: 'Section display order (click in order)',
+                required: false,
+                selector: {
+                  select: {
+                    multiple: true,
+                    mode: 'list' as 'list',
+                    options: [
+                      {
+                        label: 'Controls',
+                        value: 'controls',
+                      },
+                      {
+                        label: 'Configuration',
+                        value: 'configurations',
+                      },
+                      {
+                        label: 'Sensors',
+                        value: 'sensors',
+                      },
+                      {
+                        label: 'Diagnostic',
+                        value: 'diagnostics',
+                      },
+                    ],
+                  },
+                },
+              },
             ],
           },
           {
@@ -300,18 +329,24 @@ export default () => {
         });
       });
 
-      it('should remove features property when features array is empty', () => {
+      it('should remove array properties when array is empty', () => {
         const testConfig: Config = {
           device_id: 'device_1',
           features: [],
+          exclude_entities: [],
+          exclude_sections: [],
+          section_order: [],
         };
         card.setConfig(testConfig);
 
-        // Simulate value-changed event with empty features
+        // Simulate value-changed event with empty arrays
         const detail = {
           value: {
             device_id: 'device_2',
             features: [],
+            exclude_entities: [],
+            exclude_sections: [],
+            section_order: [],
           },
         };
 
@@ -325,6 +360,12 @@ export default () => {
           device_id: 'device_2',
         });
         expect(dispatchStub.firstCall.args[0].detail.config.features).to.be
+          .undefined;
+        expect(dispatchStub.firstCall.args[0].detail.config.exclude_entities).to
+          .be.undefined;
+        expect(dispatchStub.firstCall.args[0].detail.config.exclude_sections).to
+          .be.undefined;
+        expect(dispatchStub.firstCall.args[0].detail.config.section_order).to.be
           .undefined;
       });
     });

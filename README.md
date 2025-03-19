@@ -141,6 +141,7 @@ The card will automatically:
 | preview_count    | number | All items    | Number of items to preview before showing "Show More" button |
 | exclude_sections | list   | _none_       | Sections of entities to exclude. See below.                  |
 | exclude_entities | list   | _none_       | Entities to remove from the card.                            |
+| section_order    | list   | _none_       | Custom order for displaying sections. See below.             |
 | features         | list   | See below    | Optional flags to toggle different features                  |
 
 ### Feature Options
@@ -150,12 +151,16 @@ The card will automatically:
 | entity_picture    | flag | Show entity picture when available |
 | hide_device_model | flag | Hides the device model information |
 
-### Section Exclude Options
+### Section Options
+
+The following section names can be used with both `exclude_sections` and `section_order`:
 
 - controls
 - configurations
 - sensors
 - diagnostics
+
+For `section_order`, the default order is: Controls, Configuration, Sensors, Diagnostic. Any sections not specified in your custom order will be displayed after the specified ones.
 
 ## Example Configurations
 
@@ -197,10 +202,23 @@ exclude_entities:
   - update.home_assistant_core_update
 ```
 
+### Custom section order
+
+```yaml
+type: custom:device-card
+device_id: 1a2b3c4d5e6f7g8h9i0j
+show_order_sections:
+  - sensors # Show sensors first
+  - controls
+  - configurations
+  - diagnostics
+```
+
 ## Project Roadmap
 
 - [x] **`Initial design`**: Create initial card design
-- [ ] **`Enhanced customization`**: Add more customization options
+- [x] **`Enhanced customization`**: Add more customization options
+- [x] **`Custom section order and exclusions`**: Set the order in which sections are displayed & exclude things
 - [ ] **`Status badges`**: Quick status badges for device state
 - [ ] **`Device filtering`**: Filter specific entities from display
 
