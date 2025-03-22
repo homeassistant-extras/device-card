@@ -1,6 +1,7 @@
 /**
  * https://github.com/home-assistant/home-assistant-js-websocket/blob/master/lib/types.ts
  */
+
 export type HassEntityBase = {
   entity_id: string;
   state: string;
@@ -25,3 +26,11 @@ export type HassEntity = HassEntityBase & {
 };
 
 export type HassEntities = { [entity_id: string]: HassEntity };
+
+export type HassServiceTarget = {
+  entity_id?: string | string[];
+  device_id?: string | string[];
+  area_id?: string | string[];
+  floor_id?: string | string[];
+  label_id?: string | string[];
+};

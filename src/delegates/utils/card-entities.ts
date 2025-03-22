@@ -1,10 +1,11 @@
 import { getState } from '@delegates/retrievers/state';
 import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
-import type { EntityInformation } from '@type/config';
+import type { Config, EntityInformation } from '@type/config';
 
 export const getDeviceEntities = (
   hass: HomeAssistant,
+  config: Config,
   deviceId: string,
   deviceName?: string | null,
 ): EntityInformation[] => {
@@ -29,6 +30,11 @@ export const getDeviceEntities = (
         translation_key: entity.translation_key,
         isProblemEntity: state.attributes.device_class === 'problem',
         isActive: active,
+        config: {
+          tap_action: config.tap_action,
+          hold_action: config.hold_action,
+          double_tap_action: config.double_tap_action,
+        },
         attributes: {
           ...state.attributes,
           friendly_name: name,

@@ -1,3 +1,4 @@
+import * as actionHandlerModule from '@/delegates/action-handler-delegate';
 import { DeviceCard } from '@cards/card';
 import type { HomeAssistant } from '@hass/types';
 import * as attributesModule from '@html/attributes';
@@ -5,20 +6,21 @@ import * as percentBarModule from '@html/percent';
 import { row } from '@html/row';
 import * as stateContentModule from '@html/state-content';
 import { fixture } from '@open-wc/testing-helpers';
-import type { EntityInformation } from '@type/config';
+import type { Config, EntityInformation } from '@type/config';
 import { expect } from 'chai';
 import { html, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
 
 export default () => {
   describe('row.ts', () => {
-    // Common test variables
+    let config: Config;
     let mockHass: HomeAssistant;
     let mockElement: DeviceCard;
     let mockEntity: EntityInformation;
     let stateContentStub: sinon.SinonStub;
     let percentBarStub: sinon.SinonStub;
     let attributesStub: sinon.SinonStub;
+    let actionHandlerStub: sinon.SinonStub;
 
     beforeEach(() => {
       // Create stubs for imported components
@@ -31,8 +33,17 @@ export default () => {
       attributesStub = stub(attributesModule, 'attributes');
       attributesStub.returns(html`<div class="mocked-attributes"></div>`);
 
+      actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns({
+        bind: () => {}, // Mock the bind method
+        handleAction: () => {}, // Add any other methods that might be called
+      });
+
       // Mock Home Assistant instance
       mockHass = {} as HomeAssistant;
+
+      config = {
+        device_id: 'device_1',
+      };
 
       // Mock DeviceCard element with expandedEntities property
       mockElement = {
@@ -59,11 +70,12 @@ export default () => {
       stateContentStub.restore();
       percentBarStub.restore();
       attributesStub.restore();
+      actionHandlerStub.restore();
     });
 
     describe('row rendering', () => {
       it('should render a basic row with state content', async () => {
-        const result = row(mockHass, mockEntity, mockElement);
+        const result = row(mockHass, config, mockEntity, mockElement);
         const el = await fixture(result as TemplateResult);
 
         // Check basic structure
@@ -77,7 +89,7 @@ export default () => {
       });
 
       it('should render a percentage bar for entities with percentage measurements', async () => {
-        const result = row(mockHass, mockEntity, mockElement);
+        const result = row(mockHass, config, mockEntity, mockElement);
         await fixture(result as TemplateResult);
 
         // Check that percentBar was called
@@ -96,7 +108,7 @@ export default () => {
           },
         };
 
-        const result = row(mockHass, nonPercentEntity, mockElement);
+        const result = row(mockHass, config, nonPercentEntity, mockElement);
         await fixture(result as TemplateResult);
 
         // Check that percentBar was not called
@@ -111,7 +123,7 @@ export default () => {
           isActive: true,
         };
 
-        const result = row(mockHass, problemEntity, mockElement);
+        const result = row(mockHass, config, problemEntity, mockElement);
         const el = await fixture(result as TemplateResult);
 
         // Check that status-error class is applied
@@ -126,7 +138,7 @@ export default () => {
           isActive: false,
         };
 
-        const result = row(mockHass, problemEntity, mockElement);
+        const result = row(mockHass, config, problemEntity, mockElement);
         const el = await fixture(result as TemplateResult);
 
         // Check that status-ok class is applied
@@ -139,7 +151,7 @@ export default () => {
         // Set entity as not expanded
         mockElement.expandedEntities = { [mockEntity.entity_id]: false };
 
-        const result = row(mockHass, mockEntity, mockElement);
+        const result = row(mockHass, config, mockEntity, mockElement);
         await fixture(result as TemplateResult);
 
         // Check that attributes was not called
@@ -150,7 +162,7 @@ export default () => {
         // Set entity as expanded
         mockElement.expandedEntities = { [mockEntity.entity_id]: true };
 
-        const result = row(mockHass, mockEntity, mockElement);
+        const result = row(mockHass, config, mockEntity, mockElement);
         await fixture(result as TemplateResult);
 
         // Check that attributes was called with entity attributes
@@ -164,50 +176,19 @@ export default () => {
         // Set entity as expanded
         mockElement.expandedEntities = { [mockEntity.entity_id]: true };
 
-        const result = row(mockHass, mockEntity, mockElement);
+        const result = row(mockHass, config, mockEntity, mockElement);
         const el = await fixture(result as TemplateResult);
 
         // Check that expanded-row class is applied
         expect(el.classList.contains('expanded-row')).to.be.true;
       });
 
-      it('should toggle entity expansion state when row is clicked', async () => {
-        // Start with entity not expanded
-        mockElement.expandedEntities = { [mockEntity.entity_id]: false };
+      it('should attach action handlers', async () => {
+        const result = row(mockHass, config, mockEntity, mockElement);
+        const el = await fixture(result as TemplateResult);
 
-        const result = row(mockHass, mockEntity, mockElement);
-        const el = (await fixture(result as TemplateResult)) as HTMLElement;
-
-        // Simulate click on the row
-        el.click();
-
-        // Check that entity is now expanded
-        expect(mockElement.expandedEntities[mockEntity.entity_id]).to.be.true;
-
-        // Click again to collapse
-        el.click();
-
-        // Check that entity is now collapsed
-        expect(mockElement.expandedEntities[mockEntity.entity_id]).to.be.false;
-      });
-
-      it('should maintain state of other entities when toggling one entity', async () => {
-        // Setup initial state with multiple entities
-        mockElement.expandedEntities = {
-          [mockEntity.entity_id]: false,
-          'sensor.other_entity': true,
-        };
-
-        const result = row(mockHass, mockEntity, mockElement);
-        const el = (await fixture(result as TemplateResult)) as HTMLElement;
-
-        // Simulate click on the row
-        el.click();
-
-        // Verify the target entity was toggled
-        expect(mockElement.expandedEntities[mockEntity.entity_id]).to.be.true;
-        // Verify other entities remain unchanged
-        expect(mockElement.expandedEntities['sensor.other_entity']).to.be.true;
+        // Verify action handler was attached
+        expect((el as any).actionHandler).to.exist;
       });
     });
   });

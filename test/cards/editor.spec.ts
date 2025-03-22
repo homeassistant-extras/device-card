@@ -56,7 +56,7 @@ export default () => {
       it('should set the configuration correctly', () => {
         const testConfig: Config = {
           device_id: 'device_1',
-          title: 'My PetKit Device',
+          title: 'My Device',
           preview_count: 5,
         };
 
@@ -96,13 +96,14 @@ export default () => {
 
         expect(getDeviceEntitiesStub.calledOnce).to.be.true;
         expect(getDeviceEntitiesStub.firstCall.args[0]).to.equal(hass);
-        expect(getDeviceEntitiesStub.firstCall.args[1]).to.equal('device_1');
+        expect(getDeviceEntitiesStub.firstCall.args[1]).to.equal(testConfig);
+        expect(getDeviceEntitiesStub.firstCall.args[2]).to.equal('device_1');
       });
 
       it('should pass correct props to ha-form', async () => {
         const testConfig: Config = {
           device_id: 'device_1',
-          title: 'My PetKit Device',
+          title: 'My Device',
         };
         card.setConfig(testConfig);
 
@@ -248,6 +249,36 @@ export default () => {
               },
             ],
           },
+          {
+            name: 'interactions',
+            label: 'Interactions',
+            type: 'expandable',
+            flatten: true,
+            icon: 'mdi:gesture-tap',
+            schema: [
+              {
+                name: 'tap_action',
+                label: 'Tap Action',
+                selector: {
+                  ui_action: {},
+                },
+              },
+              {
+                name: 'hold_action',
+                label: 'Hold Action',
+                selector: {
+                  ui_action: {},
+                },
+              },
+              {
+                name: 'double_tap_action',
+                label: 'Double Tap Action',
+                selector: {
+                  ui_action: {},
+                },
+              },
+            ],
+          },
         ]);
       });
     });
@@ -256,7 +287,7 @@ export default () => {
       it('should compute labels correctly', async () => {
         const testConfig: Config = {
           device_id: 'device_1',
-          title: 'My PetKit Device',
+          title: 'My Device',
         };
         card.setConfig(testConfig);
 
@@ -275,7 +306,7 @@ export default () => {
       it('should fire config-changed event with the updated config', () => {
         const testConfig: Config = {
           device_id: 'device_1',
-          title: 'My PetKit Device',
+          title: 'My Device',
         };
         card.setConfig(testConfig);
 
@@ -283,7 +314,7 @@ export default () => {
         const detail = {
           value: {
             device_id: 'device_1',
-            title: 'Updated PetKit Device',
+            title: 'Updated Device',
             preview_count: 5,
             exclude_sections: ['controls', 'diagnostics'],
             exclude_entities: ['sensor.test_sensor'],
@@ -298,7 +329,7 @@ export default () => {
         expect(dispatchStub.firstCall.args[0].type).to.equal('config-changed');
         expect(dispatchStub.firstCall.args[0].detail.config).to.deep.equal({
           device_id: 'device_1',
-          title: 'Updated PetKit Device',
+          title: 'Updated Device',
           preview_count: 5,
           exclude_sections: ['controls', 'diagnostics'],
           exclude_entities: ['sensor.test_sensor'],

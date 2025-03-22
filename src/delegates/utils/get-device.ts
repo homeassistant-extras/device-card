@@ -35,7 +35,12 @@ export const getDevice = (
     .filter((s) => s)
     .join(' ');
 
-  const entities = getDeviceEntities(hass, hassDevice.id, hassDevice.name);
+  const entities = getDeviceEntities(
+    hass,
+    config,
+    hassDevice.id,
+    hassDevice.name,
+  );
   entities.forEach((entity) => {
     if (config.exclude_entities?.includes(entity.entity_id)) {
       return;

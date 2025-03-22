@@ -2,11 +2,13 @@ import * as stateRetriever from '@delegates/retrievers/state';
 import { getDeviceEntities } from '@delegates/utils/card-entities';
 import * as stateActiveModule from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
+import type { Config } from '@type/config';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 
 export default () => {
   describe('card-entities.ts', () => {
+    let config: Config;
     let mockHass: HomeAssistant;
     let getStateStub: sinon.SinonStub;
     let stateActiveStub: sinon.SinonStub;
@@ -60,6 +62,10 @@ export default () => {
         },
       } as any as HomeAssistant;
 
+      config = {
+        device_id: 'device_1',
+      };
+
       // Stub the getState function to return mock states
       getStateStub = stub(stateRetriever, 'getState');
 
@@ -71,7 +77,7 @@ export default () => {
         entity_id: 'light.petkit_light',
         state: 'on',
         attributes: {
-          friendly_name: 'PetKit Device Light',
+          friendly_name: 'Device Light',
           device_class: 'light',
         },
       });
@@ -80,7 +86,7 @@ export default () => {
         entity_id: 'sensor.petkit_temperature',
         state: '25',
         attributes: {
-          friendly_name: 'PetKit Device Temperature',
+          friendly_name: 'Device Temperature',
           device_class: 'temperature',
           unit_of_measurement: '°C',
         },
@@ -90,7 +96,7 @@ export default () => {
         entity_id: 'text.petkit_status',
         state: 'OK',
         attributes: {
-          friendly_name: 'PetKit Device Status',
+          friendly_name: 'Device Status',
           device_class: 'problem',
         },
       });
@@ -99,7 +105,7 @@ export default () => {
         entity_id: 'sensor.petkit_diagnostic',
         state: '100',
         attributes: {
-          friendly_name: 'PetKit Device Diagnostic',
+          friendly_name: 'Device Diagnostic',
           device_class: 'diagnostic',
         },
       });
@@ -108,7 +114,7 @@ export default () => {
         entity_id: 'switch.petkit_config',
         state: 'off',
         attributes: {
-          friendly_name: 'PetKit Device Config',
+          friendly_name: 'Device Config',
           device_class: 'config',
         },
       });
@@ -117,7 +123,7 @@ export default () => {
         entity_id: 'binary_sensor.petkit_problem',
         state: 'on',
         attributes: {
-          friendly_name: 'PetKit Device Problem',
+          friendly_name: 'Device Problem',
           device_class: 'problem',
         },
       });
@@ -138,7 +144,7 @@ export default () => {
           entity_id: 'light.petkit_light',
           state: 'on',
           attributes: {
-            friendly_name: 'PetKit Device Light',
+            friendly_name: 'Device Light',
             device_class: 'light',
           },
         })
@@ -149,7 +155,7 @@ export default () => {
           entity_id: 'binary_sensor.petkit_problem',
           state: 'on',
           attributes: {
-            friendly_name: 'PetKit Device Problem',
+            friendly_name: 'Device Problem',
             device_class: 'problem',
           },
         })
@@ -163,9 +169,14 @@ export default () => {
 
     it('should return array of entity information for a specific device', () => {
       const deviceId = 'petkit_device_1';
-      const deviceName = 'PetKit Device';
+      const deviceName = 'Device';
 
-      const entities = getDeviceEntities(mockHass, deviceId, deviceName);
+      const entities = getDeviceEntities(
+        mockHass,
+        config,
+        deviceId,
+        deviceName,
+      );
 
       // Check we got the right number of entities
       expect(entities.length).to.equal(6);
@@ -188,9 +199,14 @@ export default () => {
 
     it('should correctly determine isProblemEntity based on device_class', () => {
       const deviceId = 'petkit_device_1';
-      const deviceName = 'PetKit Device';
+      const deviceName = 'Device';
 
-      const entities = getDeviceEntities(mockHass, deviceId, deviceName);
+      const entities = getDeviceEntities(
+        mockHass,
+        config,
+        deviceId,
+        deviceName,
+      );
 
       // Find the problem entity
       const problemEntity = entities.find(
@@ -216,9 +232,14 @@ export default () => {
 
     it('should correctly determine isActive status from stateActive function', () => {
       const deviceId = 'petkit_device_1';
-      const deviceName = 'PetKit Device';
+      const deviceName = 'Device';
 
-      const entities = getDeviceEntities(mockHass, deviceId, deviceName);
+      const entities = getDeviceEntities(
+        mockHass,
+        config,
+        deviceId,
+        deviceName,
+      );
 
       // Find the active entity
       const activeEntity = entities.find(
@@ -237,9 +258,14 @@ export default () => {
 
     it('should handle entities with both isProblemEntity and isActive', () => {
       const deviceId = 'petkit_device_1';
-      const deviceName = 'PetKit Device';
+      const deviceName = 'Device';
 
-      const entities = getDeviceEntities(mockHass, deviceId, deviceName);
+      const entities = getDeviceEntities(
+        mockHass,
+        config,
+        deviceId,
+        deviceName,
+      );
 
       // Find an entity that is both a problem and active
       const activeProblemEntity = entities.find(
@@ -252,9 +278,9 @@ export default () => {
 
     it('should call stateActive for each valid entity', () => {
       const deviceId = 'petkit_device_1';
-      const deviceName = 'PetKit Device';
+      const deviceName = 'Device';
 
-      getDeviceEntities(mockHass, deviceId, deviceName);
+      getDeviceEntities(mockHass, config, deviceId, deviceName);
 
       // stateActive should be called for each entity that has a state
       expect(stateActiveStub.callCount).to.equal(6);
@@ -262,9 +288,14 @@ export default () => {
 
     it('should filter out entities for different devices', () => {
       const deviceId = 'petkit_device_1';
-      const deviceName = 'PetKit Device';
+      const deviceName = 'Device';
 
-      const entities = getDeviceEntities(mockHass, deviceId, deviceName);
+      const entities = getDeviceEntities(
+        mockHass,
+        config,
+        deviceId,
+        deviceName,
+      );
 
       // Check that only entities for the specified device are included
       entities.forEach((entity) => {
@@ -280,27 +311,30 @@ export default () => {
       const deviceId = 'petkit_device_1';
       const deviceName = null;
 
-      const entities = getDeviceEntities(mockHass, deviceId, deviceName);
+      const entities = getDeviceEntities(
+        mockHass,
+        config,
+        deviceId,
+        deviceName,
+      );
 
       // Check we still get the entities
       expect(entities.length).to.equal(6);
 
       // Check friendly_names are intact since there's no device name to strip
-      expect(entities[0]!.attributes.friendly_name).to.equal(
-        'PetKit Device Light',
-      );
+      expect(entities[0]!.attributes.friendly_name).to.equal('Device Light');
     });
 
     it('should return device name when friendly_name equals device name', () => {
       const deviceId = 'petkit_device_1';
-      const deviceName = 'PetKit Device';
+      const deviceName = 'Device';
 
       // Set up a state where the friendly_name equals the device name
       getStateStub.withArgs(mockHass, 'light.petkit_device_name').returns({
         entity_id: 'light.petkit_device_name',
         state: 'on',
         attributes: {
-          friendly_name: 'PetKit Device', // Same as device name
+          friendly_name: 'Device', // Same as device name
           device_class: 'light',
         },
       });
@@ -321,13 +355,18 @@ export default () => {
           entity_id: 'light.petkit_device_name',
           state: 'on',
           attributes: {
-            friendly_name: 'PetKit Device',
+            friendly_name: 'Device',
             device_class: 'light',
           },
         })
         .returns(true);
 
-      const entities = getDeviceEntities(mockHass, deviceId, deviceName);
+      const entities = getDeviceEntities(
+        mockHass,
+        config,
+        deviceId,
+        deviceName,
+      );
 
       // Find the new entity
       const targetEntity = entities.find(
@@ -336,17 +375,22 @@ export default () => {
       expect(targetEntity).to.exist;
 
       // Check that the friendly name is set to the device name, not an empty string
-      expect(targetEntity!.attributes.friendly_name).to.equal('PetKit Device');
+      expect(targetEntity!.attributes.friendly_name).to.equal('Device');
     });
 
     it('should filter out entities with undefined state', () => {
       const deviceId = 'petkit_device_1';
-      const deviceName = 'PetKit Device';
+      const deviceName = 'Device';
 
       // Update one stub to return undefined state
       getStateStub.withArgs(mockHass, 'light.petkit_light').returns(undefined);
 
-      const entities = getDeviceEntities(mockHass, deviceId, deviceName);
+      const entities = getDeviceEntities(
+        mockHass,
+        config,
+        deviceId,
+        deviceName,
+      );
 
       // We should have one less entity
       expect(entities.length).to.equal(5);
@@ -358,9 +402,14 @@ export default () => {
 
     it('should preserve entity category information', () => {
       const deviceId = 'petkit_device_1';
-      const deviceName = 'PetKit Device';
+      const deviceName = 'Device';
 
-      const entities = getDeviceEntities(mockHass, deviceId, deviceName);
+      const entities = getDeviceEntities(
+        mockHass,
+        config,
+        deviceId,
+        deviceName,
+      );
 
       // Find the diagnostic entity
       const diagnosticEntity = entities.find(
@@ -383,6 +432,7 @@ export default () => {
 
       const entities = getDeviceEntities(
         emptyHass,
+        config,
         'any_device_id',
         'Any Device',
       );
@@ -393,9 +443,14 @@ export default () => {
 
     it('should preserve all other state attributes', () => {
       const deviceId = 'petkit_device_1';
-      const deviceName = 'PetKit Device';
+      const deviceName = 'Device';
 
-      const entities = getDeviceEntities(mockHass, deviceId, deviceName);
+      const entities = getDeviceEntities(
+        mockHass,
+        config,
+        deviceId,
+        deviceName,
+      );
 
       // Find the temperature entity
       const tempEntity = entities.find(
@@ -408,9 +463,14 @@ export default () => {
 
     it('should preserve translation_key in the entity information', () => {
       const deviceId = 'petkit_device_1';
-      const deviceName = 'PetKit Device';
+      const deviceName = 'Device';
 
-      const entities = getDeviceEntities(mockHass, deviceId, deviceName);
+      const entities = getDeviceEntities(
+        mockHass,
+        config,
+        deviceId,
+        deviceName,
+      );
 
       // Verify translation keys are preserved
       const statusEntity = entities.find(
@@ -418,6 +478,42 @@ export default () => {
       );
       expect(statusEntity).to.exist;
       expect(statusEntity!.translation_key).to.equal('device_status');
+    });
+
+    it('should use card-level actions when defined in card config', () => {
+      const deviceId = 'petkit_device_1';
+      const deviceName = 'Device';
+
+      // Define custom actions in the config
+      const configWithActions: Config = {
+        ...config,
+        tap_action: { action: 'toggle' },
+        hold_action: { action: 'more-info' },
+        double_tap_action: {
+          action: 'navigate',
+          navigation_path: '/lovelace/0',
+        },
+      };
+
+      const entities = getDeviceEntities(
+        mockHass,
+        configWithActions,
+        deviceId,
+        deviceName,
+      );
+
+      // Check every entity has the config property with the card-level actions
+      entities.forEach((entity) => {
+        expect(entity).to.have.property('config');
+        expect(entity.config).to.deep.equal({
+          tap_action: { action: 'toggle' },
+          hold_action: { action: 'more-info' },
+          double_tap_action: {
+            action: 'navigate',
+            navigation_path: '/lovelace/0',
+          },
+        });
+      });
     });
   });
 };

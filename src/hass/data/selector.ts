@@ -2,11 +2,14 @@
  * https://github.com/home-assistant/frontend/blob/dev/src/data/selector.ts
  */
 
+import type { UiAction } from '../panels/lovelace/components/hui-action-editor';
+
 export type Selector =
   | EntitySelector
   | DeviceSelector
   | SelectSelector
-  | StringSelector;
+  | StringSelector
+  | UiActionSelector;
 
 interface EntitySelectorFilter {
   domain?: string | readonly string[];
@@ -75,4 +78,11 @@ export interface StringSelector {
       | 'color';
     suffix?: string;
   };
+}
+
+export interface UiActionSelector {
+  ui_action: {
+    actions?: UiAction[];
+    default_action?: UiAction;
+  } | null;
 }

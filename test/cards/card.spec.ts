@@ -2,8 +2,8 @@ import { DeviceCard } from '@cards/card';
 import * as deviceUtils from '@delegates/utils/get-device';
 import * as problemUtils from '@delegates/utils/has-problem';
 import type { HomeAssistant } from '@hass/types';
+import * as sectionRenderer from '@html/device-section';
 import * as pictureModule from '@html/picture';
-import * as sectionRenderer from '@html/section';
 import { fixture } from '@open-wc/testing-helpers';
 import { styles } from '@theme/styles';
 import type { Device } from '@type/config';
@@ -33,7 +33,7 @@ export default () => {
         devices: {
           device_1: {
             id: 'device_1',
-            name: 'PetKit Feeder',
+            name: 'Device',
             model: 'Feeder',
             model_id: 'Plus Pro',
           },
@@ -42,7 +42,7 @@ export default () => {
 
       // Create mock device
       mockUnit = {
-        name: 'PetKit Feeder',
+        name: 'Device',
         model: 'Feeder Plus Pro',
         sensors: [
           {
@@ -207,7 +207,7 @@ export default () => {
       it('should use device name if no title in config', async () => {
         const el = await fixture(card.render() as TemplateResult);
         const titleElement = el.querySelector('.title span');
-        expect(titleElement?.textContent).to.equal('PetKit Feeder');
+        expect(titleElement?.textContent).to.equal('Device');
       });
 
       it('should display model information', async () => {

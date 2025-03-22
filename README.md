@@ -72,8 +72,16 @@ With an optional flag, you can showcase entity pictures when available. There mu
 ### Entity Attributes
 
 - Click an entity to expand it and show it's attributes
+- This behavior can be disabled by setting `tap_action` to "none"
 
 ![attributes](assets/attributes.png)
+
+### Entity Interactions
+
+- Configure custom actions for tap, hold, and double tap interactions
+- Actions include navigating to other views, calling services, or opening more-info dialogs
+- Setting a `tap_action` disables the entity attribute expansion behavior
+- Actions can be configured in both YAML and the visual editor
 
 ### Visual Styling
 
@@ -134,15 +142,18 @@ The card will automatically:
 
 ## Configuration Options
 
-| Name             | Type   | Default      | Description                                                  |
-| ---------------- | ------ | ------------ | ------------------------------------------------------------ |
-| device_id        | string | **Required** | The Home Assistant device ID for your device                 |
-| title            | string | Device name  | Optional custom title for the card                           |
-| preview_count    | number | All items    | Number of items to preview before showing "Show More" button |
-| exclude_sections | list   | _none_       | Sections of entities to exclude. See below.                  |
-| exclude_entities | list   | _none_       | Entities to remove from the card.                            |
-| section_order    | list   | _none_       | Custom order for displaying sections. See below.             |
-| features         | list   | See below    | Optional flags to toggle different features                  |
+| Name              | Type   | Default      | Description                                                  |
+| ----------------- | ------ | ------------ | ------------------------------------------------------------ |
+| device_id         | string | **Required** | The Home Assistant device ID for your device                 |
+| title             | string | Device name  | Optional custom title for the card                           |
+| preview_count     | number | All items    | Number of items to preview before showing "Show More" button |
+| exclude_sections  | list   | _none_       | Sections of entities to exclude. See below.                  |
+| exclude_entities  | list   | _none_       | Entities to remove from the card.                            |
+| section_order     | list   | _none_       | Custom order for displaying sections. See below.             |
+| features          | list   | See below    | Optional flags to toggle different features                  |
+| tap_action        | object | none         | Action to perform when tapping the card                      |
+| hold_action       | object | none         | Action to perform when holding the card                      |
+| double_tap_action | object | none         | Action when double-tapping the card                          |
 
 ### Feature Options
 
@@ -189,7 +200,7 @@ features:
   - entity_picture
 ```
 
-### Excluding some enities and sections
+### Excluding some entities and sections
 
 ```yaml
 type: custom:device-card
@@ -207,11 +218,37 @@ exclude_entities:
 ```yaml
 type: custom:device-card
 device_id: 1a2b3c4d5e6f7g8h9i0j
-show_order_sections:
+section_order:
   - sensors # Show sensors first
   - controls
   - configurations
   - diagnostics
+```
+
+### With custom actions
+
+```yaml
+type: custom:device-card
+device_id: 1a2b3c4d5e6f7g8h9i0j
+tap_action:
+  action: more-info
+hold_action:
+  action: call-service
+  service: light.turn_on
+  service_data:
+    entity_id: light.living_room
+double_tap_action:
+  action: navigate
+  navigation_path: /lovelace/0
+```
+
+Set hold action as more-info to keep attribute exansion for `tap_action`
+
+```yaml
+type: custom:device-card
+device_id: 1a2b3c4d5e6f7g8h9i0j
+hold_action:
+  action: more-info
 ```
 
 ## Project Roadmap
@@ -219,6 +256,7 @@ show_order_sections:
 - [x] **`Initial design`**: Create initial card design
 - [x] **`Enhanced customization`**: Add more customization options
 - [x] **`Custom section order and exclusions`**: Set the order in which sections are displayed & exclude things
+- [x] **`Entity interactions`**: Configure tap, hold, and double-tap actions
 - [ ] **`Status badges`**: Quick status badges for device state
 - [ ] **`Device filtering`**: Filter specific entities from display
 

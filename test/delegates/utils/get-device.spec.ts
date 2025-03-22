@@ -27,7 +27,7 @@ export default () => {
         devices: {
           device_1: {
             id: 'device_1',
-            name: 'PetKit Feeder',
+            name: 'Device',
             model: 'Feeder',
             model_id: 'Plus Pro',
           },
@@ -63,7 +63,7 @@ export default () => {
       it('should initialize unit with device name and model', () => {
         const result = getDevice(mockHass, mockConfig);
         expect(result).to.not.be.undefined;
-        expect(result?.name).to.equal('PetKit Feeder');
+        expect(result?.name).to.equal('Device');
         expect(result?.model).to.equal('Feeder Plus Pro');
       });
 

@@ -136,6 +136,36 @@ const getSchema = (entityIds: string[]): HaFormSchema[] => [
       },
     ],
   },
+  {
+    name: 'interactions',
+    label: 'Interactions',
+    type: 'expandable',
+    flatten: true,
+    icon: 'mdi:gesture-tap',
+    schema: [
+      {
+        name: 'tap_action',
+        label: 'Tap Action',
+        selector: {
+          ui_action: {},
+        },
+      },
+      {
+        name: 'hold_action',
+        label: 'Hold Action',
+        selector: {
+          ui_action: {},
+        },
+      },
+      {
+        name: 'double_tap_action',
+        label: 'Double Tap Action',
+        selector: {
+          ui_action: {},
+        },
+      },
+    ],
+  },
 ];
 
 export class DeviceCardEditor extends LitElement {
@@ -160,9 +190,11 @@ export class DeviceCardEditor extends LitElement {
       return nothing;
     }
 
-    const entities = getDeviceEntities(this.hass, this._config.device_id).map(
-      (e) => e.entity_id,
-    );
+    const entities = getDeviceEntities(
+      this.hass,
+      this._config,
+      this._config.device_id,
+    ).map((e) => e.entity_id);
 
     return html`
       <ha-form
