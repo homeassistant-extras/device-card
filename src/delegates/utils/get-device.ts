@@ -58,7 +58,7 @@ export const getDevice = (
       device.configurations.push(entity);
     } else {
       const domain = computeDomain(entity.entity_id);
-      if (['text', 'button', 'switch', 'select'].includes(domain)) {
+      if (['text', 'button', 'number', 'switch', 'select'].includes(domain)) {
         if (config.exclude_sections?.includes('controls')) {
           return;
         }
