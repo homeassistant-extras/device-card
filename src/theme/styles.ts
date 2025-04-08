@@ -97,8 +97,8 @@ export const styles = css`
   }
 
   /* Apply larger margin only to expanded sections or those with fewer than 5 items */
-  .section.expanded:not(:last-child),
-  .section.few-items:not(:last-child) {
+  .section.expanded:not(:last-child):not(.compact),
+  .section.few-items:not(:last-child):not(.compact) {
     margin-bottom: 40px;
   }
 

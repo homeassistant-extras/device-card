@@ -124,6 +124,10 @@ const getSchema = (entityIds: string[]): HaFormSchema[] => [
                 label: 'Hide Device Model',
                 value: 'hide_device_model',
               },
+              {
+                label: 'Compact Layout',
+                value: 'compact',
+              },
             ],
           },
         },

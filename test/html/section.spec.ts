@@ -1,3 +1,4 @@
+import * as featureModule from '@config/feature';
 import type { HomeAssistant } from '@hass/types';
 import * as rowModule from '@html/row';
 import { renderSection } from '@html/section';
@@ -20,6 +21,7 @@ export default () => {
     let rowStub: sinon.SinonStub;
     let chevronStub: sinon.SinonStub;
     let showMoreStub: sinon.SinonStub;
+    let hasFeatureStub: sinon.SinonStub;
 
     beforeEach(() => {
       // Create mock entities
@@ -73,6 +75,9 @@ export default () => {
 
       showMoreStub = stub(showMoreModule, 'showMore');
       showMoreStub.returns(html`<div class="mocked-show-more"></div>`);
+
+      hasFeatureStub = stub(featureModule, 'hasFeature');
+      hasFeatureStub.returns(false);
     });
 
     afterEach(() => {
@@ -80,6 +85,7 @@ export default () => {
       rowStub.restore();
       chevronStub.restore();
       showMoreStub.restore();
+      hasFeatureStub.restore();
     });
 
     describe('renderSection', () => {
@@ -312,6 +318,40 @@ export default () => {
         // expandedEntities should be initialized
         expect(mockElement.expandedEntities).to.exist;
         expect(mockElement.expandedEntities).to.deep.equal({});
+      });
+
+      it('should apply compact class when compact feature is enabled', async () => {
+        // Set hasFeature to return true for 'compact'
+        hasFeatureStub.withArgs(mockConfig, 'compact').returns(true);
+
+        const result = renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+        const el = await fixture(result as TemplateResult);
+
+        // Verify compact class is applied
+        expect(el.classList.contains('compact')).to.be.true;
+      });
+
+      it('should not apply compact class when compact feature is disabled', async () => {
+        // Set hasFeature to return false for 'compact'
+        hasFeatureStub.withArgs(mockConfig, 'compact').returns(false);
+
+        const result = renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+        const el = await fixture(result as TemplateResult);
+
+        // Verify compact class is not applied
+        expect(el.classList.contains('compact')).to.be.false;
       });
     });
   });

@@ -7,6 +7,7 @@
  */
 
 import type { DeviceCard } from '@cards/card';
+import { hasFeature } from '@config/feature';
 import type { HomeAssistant } from '@hass/types';
 import type { Config, EntityInformation } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';
@@ -48,8 +49,9 @@ export const renderSection = (
   const displayEntities =
     needsExpansion && !isExpanded ? entities.slice(0, size) : entities;
 
-  // Determine section class based on expanded state and number of items
-  const sectionClass = `section ${isExpanded ? 'expanded' : ''} ${!needsExpansion ? 'few-items' : ''}`;
+  // Determine section class based on expanded state, number of items, and compact feature
+  const isCompact = hasFeature(config, 'compact');
+  const sectionClass = `section ${isExpanded ? 'expanded' : ''} ${!needsExpansion ? 'few-items' : ''} ${isCompact ? 'compact' : ''}`;
 
   // Initialize expandedEntities if it doesn't exist
   if (!element.expandedEntities) {

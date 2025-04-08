@@ -157,10 +157,11 @@ The card will automatically:
 
 ### Feature Options
 
-| Name              | Type | Description                        |
-| ----------------- | ---- | ---------------------------------- |
-| entity_picture    | flag | Show entity picture when available |
-| hide_device_model | flag | Hides the device model information |
+| Name              | Type | Description                              |
+| ----------------- | ---- | ---------------------------------------- |
+| entity_picture    | flag | Show entity picture when available       |
+| hide_device_model | flag | Hides the device model information       |
+| compact           | flag | Uses compact layout with reduced spacing |
 
 ### Section Options
 
@@ -240,6 +241,15 @@ hold_action:
 double_tap_action:
   action: navigate
   navigation_path: /lovelace/0
+```
+
+### With compact layout
+
+```yaml
+type: custom:device-card
+device_id: 1a2b3c4d5e6f7g8h9i0j
+features:
+  - compact
 ```
 
 Set hold action as more-info to keep attribute exansion for `tap_action`
