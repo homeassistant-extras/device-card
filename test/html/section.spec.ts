@@ -353,6 +353,49 @@ export default () => {
         // Verify compact class is not applied
         expect(el.classList.contains('compact')).to.be.false;
       });
+
+      it('should not show "show more" when compact feature is enabled', async () => {
+        // Set preview count to 1 (less than our 3 entities) to trigger "show more"
+        mockConfig.preview_count = 1;
+        mockElement.expandedSections['Test Section'] = false;
+
+        // Set hasFeature to return true for 'compact'
+        hasFeatureStub.withArgs(mockConfig, 'compact').returns(true);
+
+        renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+
+        // Verify showMore was not called (should be hidden in compact mode)
+        expect(showMoreStub.called).to.be.false;
+
+        // Verify chevron was still called (should be visible in compact mode)
+        expect(chevronStub.called).to.be.true;
+      });
+
+      it('should show "show more" when compact feature is disabled', async () => {
+        // Set preview count to 1 (less than our 3 entities) to trigger "show more"
+        mockConfig.preview_count = 1;
+        mockElement.expandedSections['Test Section'] = false;
+
+        // Set hasFeature to return false for 'compact'
+        hasFeatureStub.withArgs(mockConfig, 'compact').returns(false);
+
+        renderSection(
+          mockElement,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+        );
+
+        // Verify showMore was called (should be visible in normal mode)
+        expect(showMoreStub.called).to.be.true;
+      });
     });
   });
 };

@@ -64,7 +64,7 @@ export const renderSection = (
       ${needsExpansion ? chevron(element, title, isExpanded) : nothing}
     </div>
     ${displayEntities.map((entity) => row(hass, config, entity, element))}
-    ${needsExpansion
+    ${needsExpansion && !isCompact
       ? showMore(element, title, entities, isExpanded, size)
       : nothing}
   </div>`;
