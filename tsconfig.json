@@ -19,7 +19,8 @@
     /* Paths */
     "baseUrl": ".",
     "paths": {
-      "@cards/*": ["./src/cards/*"],
+      "@device/*": ["./src/cards/device-card/*"],
+      "@integration/*": ["./src/cards/integration-card/*"],
       "@type/*": ["./src/types/*"],
       "@hass/*": ["./src/hass/*"],
       "@config/*": ["./src/config/*"],

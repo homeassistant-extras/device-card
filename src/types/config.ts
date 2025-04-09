@@ -9,10 +9,7 @@ import type { ActionConfig } from '@hass/data/lovelace/config/action';
 /**
  * Configuration settings for entity display and behavior within Home Assistant.
  */
-export interface Config {
-  /** Unique identifier for the device */
-  device_id: string;
-
+export interface BaseConfig {
   /** Optional display title for the device */
   title?: string;
 

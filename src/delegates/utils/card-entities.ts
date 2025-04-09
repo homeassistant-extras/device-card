@@ -1,7 +1,8 @@
 import { getState } from '@delegates/retrievers/state';
+import type { Config } from '@device/types';
 import { stateActive } from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
-import type { Config, EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/config';
 
 export const getDeviceEntities = (
   hass: HomeAssistant,

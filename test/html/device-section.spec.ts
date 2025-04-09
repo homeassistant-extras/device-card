@@ -1,9 +1,10 @@
+import type { Config } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import { renderSections } from '@html/device-section';
 import * as rowModule from '@html/row';
 import * as sectionModule from '@html/section';
 import * as showMoreModule from '@html/show-more';
-import type { Config, Device, EntityInformation } from '@type/config';
+import type { Device, EntityInformation } from '@type/config';
 import { expect } from 'chai';
 import { html } from 'lit';
 import { stub } from 'sinon';

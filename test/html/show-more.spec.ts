@@ -1,4 +1,4 @@
-import { DeviceCard } from '@cards/card';
+import { DeviceCard } from '@device/card';
 import { chevron, showMore } from '@html/show-more';
 import { fixture } from '@open-wc/testing-helpers';
 import type { EntityInformation } from '@type/config';

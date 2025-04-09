@@ -5,7 +5,7 @@
  * allow sections to be expanded and collapsed.
  */
 
-import type { DeviceCard } from '@cards/card';
+import type { DeviceCard } from '@device/card';
 import type { EntityInformation } from '@type/config';
 import { html, nothing } from 'lit';
 

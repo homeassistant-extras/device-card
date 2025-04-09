@@ -2,9 +2,9 @@ import { getDeviceEntities } from '@delegates/utils/card-entities';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
-import type { Config } from '@type/config';
 import { html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
+import type { Config } from './types';
 
 const getSchema = (entityIds: string[]): HaFormSchema[] => [
   {

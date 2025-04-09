@@ -1,7 +1,15 @@
-import cardSpec from './card.spec';
-import editorSpec from './editor.spec';
+import cardSpec from './device-card/card.spec';
+import editorSpec from './device-card/editor.spec';
+import integrationCardSpec from './integration-card/card.spec';
+import integrationEditorSpec from './integration-card/editor.spec';
 
 describe('cards', () => {
-  cardSpec();
-  editorSpec();
+  describe('device-card', () => {
+    cardSpec();
+    editorSpec();
+  });
+  describe('integration-card', () => {
+    integrationCardSpec();
+    integrationEditorSpec();
+  });
 });

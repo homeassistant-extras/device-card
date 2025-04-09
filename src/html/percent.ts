@@ -6,8 +6,6 @@ export const percentBar = (entity: EntityInformation): TemplateResult => {
   // Extract the percentage value from the entity state
   const percentage = Number(entity.state);
 
-  // todo - flip for humidity?
-
   // Determine the color class based on percentage value
   const colorClass =
     percentage > 60 ? 'high' : percentage > 30 ? 'medium' : 'low';

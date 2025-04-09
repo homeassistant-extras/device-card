@@ -1,12 +1,13 @@
 import * as actionHandlerModule from '@/delegates/action-handler-delegate';
-import { DeviceCard } from '@cards/card';
+import { DeviceCard } from '@device/card';
+import type { Config } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import * as attributesModule from '@html/attributes';
 import * as percentBarModule from '@html/percent';
 import { row } from '@html/row';
 import * as stateContentModule from '@html/state-content';
 import { fixture } from '@open-wc/testing-helpers';
-import type { Config, EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/config';
 import { expect } from 'chai';
 import { html, type TemplateResult } from 'lit';
 import { stub } from 'sinon';

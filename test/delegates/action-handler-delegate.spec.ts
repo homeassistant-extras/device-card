@@ -1,12 +1,13 @@
-import { DeviceCard } from '@cards/card';
 import {
   actionHandler,
   handleClickAction,
 } from '@delegates/action-handler-delegate';
+import { DeviceCard } from '@device/card';
+import type { Config } from '@device/types';
 import * as fireEventModule from '@hass/common/dom/fire_event';
 import type { ActionHandlerEvent } from '@hass/data/lovelace/action_handler';
 import * as actionHandlerDirective from '@hass/panels/lovelace/common/directives/action-handler-directive';
-import type { Config, EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/config';
 import { expect } from 'chai';
 import { restore, type SinonStub, stub } from 'sinon';
 

@@ -1,14 +1,15 @@
 import { hasFeature } from '@config/feature';
 import { getDevice } from '@delegates/utils/get-device';
 import { hasProblem } from '@delegates/utils/has-problem';
+import { styles } from '@device/styles';
 import type { HomeAssistant } from '@hass/types';
 import { renderSections } from '@html/device-section';
 import { picture } from '@html/picture';
-import { styles } from '@theme/styles';
-import type { Config, Device } from '@type/config';
+import type { Device } from '@type/config';
 import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
-import { version } from '../../package.json';
+import { version } from '../../../package.json';
+import type { Config } from './types';
 const equal = require('fast-deep-equal');
 
 export class DeviceCard extends LitElement {
@@ -65,6 +66,11 @@ export class DeviceCard extends LitElement {
     if (!equal(config, this._config)) {
       this._config = config;
     }
+  }
+
+  // required for integration card
+  set config(config: Config) {
+    this.setConfig(config);
   }
 
   /**

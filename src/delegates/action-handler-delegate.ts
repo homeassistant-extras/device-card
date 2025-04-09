@@ -1,9 +1,10 @@
-import type { DeviceCard } from '@cards/card';
+import type { DeviceCard } from '@device/card';
+import type { Config } from '@device/types';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { ActionHandlerEvent } from '@hass/data/lovelace/action_handler';
 import { actionHandler as hassActionHandler } from '@hass/panels/lovelace/common/directives/action-handler-directive';
 import type { ActionConfigParams } from '@hass/panels/lovelace/common/handle-action';
-import type { Config, EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/config';
 
 /**
  * Toggles the expanded state of an entity row to show/hide attributes

@@ -1,8 +1,8 @@
 import * as stateRetriever from '@delegates/retrievers/state';
 import { getDeviceEntities } from '@delegates/utils/card-entities';
+import type { Config } from '@device/types';
 import * as stateActiveModule from '@hass/common/entity/state_active';
 import type { HomeAssistant } from '@hass/types';
-import type { Config } from '@type/config';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 

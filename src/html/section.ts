@@ -6,10 +6,11 @@
  * expandable/collapsible behavior.
  */
 
-import type { DeviceCard } from '@cards/card';
 import { hasFeature } from '@config/feature';
+import type { DeviceCard } from '@device/card';
+import type { Config } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
-import type { Config, EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';
 import { row } from './row';
 import { chevron, showMore } from './show-more';

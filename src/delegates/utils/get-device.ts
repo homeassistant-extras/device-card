@@ -1,7 +1,8 @@
 import { getDevice as getHassDevice } from '@delegates/retrievers/device';
+import type { Config } from '@device/types';
 import { computeDomain } from '@hass/common/entity/compute_domain';
 import type { HomeAssistant } from '@hass/types';
-import type { Config, Device } from '@type/config';
+import type { Device } from '@type/config';
 import { getDeviceEntities } from './card-entities';
 
 /**

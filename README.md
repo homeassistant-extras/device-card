@@ -31,7 +31,17 @@
 
 ## Overview
 
+### Device Card
+
 A custom card for Home Assistant that provides a comprehensive overview of any device in your system. The card organizes device information into expandable sections, displaying sensors, controls, configuration options, and diagnostic data in a clean, user-friendly interface.
+
+### Integration Card
+
+The Integration Card automatically finds and displays all devices from a selected integration domain. This is useful for:
+
+- Viewing all your lights, sensors, or switches from a specific brand or system
+- Creating dedicated dashboards for specific systems in your home
+- Monitoring the status of all devices in an integration at once
 
 ## Features
 
@@ -124,9 +134,13 @@ The card is fully configurable in the UI editor. Simply select "Custom: Device C
 
 ![editor](assets/editor.png)
 
+You can also add the integration card via the UI editor. It will accept mostly the same configuration as the device card.
+
+![integration-editor](assets/integration-picker.png)
+
 ### YAML
 
-This is the most minimal configuration needed to get started:
+This is the most minimal configuration needed to get started on the device card:
 
 ```yaml
 type: custom:device-card
@@ -140,7 +154,20 @@ The card will automatically:
 - Show collapsible sections for Controls, Configuration, Sensors, and Diagnostics
 - Highlight any detected problems
 
+This is the most minimal configuration needed for the integration card:
+
+```yaml
+type: custom:integration-card
+integration: zwave_js
+```
+
+The card will automatically:
+
+- Display a device card for each device in the integration
+
 ## Configuration Options
+
+### Device Card
 
 | Name              | Type   | Default      | Description                                                  |
 | ----------------- | ------ | ------------ | ------------------------------------------------------------ |
@@ -155,7 +182,7 @@ The card will automatically:
 | hold_action       | object | none         | Action to perform when holding the card                      |
 | double_tap_action | object | none         | Action when double-tapping the card                          |
 
-### Feature Options
+#### Feature Options
 
 | Name              | Type | Description                              |
 | ----------------- | ---- | ---------------------------------------- |
@@ -163,7 +190,7 @@ The card will automatically:
 | hide_device_model | flag | Hides the device model information       |
 | compact           | flag | Uses compact layout with reduced spacing |
 
-### Section Options
+#### Section Options
 
 The following section names can be used with both `exclude_sections` and `section_order`:
 
@@ -174,16 +201,41 @@ The following section names can be used with both `exclude_sections` and `sectio
 
 For `section_order`, the default order is: Controls, Configuration, Sensors, Diagnostic. Any sections not specified in your custom order will be displayed after the specified ones.
 
+### Integration Card
+
+Most configuration options from the Device Card are supported:
+
+| Name              | Type   | Default      | Description                                                  |
+| ----------------- | ------ | ------------ | ------------------------------------------------------------ |
+| integration       | string | **Required** | The Home Assistant integration domain (e.g., zwave_js, hue)  |
+| title             | string | Device name  | Optional custom title for the card                           |
+| preview_count     | number | All items    | Number of items to preview before showing "Show More" button |
+| exclude_sections  | list   | _none_       | Sections of entities to exclude. See below.                  |
+| section_order     | list   | _none_       | Custom order for displaying sections. See below.             |
+| features          | list   | See below    | Optional flags to toggle different features                  |
+| tap_action        | object | none         | Action to perform when tapping the card                      |
+| hold_action       | object | none         | Action to perform when holding the card                      |
+| double_tap_action | object | none         | Action when double-tapping the card                          |
+
+#### Feature Options
+
+| Name              | Type | Description                              |
+| ----------------- | ---- | ---------------------------------------- |
+| hide_device_model | flag | Hides the device model information       |
+| compact           | flag | Uses compact layout with reduced spacing |
+
 ## Example Configurations
 
-### Basic Configuration
+### Device Card
+
+#### Basic Configuration
 
 ```yaml
 type: custom:device-card
 device_id: 1a2b3c4d5e6f7g8h9i0j
 ```
 
-### Custom Title and Preview Count
+#### Custom Title and Preview Count
 
 ```yaml
 type: custom:device-card
@@ -192,7 +244,7 @@ title: Living Room Thermostat
 preview_count: 3
 ```
 
-### With Entity Picture
+#### With Entity Picture
 
 ```yaml
 type: custom:device-card
@@ -201,7 +253,7 @@ features:
   - entity_picture
 ```
 
-### Excluding some entities and sections
+#### Excluding some entities and sections
 
 ```yaml
 type: custom:device-card
@@ -214,7 +266,7 @@ exclude_entities:
   - update.home_assistant_core_update
 ```
 
-### Custom section order
+#### Custom section order
 
 ```yaml
 type: custom:device-card
@@ -226,7 +278,7 @@ section_order:
   - diagnostics
 ```
 
-### With custom actions
+#### With custom actions
 
 ```yaml
 type: custom:device-card
@@ -243,7 +295,7 @@ double_tap_action:
   navigation_path: /lovelace/0
 ```
 
-### With compact layout
+#### With compact layout
 
 ```yaml
 type: custom:device-card
@@ -261,14 +313,58 @@ hold_action:
   action: more-info
 ```
 
+### Integration Card
+
+Basic Configuration
+
+```yaml
+type: custom:integration-card
+integration: zwave_js
+```
+
+Custom Title and Compact Layout
+
+```yaml
+type: custom:integration-card
+integration: hue
+title: Philips Hue Devices
+features:
+  - compact
+  - hide_device_model
+```
+
+Excluding Sections
+
+```yaml
+type: custom:integration-card
+integration: matter
+title: Matter Devices
+exclude_sections:
+  - diagnostics
+  - configurations
+```
+
+Custom Actions for All Device Cards
+
+```yaml
+type: custom:integration-card
+integration: esphome
+tap_action:
+  action: more-info
+hold_action:
+  action: navigate
+  navigation_path: /config/devices
+```
+
 ## Project Roadmap
 
 - [x] **`Initial design`**: Create initial card design
 - [x] **`Enhanced customization`**: Add more customization options
 - [x] **`Custom section order and exclusions`**: Set the order in which sections are displayed & exclude things
 - [x] **`Entity interactions`**: Configure tap, hold, and double-tap actions
-- [ ] **`Status badges`**: Quick status badges for device state
-- [ ] **`Device filtering`**: Filter specific entities from display
+- [x] **`Status badges`**: Quick status badges for device state
+- [x] **`Entity filtering`**: Filter specific entities from display
+- [x] **`Integration Card`**: Rollup to see all devices
 
 ## Contributing
 

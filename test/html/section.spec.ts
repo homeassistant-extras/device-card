@@ -1,10 +1,11 @@
 import * as featureModule from '@config/feature';
+import type { Config } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import * as rowModule from '@html/row';
 import { renderSection } from '@html/section';
 import * as showMoreModule from '@html/show-more';
 import { fixture } from '@open-wc/testing-helpers';
-import type { Config, EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/config';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';

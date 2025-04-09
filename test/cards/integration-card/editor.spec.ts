@@ -1,18 +1,17 @@
-import { DeviceCardEditor } from '@cards/editor';
-import * as cardEntitiesModule from '@delegates/utils/card-entities';
+import type { DeviceRegistryEntry } from '@hass/data/device_registry';
 import type { HomeAssistant } from '@hass/types';
+import { IntegrationCardEditor } from '@integration/editor';
+import type { Config } from '@integration/types';
 import { fixture } from '@open-wc/testing-helpers';
-import type { Config } from '@type/config';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
 
 export default () => {
   describe('editor.ts', () => {
-    let card: DeviceCardEditor;
+    let card: IntegrationCardEditor;
     let hass: HomeAssistant;
     let dispatchStub: sinon.SinonStub;
-    let getDeviceEntitiesStub: sinon.SinonStub;
 
     beforeEach(async () => {
       // Create mock HomeAssistant instance
@@ -20,30 +19,25 @@ export default () => {
         states: {},
         areas: {},
         entities: {},
-        devices: {},
+        devices: {
+          device_1: {
+            identifiers: [['device_one']],
+          } as any as DeviceRegistryEntry,
+        },
       } as HomeAssistant;
-      card = new DeviceCardEditor();
+      card = new IntegrationCardEditor();
       dispatchStub = stub(card, 'dispatchEvent');
-
-      // Stub the getDeviceEntities function
-      getDeviceEntitiesStub = stub(cardEntitiesModule, 'getDeviceEntities');
-      getDeviceEntitiesStub.returns([
-        { entity_id: 'light.test_light' },
-        { entity_id: 'sensor.test_sensor' },
-        { entity_id: 'switch.test_switch' },
-      ]);
 
       card.hass = hass;
     });
 
     afterEach(() => {
       dispatchStub.restore();
-      getDeviceEntitiesStub.restore();
     });
 
     describe('initialization', () => {
       it('should be defined', () => {
-        expect(card).to.be.instanceOf(DeviceCardEditor);
+        expect(card).to.be.instanceOf(IntegrationCardEditor);
       });
 
       it('should have default properties', () => {
@@ -55,7 +49,7 @@ export default () => {
     describe('setConfig', () => {
       it('should set the configuration correctly', () => {
         const testConfig: Config = {
-          device_id: 'device_1',
+          integration: 'device_1',
           title: 'My Device',
           preview_count: 5,
         };
@@ -79,7 +73,7 @@ export default () => {
 
       it('should render ha-form when both hass and config are set', async () => {
         const testConfig: Config = {
-          device_id: 'device_1',
+          integration: 'device_1',
         };
         card.setConfig(testConfig);
 
@@ -87,22 +81,9 @@ export default () => {
         expect(el.outerHTML).to.equal('<ha-form></ha-form>');
       });
 
-      it('should call getDeviceEntities with correct parameters', async () => {
-        const testConfig: Config = {
-          device_id: 'device_1',
-        };
-        card.setConfig(testConfig);
-        card.render();
-
-        expect(getDeviceEntitiesStub.calledOnce).to.be.true;
-        expect(getDeviceEntitiesStub.firstCall.args[0]).to.equal(hass);
-        expect(getDeviceEntitiesStub.firstCall.args[1]).to.equal(testConfig);
-        expect(getDeviceEntitiesStub.firstCall.args[2]).to.equal('device_1');
-      });
-
       it('should pass correct props to ha-form', async () => {
         const testConfig: Config = {
-          device_id: 'device_1',
+          integration: 'device_one',
           title: 'My Device',
         };
         card.setConfig(testConfig);
@@ -112,12 +93,20 @@ export default () => {
         expect((el as any).data).to.deep.equal(testConfig);
         expect((el as any).schema).to.deep.equal([
           {
-            name: 'device_id',
+            name: 'integration',
             selector: {
-              device: {},
+              select: {
+                options: [
+                  {
+                    value: 'device_one',
+                    label: 'Device One',
+                  },
+                ],
+                mode: 'dropdown' as 'dropdown',
+              },
             },
             required: true,
-            label: `Device`,
+            label: 'Integration',
           },
           {
             name: 'content',
@@ -221,32 +210,13 @@ export default () => {
                     mode: 'list' as 'list',
                     options: [
                       {
-                        label: 'Use Entity Picture',
-                        value: 'entity_picture',
+                        label: 'Compact Layout',
+                        value: 'compact',
                       },
                       {
                         label: 'Hide Device Model',
                         value: 'hide_device_model',
                       },
-                      {
-                        label: 'Compact Layout',
-                        value: 'compact',
-                      },
-                    ],
-                  },
-                },
-              },
-              {
-                name: 'exclude_entities',
-                label: 'Entities to exclude',
-                required: false,
-                selector: {
-                  entity: {
-                    multiple: true,
-                    include_entities: [
-                      'light.test_light',
-                      'sensor.test_sensor',
-                      'switch.test_switch',
                     ],
                   },
                 },
@@ -290,7 +260,7 @@ export default () => {
     describe('form behavior', () => {
       it('should compute labels correctly', async () => {
         const testConfig: Config = {
-          device_id: 'device_1',
+          integration: 'device_1',
           title: 'My Device',
         };
         card.setConfig(testConfig);
@@ -309,7 +279,7 @@ export default () => {
     describe('_valueChanged', () => {
       it('should fire config-changed event with the updated config', () => {
         const testConfig: Config = {
-          device_id: 'device_1',
+          integration: 'device_1',
           title: 'My Device',
         };
         card.setConfig(testConfig);
@@ -317,7 +287,7 @@ export default () => {
         // Simulate value-changed event
         const detail = {
           value: {
-            device_id: 'device_1',
+            integration: 'device_1',
             title: 'Updated Device',
             preview_count: 5,
             exclude_sections: ['controls', 'diagnostics'],
@@ -332,7 +302,7 @@ export default () => {
         expect(dispatchStub.calledOnce).to.be.true;
         expect(dispatchStub.firstCall.args[0].type).to.equal('config-changed');
         expect(dispatchStub.firstCall.args[0].detail.config).to.deep.equal({
-          device_id: 'device_1',
+          integration: 'device_1',
           title: 'Updated Device',
           preview_count: 5,
           exclude_sections: ['controls', 'diagnostics'],
@@ -340,16 +310,16 @@ export default () => {
         });
       });
 
-      it('should handle config with only device_id', () => {
+      it('should handle config with only integration', () => {
         const testConfig: Config = {
-          device_id: 'device_1',
+          integration: 'device_1',
         };
         card.setConfig(testConfig);
 
         // Simulate value-changed event with minimal config
         const detail = {
           value: {
-            device_id: 'device_1',
+            integration: 'device_1',
           },
         };
 
@@ -360,13 +330,13 @@ export default () => {
         expect(dispatchStub.calledOnce).to.be.true;
         expect(dispatchStub.firstCall.args[0].type).to.equal('config-changed');
         expect(dispatchStub.firstCall.args[0].detail.config).to.deep.equal({
-          device_id: 'device_1',
+          integration: 'device_1',
         });
       });
 
       it('should remove array properties when array is empty', () => {
         const testConfig: Config = {
-          device_id: 'device_1',
+          integration: 'device_1',
           features: [],
           exclude_entities: [],
           exclude_sections: [],
@@ -377,7 +347,7 @@ export default () => {
         // Simulate value-changed event with empty arrays
         const detail = {
           value: {
-            device_id: 'device_2',
+            integration: 'device_2',
             features: [],
             exclude_entities: [],
             exclude_sections: [],
@@ -392,7 +362,7 @@ export default () => {
         expect(dispatchStub.calledOnce).to.be.true;
         expect(dispatchStub.firstCall.args[0].type).to.equal('config-changed');
         expect(dispatchStub.firstCall.args[0].detail.config).to.deep.equal({
-          device_id: 'device_2',
+          integration: 'device_2',
         });
         expect(dispatchStub.firstCall.args[0].detail.config.features).to.be
           .undefined;

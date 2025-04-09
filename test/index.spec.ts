@@ -27,12 +27,16 @@ describe('index.ts', () => {
     delete require.cache[require.resolve('@/index.ts')];
   });
 
-  it('should register both device-card and editor custom elements', () => {
+  it('should register all custom elements', () => {
     require('@/index.ts');
-    expect(customElementsStub.calledTwice).to.be.true;
+    expect(customElementsStub.callCount).to.equal(4);
     expect(customElementsStub.firstCall.args[0]).to.equal('device-card');
     expect(customElementsStub.secondCall.args[0]).to.equal(
       'device-card-editor',
+    );
+    expect(customElementsStub.thirdCall.args[0]).to.equal('integration-card');
+    expect(customElementsStub.getCall(3).args[0]).to.equal(
+      'integration-card-editor',
     );
   });
 
@@ -43,14 +47,25 @@ describe('index.ts', () => {
     expect(window.customCards).to.be.an('array');
   });
 
-  it('should add card configuration with all fields to window.customCards', () => {
+  it('should add card configurations with all fields to window.customCards', () => {
     require('@/index.ts');
 
-    expect(window.customCards).to.have.lengthOf(1);
+    expect(window.customCards).to.have.lengthOf(2);
+
+    // Check device-card configuration
     expect(window.customCards[0]).to.deep.equal({
       type: 'device-card',
       name: 'Device Card',
       description: 'A card to summarize the status of a Device.',
+      preview: true,
+      documentationURL: 'https://github.com/homeassistant-extras/device-card',
+    });
+
+    // Check integration-card configuration
+    expect(window.customCards[1]).to.deep.equal({
+      type: 'integration-card',
+      name: 'Integration Card',
+      description: 'A card to display all devices from a specific integration.',
       preview: true,
       documentationURL: 'https://github.com/homeassistant-extras/device-card',
     });
@@ -67,7 +82,7 @@ describe('index.ts', () => {
 
     require('@/index.ts');
 
-    expect(window.customCards).to.have.lengthOf(2);
+    expect(window.customCards).to.have.lengthOf(3);
     expect(window.customCards[0]).to.deep.equal({
       type: 'existing-card',
       name: 'Existing Card',
@@ -78,7 +93,7 @@ describe('index.ts', () => {
     require('@/index.ts');
     require('@/index.ts');
 
-    expect(window.customCards).to.have.lengthOf(1);
-    expect(customElementsStub.callCount).to.equal(2); // Called twice for initial registration only
+    expect(window.customCards).to.have.lengthOf(2);
+    expect(customElementsStub.callCount).to.equal(4); // Called once for each component
   });
 });

@@ -1,16 +1,16 @@
-import { DeviceCard } from '@cards/card';
 import * as deviceUtils from '@delegates/utils/get-device';
 import * as problemUtils from '@delegates/utils/has-problem';
+import { DeviceCard } from '@device/card';
+import { styles } from '@device/styles';
 import type { HomeAssistant } from '@hass/types';
 import * as sectionRenderer from '@html/device-section';
 import * as pictureModule from '@html/picture';
 import { fixture } from '@open-wc/testing-helpers';
-import { styles } from '@theme/styles';
 import type { Device } from '@type/config';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { version } from '../../package.json';
+import { version } from '../../../package.json';
 
 export default () => {
   describe('card.ts', () => {

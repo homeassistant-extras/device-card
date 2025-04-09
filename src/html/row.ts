@@ -5,13 +5,14 @@
  * including their state content, percentage bars, and expandable attribute details.
  */
 
-import type { DeviceCard } from '@cards/card';
 import {
   actionHandler,
   handleClickAction,
 } from '@delegates/action-handler-delegate';
+import type { DeviceCard } from '@device/card';
+import type { Config } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
-import type { Config, EntityInformation } from '@type/config';
+import type { EntityInformation } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';
 import { attributes } from './attributes';
 import { percentBar } from './percent';
