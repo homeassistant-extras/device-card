@@ -33,7 +33,9 @@ export const getDeviceEntities = (
         isActive: active,
         config: {
           tap_action: config.tap_action,
-          hold_action: config.hold_action,
+          hold_action: config.hold_action || {
+            action: 'more-info',
+          },
           double_tap_action: config.double_tap_action,
         },
         attributes: {
