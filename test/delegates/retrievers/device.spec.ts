@@ -19,23 +19,12 @@ export default () => {
             id: 'device-123',
             area_id: 'area-123',
             name: 'Living Room Light',
-            name_by_user: 'Main Light',
-            manufacturer: 'Philips',
-            model: 'Hue',
-            entry_type: 'service',
-            disabled_by: null,
-            config_entries: ['config-1'],
           },
           'device-456': {
             id: 'device-456',
             area_id: 'area-456',
             name: 'Kitchen Sensor',
-            name_by_user: 'Temperature Sensor',
             manufacturer: 'Aqara',
-            model: 'WSDCGQ11LM',
-            entry_type: 'service',
-            disabled_by: null,
-            config_entries: ['config-2'],
           },
         },
       } as unknown as HomeAssistant;
@@ -55,12 +44,6 @@ export default () => {
           id: 'device-123',
           area_id: 'area-123',
           name: 'Living Room Light',
-          name_by_user: 'Main Light',
-          manufacturer: 'Philips',
-          model: 'Hue',
-          entry_type: 'service',
-          disabled_by: null,
-          config_entries: ['config-1'],
         });
       });
 

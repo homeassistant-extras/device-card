@@ -11,6 +11,9 @@ import type { BaseConfig } from '@type/config';
 export interface Config extends BaseConfig {
   /** Integration domain to display devices for */
   integration: string;
+
+  /** List of device IDs to exclude from the display */
+  excluded_devices?: string[];
 }
 
 /**

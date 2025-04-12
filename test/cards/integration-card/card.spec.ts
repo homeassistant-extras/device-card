@@ -42,9 +42,16 @@ export default () => {
           device_3: {
             id: 'device_3',
             name: 'Device 3',
-            identifiers: [['mqtt', 'node_3']],
+            identifiers: [['zwave_js', 'node_3']],
             manufacturer: 'Other',
             model: 'Model 3',
+          },
+          device_4: {
+            id: 'device_4',
+            name: 'Device 4',
+            identifiers: [['mqtt', 'node_3']],
+            manufacturer: 'Other',
+            model: 'Model 4',
           },
         },
         states: {},
@@ -57,6 +64,9 @@ export default () => {
         .returns(true);
       isInIntegrationStub
         .withArgs(mockHass.devices.device_2, 'zwave_js')
+        .returns(true);
+      isInIntegrationStub
+        .withArgs(mockHass.devices.device_3, 'zwave_js')
         .returns(true);
       isInIntegrationStub
         .withArgs(mockHass.devices.device_3, 'mqtt')
@@ -114,10 +124,11 @@ export default () => {
         // Check integration data
         const integrationData = card['_integration'];
         expect(integrationData.name).to.equal('Zwave Js');
-        expect(integrationData.devices).to.have.length(2);
+        expect(integrationData.devices).to.have.length(3);
         expect(integrationData.devices).to.include('device_1');
         expect(integrationData.devices).to.include('device_2');
-        expect(integrationData.devices).to.not.include('device_3');
+        expect(integrationData.devices).to.include('device_3');
+        expect(integrationData.devices).to.not.include('device_4');
       });
 
       it('should update integration data when hass changes', () => {
@@ -150,7 +161,7 @@ export default () => {
 
         // Check integration data was updated
         const integrationData = card['_integration'];
-        expect(integrationData.devices).to.have.length(3);
+        expect(integrationData.devices).to.have.length(4);
         expect(integrationData.devices).to.include('device_4');
       });
 
@@ -208,7 +219,7 @@ export default () => {
 
         // In preview mode, should only show one node-info component
         const nodeInfoElements = el.querySelectorAll('device-card');
-        expect(nodeInfoElements).to.have.lengthOf(2);
+        expect(nodeInfoElements).to.have.lengthOf(3);
       });
 
       it('should use config title when provided', async () => {
@@ -282,6 +293,96 @@ export default () => {
         expect(config).to.have.property('integration');
         // Should find one of the integrations in the mock data
         expect(['zwave_js', 'mqtt']).to.include(config.integration);
+      });
+    });
+
+    describe('integration-card excluded devices feature', () => {
+      it('should exclude devices listed in excluded_devices config', async () => {
+        // Set config to filter for zwave_js devices, excluding device_2
+        card.setConfig({
+          integration: 'zwave_js',
+          excluded_devices: ['device_2'],
+        });
+
+        // Set hass property
+        card.hass = mockHass;
+
+        // Check integration data
+        const integrationData = card['_integration'];
+        expect(integrationData.devices).to.have.length(2);
+        expect(integrationData.devices).to.include('device_1');
+        expect(integrationData.devices).to.include('device_3');
+        expect(integrationData.devices).to.not.include('device_2');
+      });
+
+      it('should exclude multiple devices when listed in excluded_devices config', async () => {
+        // Set config to filter for zwave_js devices, excluding device_1 and device_3
+        card.setConfig({
+          integration: 'zwave_js',
+          excluded_devices: ['device_1', 'device_3'],
+        });
+
+        // Set hass property
+        card.hass = mockHass;
+
+        // Check integration data
+        const integrationData = card['_integration'];
+        expect(integrationData.devices).to.have.length(1);
+        expect(integrationData.devices).to.include('device_2');
+        expect(integrationData.devices).to.not.include('device_1');
+        expect(integrationData.devices).to.not.include('device_3');
+      });
+
+      it('should show all devices when excluded_devices is empty', async () => {
+        // Set config to filter for zwave_js devices with empty excluded_devices
+        card.setConfig({
+          integration: 'zwave_js',
+          excluded_devices: [],
+        });
+
+        // Set hass property
+        card.hass = mockHass;
+
+        // Check integration data
+        const integrationData = card['_integration'];
+        expect(integrationData.devices).to.have.length(3);
+        expect(integrationData.devices).to.include('device_1');
+        expect(integrationData.devices).to.include('device_2');
+        expect(integrationData.devices).to.include('device_3');
+      });
+
+      it('should show all devices when excluded_devices is not set', async () => {
+        // Set config to filter for zwave_js devices with no excluded_devices
+        card.setConfig({
+          integration: 'zwave_js',
+        });
+
+        // Set hass property
+        card.hass = mockHass;
+
+        // Check integration data
+        const integrationData = card['_integration'];
+        expect(integrationData.devices).to.have.length(3);
+        expect(integrationData.devices).to.include('device_1');
+        expect(integrationData.devices).to.include('device_2');
+        expect(integrationData.devices).to.include('device_3');
+      });
+
+      it('should render the correct number of device cards after exclusion', async () => {
+        // Set config to filter for zwave_js devices, excluding device_2
+        card.setConfig({
+          integration: 'zwave_js',
+          excluded_devices: ['device_2'],
+        });
+
+        // Set hass property
+        card.hass = mockHass;
+
+        const el = await fixture(card.render() as TemplateResult);
+
+        // Should only show device cards for non-excluded devices
+        const deviceElements = el.querySelectorAll('device-card');
+        expect(deviceElements).to.have.lengthOf(2);
       });
     });
   });

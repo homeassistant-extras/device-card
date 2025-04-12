@@ -73,7 +73,10 @@ export class IntegrationCard extends LitElement {
       data.name = pascalCase(this._config.integration);
 
       Object.values(hass.devices).forEach((device) => {
-        if (isInIntegration(device, this._config.integration)) {
+        if (
+          !this._config.excluded_devices?.includes(device.id) &&
+          isInIntegration(device, this._config.integration)
+        ) {
           data.devices.push(device.id);
         }
       });

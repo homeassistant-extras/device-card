@@ -28,7 +28,6 @@ export class IntegrationCardEditor extends LitElement {
     Object.values(this.hass.devices).forEach((device) => {
       for (const parts of device.identifiers) {
         const part = parts[0];
-
         if (!integrations.includes(part)) {
           integrations.push(part);
         }
@@ -72,6 +71,19 @@ export class IntegrationCardEditor extends LitElement {
             selector: {
               text: {
                 type: 'number' as 'number',
+              },
+            },
+          },
+          {
+            name: 'excluded_devices',
+            label: 'Devices to exclude',
+            required: false,
+            selector: {
+              device: {
+                multiple: true,
+                filter: {
+                  integration: this._config.integration,
+                },
               },
             },
           },
@@ -244,6 +256,9 @@ export class IntegrationCardEditor extends LitElement {
     }
     if (!config.section_order?.length) {
       delete config.section_order;
+    }
+    if (!config.excluded_devices?.length) {
+      delete config.excluded_devices;
     }
 
     // @ts-ignore

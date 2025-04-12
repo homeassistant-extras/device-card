@@ -210,6 +210,7 @@ Most configuration options from the Device Card are supported:
 | integration       | string | **Required** | The Home Assistant integration domain (e.g., zwave_js, hue)  |
 | title             | string | Device name  | Optional custom title for the card                           |
 | preview_count     | number | All items    | Number of items to preview before showing "Show More" button |
+| excluded_devices  | list   | _none_       | Specific device IDs to exclude from the integration display  |
 | exclude_sections  | list   | _none_       | Sections of entities to exclude. See below.                  |
 | section_order     | list   | _none_       | Custom order for displaying sections. See below.             |
 | features          | list   | See below    | Optional flags to toggle different features                  |
@@ -354,6 +355,16 @@ tap_action:
 hold_action:
   action: navigate
   navigation_path: /config/devices
+```
+
+Basic Configuration with Excluded Devices
+
+```yaml
+type: custom:integration-card
+integration: zwave_js
+excluded_devices:
+  - b30c9bb17b44450d99ed41c6167e5c92 # Z-Wave Hub
+  - 99f45623df8146e8a446f17e92d38272 # Guest Room Switch
 ```
 
 ## Project Roadmap

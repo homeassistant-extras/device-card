@@ -134,6 +134,19 @@ export default () => {
                 },
               },
               {
+                name: 'excluded_devices',
+                label: 'Devices to exclude',
+                required: false,
+                selector: {
+                  device: {
+                    multiple: true,
+                    filter: {
+                      integration: testConfig.integration,
+                    },
+                  },
+                },
+              },
+              {
                 name: 'exclude_sections',
                 label: 'Sections to exclude',
                 required: false,
