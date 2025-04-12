@@ -7,6 +7,7 @@ import type { UiAction } from '../panels/lovelace/components/hui-action-editor';
 export type Selector =
   | EntitySelector
   | DeviceSelector
+  | NumberSelector
   | SelectSelector
   | StringSelector
   | UiActionSelector;
@@ -43,6 +44,17 @@ interface EntitySelectorFilter {
   domain?: string | readonly string[];
   device_class?: string | readonly string[];
   supported_features?: number | [number];
+}
+
+export interface NumberSelector {
+  number: {
+    min?: number;
+    max?: number;
+    step?: number | 'any';
+    mode?: 'box' | 'slider';
+    unit_of_measurement?: string;
+    slider_ticks?: boolean;
+  } | null;
 }
 
 export interface SelectSelector {

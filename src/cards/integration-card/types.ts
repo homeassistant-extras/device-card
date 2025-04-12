@@ -14,6 +14,9 @@ export interface Config extends BaseConfig {
 
   /** List of device IDs to exclude from the display */
   excluded_devices?: string[];
+
+  /** Fixed number of columns for device display (overrides responsive behavior) */
+  columns?: number;
 }
 
 /**

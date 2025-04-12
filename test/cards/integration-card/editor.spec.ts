@@ -134,6 +134,18 @@ export default () => {
                 },
               },
               {
+                name: 'columns',
+                required: false,
+                label: 'Number of Columns',
+                selector: {
+                  number: {
+                    min: 1,
+                    max: 6,
+                    mode: 'slider' as 'slider',
+                  },
+                },
+              },
+              {
                 name: 'excluded_devices',
                 label: 'Devices to exclude',
                 required: false,

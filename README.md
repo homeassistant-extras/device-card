@@ -210,6 +210,7 @@ Most configuration options from the Device Card are supported:
 | integration       | string | **Required** | The Home Assistant integration domain (e.g., zwave_js, hue)  |
 | title             | string | Device name  | Optional custom title for the card                           |
 | preview_count     | number | All items    | Number of items to preview before showing "Show More" button |
+| columns           | number | _responsive_ | Fix the number of columns for device cards (1-6)             |
 | excluded_devices  | list   | _none_       | Specific device IDs to exclude from the integration display  |
 | exclude_sections  | list   | _none_       | Sections of entities to exclude. See below.                  |
 | section_order     | list   | _none_       | Custom order for displaying sections. See below.             |

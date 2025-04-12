@@ -3,6 +3,7 @@ import { isInIntegration } from '@delegates/utils/is-integration';
 import type { HomeAssistant } from '@hass/types';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { integrationStyles } from './styles';
 import type { Config, IntegrationData } from './types';
 const equal = require('fast-deep-equal');
@@ -108,6 +109,7 @@ export class IntegrationCard extends LitElement {
       integration: integration,
     };
   }
+
   /**
    * Renders the lit element card
    * @returns {TemplateResult} The rendered HTML template
@@ -131,11 +133,14 @@ export class IntegrationCard extends LitElement {
 
     const title = this._config.title || this._integration.name;
 
+    // Get grid styles based on columns configuration
+    const gridStyles = this._getGridStyles();
+
     return html`
       <div class="integration-wrapper">
         ${title ? html`<h1 class="integration-title">${title}</h1>` : nothing}
 
-        <div class="devices-container">
+        <div class="devices-container" style=${styleMap(gridStyles)}>
           ${devicesToShow.map((deviceId) => {
             return html`
               <device-card
@@ -150,5 +155,25 @@ export class IntegrationCard extends LitElement {
         </div>
       </div>
     `;
+  }
+
+  /**
+   * Generate the grid styles based on the columns configuration
+   * @returns {Record<string, string>} Style properties object
+   */
+  private _getGridStyles(): Record<string, string> {
+    // If columns setting is provided, use it to set a fixed number of columns
+    if (
+      this._config.columns &&
+      Number.isInteger(this._config.columns) &&
+      this._config.columns > 0
+    ) {
+      return {
+        'grid-template-columns': `repeat(${this._config.columns}, 1fr)`,
+      };
+    }
+
+    // Otherwise, return an empty object to use the default responsive behavior
+    return {};
   }
 }

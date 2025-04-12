@@ -296,7 +296,7 @@ export default () => {
       });
     });
 
-    describe('integration-card excluded devices feature', () => {
+    describe('excluded devices feature', () => {
       it('should exclude devices listed in excluded_devices config', async () => {
         // Set config to filter for zwave_js devices, excluding device_2
         card.setConfig({
@@ -383,6 +383,90 @@ export default () => {
         // Should only show device cards for non-excluded devices
         const deviceElements = el.querySelectorAll('device-card');
         expect(deviceElements).to.have.lengthOf(2);
+      });
+    });
+
+    describe('column counts feature', () => {
+      it('should apply custom grid columns when columns is set', async () => {
+        // Set up the card with columns configuration
+        card.setConfig({
+          integration: 'zwave_js',
+          columns: 2,
+        });
+        card.hass = mockHass;
+
+        // Render the card
+        const el = await fixture(card.render() as TemplateResult);
+
+        // Get the devices container
+        const container = el.querySelector('.devices-container');
+        expect(container).to.exist;
+
+        // Check that the grid-template-columns style is set correctly
+        const style = window.getComputedStyle(container!);
+        expect(container!.getAttribute('style')).to.include(
+          'grid-template-columns:repeat(2, 1fr)',
+        );
+      });
+
+      it('should not apply custom grid styles when columns is not set', async () => {
+        // Set up the card without columns configuration
+        card.setConfig({
+          integration: 'zwave_js',
+        });
+        card.hass = mockHass;
+
+        // Render the card
+        const el = await fixture(card.render() as TemplateResult);
+
+        // Get the devices container
+        const container = el.querySelector('.devices-container');
+        expect(container).to.exist;
+
+        // Check that no grid-template-columns style is set
+        expect(container!.getAttribute('style')).to.be.empty;
+      });
+
+      it('should handle invalid columns values by using default responsive behavior', async () => {
+        // Set up the card with an invalid columns configuration
+        card.setConfig({
+          integration: 'zwave_js',
+          columns: -1, // Invalid value
+        });
+        card.hass = mockHass;
+
+        // Render the card
+        const el = await fixture(card.render() as TemplateResult);
+
+        // Get the devices container
+        const container = el.querySelector('.devices-container');
+        expect(container).to.exist;
+
+        // Check that no grid-template-columns style is set
+        expect(container!.getAttribute('style')).to.not.include(
+          'grid-template-columns',
+        );
+      });
+
+      it('should handle non-integer columns values by using default responsive behavior', async () => {
+        // Set up the card with a non-integer columns configuration
+        card.setConfig({
+          integration: 'zwave_js',
+          columns: 2.5, // Non-integer value
+        });
+        card.hass = mockHass;
+
+        // Render the card
+        const el = await fixture(card.render() as TemplateResult);
+
+        // Get the devices container
+        const container = el.querySelector('.devices-container');
+        expect(container).to.exist;
+
+        // Check that no grid-template-columns style is set
+        expect(container!.getAttribute('style')).to.not.include(
+          'grid-template-columns',
+        );
       });
     });
   });

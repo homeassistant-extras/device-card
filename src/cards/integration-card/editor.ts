@@ -25,6 +25,7 @@ export class IntegrationCardEditor extends LitElement {
   private _getSchema(): HaFormSchema[] {
     const integrations: string[] = [];
 
+    // Gather all integrations
     Object.values(this.hass.devices).forEach((device) => {
       for (const parts of device.identifiers) {
         const part = parts[0];
@@ -71,6 +72,18 @@ export class IntegrationCardEditor extends LitElement {
             selector: {
               text: {
                 type: 'number' as 'number',
+              },
+            },
+          },
+          {
+            name: 'columns',
+            required: false,
+            label: 'Number of Columns',
+            selector: {
+              number: {
+                min: 1,
+                max: 6,
+                mode: 'slider' as 'slider',
               },
             },
           },
@@ -259,6 +272,11 @@ export class IntegrationCardEditor extends LitElement {
     }
     if (!config.excluded_devices?.length) {
       delete config.excluded_devices;
+    }
+
+    // Remove columns if set to 0 or invalid
+    if (!config.columns || config.columns <= 0) {
+      delete config.columns;
     }
 
     // @ts-ignore
