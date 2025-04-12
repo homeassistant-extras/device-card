@@ -2,6 +2,7 @@ import { DeviceCard } from '@device/card';
 import { DeviceCardEditor } from '@device/editor';
 import { IntegrationCard } from '@integration/card';
 import { IntegrationCardEditor } from '@integration/editor';
+import { version } from '../package.json';
 
 // Register the custom elements with the browser
 customElements.define('device-card', DeviceCard);
@@ -46,3 +47,5 @@ window.customCards.push({
   // URL for the card's documentation
   documentationURL: 'https://github.com/homeassistant-extras/device-card',
 });
+
+console.info(`%c🐱 Poat's Tools: device-card - ${version}`, 'color: #CFC493;');

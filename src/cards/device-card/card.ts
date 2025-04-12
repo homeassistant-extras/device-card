@@ -8,7 +8,6 @@ import { picture } from '@html/picture';
 import type { Device } from '@type/config';
 import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
-import { version } from '../../../package.json';
 import type { Config } from './types';
 const equal = require('fast-deep-equal');
 
@@ -42,14 +41,6 @@ export class DeviceCard extends LitElement {
    */
   @state()
   public expandedEntities: Record<string, boolean> = {};
-
-  constructor() {
-    super();
-    console.info(
-      `%c🐱 Poat's Tools: device-card-card - ${version}`,
-      'color: #CFC493;',
-    );
-  }
 
   /**
    * Returns the component's styles

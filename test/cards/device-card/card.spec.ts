@@ -10,20 +10,17 @@ import type { Device } from '@type/config';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
-import { version } from '../../../package.json';
 
 export default () => {
   describe('card.ts', () => {
     let card: DeviceCard;
     let mockHass: HomeAssistant;
     let mockUnit: Device;
-    let consoleInfoStub: sinon.SinonStub;
     let hasProblemStub: sinon.SinonStub;
     let getDeviceStub: sinon.SinonStub;
     let renderSectionsStub: sinon.SinonStub;
 
     beforeEach(() => {
-      consoleInfoStub = stub(console, 'info');
       hasProblemStub = stub(problemUtils, 'hasProblem');
       getDeviceStub = stub(deviceUtils, 'getDevice');
       renderSectionsStub = stub(sectionRenderer, 'renderSections');
@@ -100,25 +97,9 @@ export default () => {
     });
 
     afterEach(() => {
-      consoleInfoStub.restore();
       hasProblemStub.restore();
       getDeviceStub.restore();
       renderSectionsStub.restore();
-    });
-
-    describe('constructor', () => {
-      it('should log the version with proper formatting', () => {
-        // Assert that console.info was called once
-        expect(consoleInfoStub.calledOnce).to.be.true;
-
-        // Assert that it was called with the expected arguments
-        expect(
-          consoleInfoStub.calledWithExactly(
-            `%c🐱 Poat's Tools: device-card-card - ${version}`,
-            'color: #CFC493;',
-          ),
-        ).to.be.true;
-      });
     });
 
     describe('setConfig', () => {

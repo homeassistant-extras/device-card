@@ -1,13 +1,16 @@
 import { expect } from 'chai';
 import { stub, type SinonStub } from 'sinon';
+import { version } from '..//package.json';
 
 describe('index.ts', () => {
   let customElementsStub: SinonStub;
   let customCardsStub: Array<Object> | undefined;
+  let consoleInfoStub: sinon.SinonStub;
 
   beforeEach(() => {
     // Stub customElements.define to prevent actual registration
     customElementsStub = stub(customElements, 'define');
+    consoleInfoStub = stub(console, 'info');
 
     // Create a stub for window.customCards
     customCardsStub = [];
@@ -23,6 +26,7 @@ describe('index.ts', () => {
   afterEach(() => {
     // Restore the original customElements.define
     customElementsStub.restore();
+    consoleInfoStub.restore();
     customCardsStub = undefined;
     delete require.cache[require.resolve('@/index.ts')];
   });
@@ -95,5 +99,18 @@ describe('index.ts', () => {
 
     expect(window.customCards).to.have.lengthOf(2);
     expect(customElementsStub.callCount).to.equal(4); // Called once for each component
+  });
+
+  it('should log the version with proper formatting', () => {
+    require('@/index.ts');
+    expect(consoleInfoStub.calledOnce).to.be.true;
+
+    // Assert that it was called with the expected arguments
+    expect(
+      consoleInfoStub.calledWithExactly(
+        `%c🐱 Poat's Tools: device-card - ${version}`,
+        'color: #CFC493;',
+      ),
+    ).to.be.true;
   });
 });
