@@ -87,7 +87,7 @@ export class DeviceCard extends LitElement {
     const device = Object.values(hass.devices)[0];
 
     return {
-      device_id: device?.id || '',
+      device_id: device?.id ?? '',
     };
   }
 
@@ -110,7 +110,7 @@ export class DeviceCard extends LitElement {
       <ha-card class="${problem ? 'problem' : ''}">
         <div class="card-header">
           <div class="title">
-            <span>${this._config.title || this._device.name}</span>
+            <span>${this._config.title ?? this._device.name}</span>
             ${hasFeature(this._config, 'hide_device_model')
               ? nothing
               : html`<span class="model">${this._device.model}</span>`}

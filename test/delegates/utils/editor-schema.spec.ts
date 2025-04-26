@@ -195,7 +195,7 @@ export default () => {
                 selector: {
                   select: {
                     multiple: true,
-                    mode: 'list' as 'list',
+                    mode: 'list' as const,
                     options: [
                       {
                         label: 'Controls',
@@ -224,7 +224,7 @@ export default () => {
                 selector: {
                   select: {
                     multiple: true,
-                    mode: 'list' as 'list',
+                    mode: 'list' as const,
                     options: [
                       {
                         label: 'Controls',
@@ -262,7 +262,7 @@ export default () => {
                 selector: {
                   select: {
                     multiple: true,
-                    mode: 'list' as 'list',
+                    mode: 'list' as const,
                     options: [
                       {
                         label: 'Use Entity Picture',
@@ -392,7 +392,7 @@ export default () => {
                 selector: {
                   select: {
                     multiple: true,
-                    mode: 'list' as 'list',
+                    mode: 'list' as const,
                     options: [
                       {
                         label: 'Controls',
@@ -421,7 +421,7 @@ export default () => {
                 selector: {
                   select: {
                     multiple: true,
-                    mode: 'list' as 'list',
+                    mode: 'list' as const,
                     options: [
                       {
                         label: 'Controls',
@@ -459,7 +459,7 @@ export default () => {
                 selector: {
                   select: {
                     multiple: true,
-                    mode: 'list' as 'list',
+                    mode: 'list' as const,
                     options: [
                       {
                         label: 'Use Entity Picture',

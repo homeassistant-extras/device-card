@@ -142,7 +142,7 @@ export class IntegrationCard extends LitElement {
       ? this._integration.devices.slice(0, 1)
       : this._integration.devices;
 
-    const title = this._config.title || this._integration.name;
+    const title = this._config.title ?? this._integration.name;
 
     // Get grid styles based on columns configuration
     const gridStyles = this._getGridStyles();

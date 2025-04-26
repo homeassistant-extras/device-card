@@ -97,7 +97,7 @@ const contentSchema = (integration?: string): HaFormSchema => {
         selector: {
           select: {
             multiple: true,
-            mode: 'list' as 'list',
+            mode: 'list' as const,
             options: [
               {
                 label: 'Controls',
@@ -126,7 +126,7 @@ const contentSchema = (integration?: string): HaFormSchema => {
         selector: {
           select: {
             multiple: true,
-            mode: 'list' as 'list',
+            mode: 'list' as const,
             options: [
               {
                 label: 'Controls',
@@ -178,7 +178,7 @@ const featuresSchema = (
         selector: {
           select: {
             multiple: true,
-            mode: 'list' as 'list',
+            mode: 'list' as const,
             options: [
               {
                 label: 'Use Entity Picture',
