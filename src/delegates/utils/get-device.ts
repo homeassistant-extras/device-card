@@ -2,14 +2,14 @@ import { getDevice as getHassDevice } from '@delegates/retrievers/device';
 import type { Config } from '@device/types';
 import { computeDomain } from '@hass/common/entity/compute_domain';
 import type { HomeAssistant } from '@hass/types';
-import type { Device } from '@type/config';
+import type { Device, EntityInformation } from '@type/config';
 import { getDeviceEntities } from './card-entities';
 
 /**
- * Get the device information
- * @param {HomeAssistant} hass - Home Assistant instance
- * @param {Config} config - Card configuration
- * @returns {Device | undefined} - device information
+ * Gets a device with all its entities sorted into appropriate categories
+ * @param hass - The Home Assistant instance
+ * @param config - The configuration object
+ * @returns The device object or undefined if the device is not found
  */
 export const getDevice = (
   hass: HomeAssistant,
@@ -42,37 +42,61 @@ export const getDevice = (
     hassDevice.id,
     hassDevice.name,
   );
+
   entities.forEach((entity) => {
-    if (config.exclude_entities?.includes(entity.entity_id)) {
+    if (shouldSkipEntity(entity, config)) {
       return;
     }
 
-    if (entity.category === 'diagnostic') {
-      if (config.exclude_sections?.includes('diagnostics')) {
-        return;
-      }
-      device.diagnostics.push(entity);
-    } else if (entity.category === 'config') {
-      if (config.exclude_sections?.includes('configurations')) {
-        return;
-      }
-      device.configurations.push(entity);
-    } else {
-      const domain = computeDomain(entity.entity_id);
-      if (['text', 'button', 'number', 'switch', 'select'].includes(domain)) {
-        if (config.exclude_sections?.includes('controls')) {
-          return;
-        }
-        device.controls.push(entity);
-      } else {
-        if (config.exclude_sections?.includes('sensors')) {
-          return;
-        }
-        // everything else is a sensor
-        device.sensors.push(entity);
-      }
-    }
+    addEntityToDevice(entity, device, config);
   });
 
   return device;
+};
+
+/**
+ * Determines if an entity should be skipped based on configuration
+ * @param entity - The entity to check
+ * @param config - The configuration object containing exclusion rules
+ * @returns True if the entity should be skipped, false otherwise
+ */
+const shouldSkipEntity = (
+  entity: EntityInformation,
+  config: Config,
+): boolean | undefined => {
+  return config.exclude_entities?.includes(entity.entity_id);
+};
+
+/**
+ * Adds an entity to the appropriate category in the device object
+ * based on entity type and configuration exclusion rules
+ * @param entity - The entity to categorize and add
+ * @param device - The device object to update
+ * @param config - The configuration object containing exclusion rules
+ */
+const addEntityToDevice = (
+  entity: EntityInformation,
+  device: Device,
+  config: Config,
+): void => {
+  if (entity.category === 'diagnostic') {
+    if (!config.exclude_sections?.includes('diagnostics')) {
+      device.diagnostics.push(entity);
+    }
+  } else if (entity.category === 'config') {
+    if (!config.exclude_sections?.includes('configurations')) {
+      device.configurations.push(entity);
+    }
+  } else {
+    const domain = computeDomain(entity.entity_id);
+    const isControl = ['text', 'button', 'number', 'switch', 'select'].includes(
+      domain,
+    );
+
+    if (isControl && !config.exclude_sections?.includes('controls')) {
+      device.controls.push(entity);
+    } else if (!isControl && !config.exclude_sections?.includes('sensors')) {
+      device.sensors.push(entity);
+    }
+  }
 };
