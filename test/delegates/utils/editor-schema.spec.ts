@@ -1,12 +1,17 @@
-import { getSchema } from '@delegates/utils/integration-schema';
+import * as cardEntitiesModule from '@delegates/utils/card-entities';
+import {
+  getDeviceSchema,
+  getIntegrationSchema,
+} from '@delegates/utils/editor-schema';
 import type { HomeAssistant } from '@hass/types';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 
 export default () => {
-  describe('integration-schema.ts', () => {
-    describe('getSchema', () => {
-      let mockHass: HomeAssistant;
+  describe('editor-schema.ts', () => {
+    let mockHass: HomeAssistant;
+
+    describe('getIntegrationSchema', () => {
       let callWSStub: sinon.SinonStub;
 
       beforeEach(() => {
@@ -53,19 +58,20 @@ export default () => {
         callWSStub.resolves(manifests);
 
         // Act
-        const schema = await getSchema(mockHass, 'zwave_js');
+        const schema = await getIntegrationSchema(mockHass, 'zwave_js');
 
         // Assert
-        const options = schema[0]!.selector!.select.options;
+        // @ts-ignore
+        const options = schema[0]!.selector.select.options;
         expect(options).to.have.lengthOf(5); // Should only include the valid ones
-        expect(options.map((o) => o.value)).to.include.members([
+        expect(options.map((o: any) => o.value)).to.include.members([
           'valid_device',
           'valid_hub',
           'valid_service',
           'valid_integration',
           'no_type',
         ]);
-        expect(options.map((o) => o.value)).to.not.include('invalid_type');
+        expect(options.map((o: any) => o.value)).to.not.include('invalid_type');
       });
 
       it('should sort integrations alphabetically by name', async () => {
@@ -90,9 +96,10 @@ export default () => {
         callWSStub.resolves(manifests);
 
         // Act
-        const schema = await getSchema(mockHass, 'zwave_js');
+        const schema = await getIntegrationSchema(mockHass, 'zwave_js');
 
         // Assert
+        // @ts-ignore
         const options = schema[0]!.selector!.select.options;
         expect(options[0]!.label).to.equal('A Integration');
         expect(options[1]!.label).to.equal('M Integration');
@@ -111,7 +118,7 @@ export default () => {
         const integrationName = 'test_integration';
 
         // Act
-        const schema = await getSchema(mockHass, integrationName);
+        const schema = await getIntegrationSchema(mockHass, integrationName);
 
         // Assert
         expect(schema).to.deep.equal([
@@ -258,13 +265,232 @@ export default () => {
                     mode: 'list' as 'list',
                     options: [
                       {
-                        label: 'Compact Layout',
-                        value: 'compact',
+                        label: 'Use Entity Picture',
+                        value: 'entity_picture',
                       },
                       {
                         label: 'Hide Device Model',
                         value: 'hide_device_model',
                       },
+                      {
+                        label: 'Compact Layout',
+                        value: 'compact',
+                      },
+                    ],
+                  },
+                },
+              },
+              {
+                name: 'exclude_entities',
+                label: 'Entities to exclude',
+                required: false,
+                selector: {
+                  entity: {
+                    multiple: true,
+                    filter: {
+                      integration: 'test_integration',
+                    },
+                    include_entities: undefined,
+                  },
+                },
+              },
+            ],
+          },
+          {
+            name: 'interactions',
+            label: 'Interactions',
+            type: 'expandable',
+            flatten: true,
+            icon: 'mdi:gesture-tap',
+            schema: [
+              {
+                name: 'tap_action',
+                label: 'Tap Action',
+                selector: {
+                  ui_action: {},
+                },
+              },
+              {
+                name: 'hold_action',
+                label: 'Hold Action',
+                selector: {
+                  ui_action: {},
+                },
+              },
+              {
+                name: 'double_tap_action',
+                label: 'Double Tap Action',
+                selector: {
+                  ui_action: {},
+                },
+              },
+            ],
+          },
+        ]);
+      });
+    });
+
+    describe('getDeviceSchema', () => {
+      let getDeviceEntitiesStub: sinon.SinonStub;
+
+      beforeEach(async () => {
+        // Stub the getDeviceEntities function
+        getDeviceEntitiesStub = stub(cardEntitiesModule, 'getDeviceEntities');
+        getDeviceEntitiesStub.returns([
+          { entity_id: 'light.test_light' },
+          { entity_id: 'sensor.test_sensor' },
+          { entity_id: 'switch.test_switch' },
+        ]);
+      });
+
+      it('should return expected schema', () => {
+        // Act
+        const schema = getDeviceSchema(mockHass, {
+          device_id: 'device_1',
+          title: 'My Device',
+        });
+
+        // Assert
+        expect(schema).to.deep.equal([
+          {
+            name: 'device_id',
+            selector: {
+              device: {},
+            },
+            required: true,
+            label: `Device`,
+          },
+          {
+            name: 'content',
+            label: 'Content',
+            type: 'expandable',
+            flatten: true,
+            icon: 'mdi:text-short',
+            schema: [
+              {
+                name: 'title',
+                required: false,
+                label: 'Card Title',
+                selector: {
+                  text: {},
+                },
+              },
+              {
+                name: 'preview_count',
+                required: false,
+                label: 'Preview Count',
+                selector: {
+                  text: {
+                    type: 'number' as 'number',
+                  },
+                },
+              },
+              {
+                name: 'exclude_sections',
+                label: 'Sections to exclude',
+                required: false,
+                selector: {
+                  select: {
+                    multiple: true,
+                    mode: 'list' as 'list',
+                    options: [
+                      {
+                        label: 'Controls',
+                        value: 'controls',
+                      },
+                      {
+                        label: 'Configuration',
+                        value: 'configurations',
+                      },
+                      {
+                        label: 'Sensors',
+                        value: 'sensors',
+                      },
+                      {
+                        label: 'Diagnostic',
+                        value: 'diagnostics',
+                      },
+                    ],
+                  },
+                },
+              },
+              {
+                name: 'section_order',
+                label: 'Section display order (click in order)',
+                required: false,
+                selector: {
+                  select: {
+                    multiple: true,
+                    mode: 'list' as 'list',
+                    options: [
+                      {
+                        label: 'Controls',
+                        value: 'controls',
+                      },
+                      {
+                        label: 'Configuration',
+                        value: 'configurations',
+                      },
+                      {
+                        label: 'Sensors',
+                        value: 'sensors',
+                      },
+                      {
+                        label: 'Diagnostic',
+                        value: 'diagnostics',
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          },
+          {
+            name: 'features',
+            label: 'Features',
+            type: 'expandable',
+            flatten: true,
+            icon: 'mdi:list-box',
+            schema: [
+              {
+                name: 'features',
+                label: 'Enable Features',
+                required: false,
+                selector: {
+                  select: {
+                    multiple: true,
+                    mode: 'list' as 'list',
+                    options: [
+                      {
+                        label: 'Use Entity Picture',
+                        value: 'entity_picture',
+                      },
+                      {
+                        label: 'Hide Device Model',
+                        value: 'hide_device_model',
+                      },
+                      {
+                        label: 'Compact Layout',
+                        value: 'compact',
+                      },
+                    ],
+                  },
+                },
+              },
+              {
+                name: 'exclude_entities',
+                label: 'Entities to exclude',
+                required: false,
+                selector: {
+                  entity: {
+                    multiple: true,
+                    filter: {
+                      integration: undefined,
+                    },
+                    include_entities: [
+                      'light.test_light',
+                      'sensor.test_sensor',
+                      'switch.test_switch',
                     ],
                   },
                 },

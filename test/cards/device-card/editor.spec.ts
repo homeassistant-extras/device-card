@@ -1,4 +1,4 @@
-import * as cardEntitiesModule from '@delegates/utils/card-entities';
+import * as editorSchemaModule from '@delegates/utils/editor-schema';
 import { DeviceCardEditor } from '@device/editor';
 import type { Config } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
@@ -12,9 +12,26 @@ export default () => {
     let card: DeviceCardEditor;
     let hass: HomeAssistant;
     let dispatchStub: sinon.SinonStub;
-    let getDeviceEntitiesStub: sinon.SinonStub;
+    let getDeviceSchemaStub: sinon.SinonStub;
+    let mockSchema: any[];
 
     beforeEach(async () => {
+      // Create mock schema
+      mockSchema = [
+        {
+          name: 'device_id',
+          selector: { device: {} },
+          required: true,
+          label: 'Device',
+        },
+        {
+          name: 'content',
+          label: 'Content',
+          type: 'expandable',
+          schema: [],
+        },
+      ];
+
       // Create mock HomeAssistant instance
       hass = {
         states: {},
@@ -22,23 +39,20 @@ export default () => {
         entities: {},
         devices: {},
       } as any as HomeAssistant;
+
       card = new DeviceCardEditor();
       dispatchStub = stub(card, 'dispatchEvent');
 
-      // Stub the getDeviceEntities function
-      getDeviceEntitiesStub = stub(cardEntitiesModule, 'getDeviceEntities');
-      getDeviceEntitiesStub.returns([
-        { entity_id: 'light.test_light' },
-        { entity_id: 'sensor.test_sensor' },
-        { entity_id: 'switch.test_switch' },
-      ]);
+      // Stub the getDeviceSchema function
+      getDeviceSchemaStub = stub(editorSchemaModule, 'getDeviceSchema');
+      getDeviceSchemaStub.returns(mockSchema);
 
       card.hass = hass;
     });
 
     afterEach(() => {
       dispatchStub.restore();
-      getDeviceEntitiesStub.restore();
+      getDeviceSchemaStub.restore();
     });
 
     describe('initialization', () => {
@@ -87,17 +101,16 @@ export default () => {
         expect(el.outerHTML).to.equal('<ha-form></ha-form>');
       });
 
-      it('should call getDeviceEntities with correct parameters', async () => {
+      it('should call getDeviceSchema with correct parameters', async () => {
         const testConfig: Config = {
           device_id: 'device_1',
         };
         card.setConfig(testConfig);
         card.render();
 
-        expect(getDeviceEntitiesStub.calledOnce).to.be.true;
-        expect(getDeviceEntitiesStub.firstCall.args[0]).to.equal(hass);
-        expect(getDeviceEntitiesStub.firstCall.args[1]).to.equal(testConfig);
-        expect(getDeviceEntitiesStub.firstCall.args[2]).to.equal('device_1');
+        expect(getDeviceSchemaStub.calledOnce).to.be.true;
+        expect(getDeviceSchemaStub.firstCall.args[0]).to.equal(hass);
+        expect(getDeviceSchemaStub.firstCall.args[1]).to.equal(testConfig);
       });
 
       it('should pass correct props to ha-form', async () => {
@@ -110,180 +123,7 @@ export default () => {
         const el = await fixture(card.render() as TemplateResult);
         expect((el as any).hass).to.deep.equal(hass);
         expect((el as any).data).to.deep.equal(testConfig);
-        expect((el as any).schema).to.deep.equal([
-          {
-            name: 'device_id',
-            selector: {
-              device: {},
-            },
-            required: true,
-            label: `Device`,
-          },
-          {
-            name: 'content',
-            label: 'Content',
-            type: 'expandable',
-            flatten: true,
-            icon: 'mdi:text-short',
-            schema: [
-              {
-                name: 'title',
-                required: false,
-                label: 'Card Title',
-                selector: {
-                  text: {},
-                },
-              },
-              {
-                name: 'preview_count',
-                required: false,
-                label: 'Preview Count',
-                selector: {
-                  text: {
-                    type: 'number' as 'number',
-                  },
-                },
-              },
-              {
-                name: 'exclude_sections',
-                label: 'Sections to exclude',
-                required: false,
-                selector: {
-                  select: {
-                    multiple: true,
-                    mode: 'list' as 'list',
-                    options: [
-                      {
-                        label: 'Controls',
-                        value: 'controls',
-                      },
-                      {
-                        label: 'Configuration',
-                        value: 'configurations',
-                      },
-                      {
-                        label: 'Sensors',
-                        value: 'sensors',
-                      },
-                      {
-                        label: 'Diagnostic',
-                        value: 'diagnostics',
-                      },
-                    ],
-                  },
-                },
-              },
-              {
-                name: 'section_order',
-                label: 'Section display order (click in order)',
-                required: false,
-                selector: {
-                  select: {
-                    multiple: true,
-                    mode: 'list' as 'list',
-                    options: [
-                      {
-                        label: 'Controls',
-                        value: 'controls',
-                      },
-                      {
-                        label: 'Configuration',
-                        value: 'configurations',
-                      },
-                      {
-                        label: 'Sensors',
-                        value: 'sensors',
-                      },
-                      {
-                        label: 'Diagnostic',
-                        value: 'diagnostics',
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-          },
-          {
-            name: 'features',
-            label: 'Features',
-            type: 'expandable',
-            flatten: true,
-            icon: 'mdi:list-box',
-            schema: [
-              {
-                name: 'features',
-                label: 'Enable Features',
-                required: false,
-                selector: {
-                  select: {
-                    multiple: true,
-                    mode: 'list' as 'list',
-                    options: [
-                      {
-                        label: 'Use Entity Picture',
-                        value: 'entity_picture',
-                      },
-                      {
-                        label: 'Hide Device Model',
-                        value: 'hide_device_model',
-                      },
-                      {
-                        label: 'Compact Layout',
-                        value: 'compact',
-                      },
-                    ],
-                  },
-                },
-              },
-              {
-                name: 'exclude_entities',
-                label: 'Entities to exclude',
-                required: false,
-                selector: {
-                  entity: {
-                    multiple: true,
-                    include_entities: [
-                      'light.test_light',
-                      'sensor.test_sensor',
-                      'switch.test_switch',
-                    ],
-                  },
-                },
-              },
-            ],
-          },
-          {
-            name: 'interactions',
-            label: 'Interactions',
-            type: 'expandable',
-            flatten: true,
-            icon: 'mdi:gesture-tap',
-            schema: [
-              {
-                name: 'tap_action',
-                label: 'Tap Action',
-                selector: {
-                  ui_action: {},
-                },
-              },
-              {
-                name: 'hold_action',
-                label: 'Hold Action',
-                selector: {
-                  ui_action: {},
-                },
-              },
-              {
-                name: 'double_tap_action',
-                label: 'Double Tap Action',
-                selector: {
-                  ui_action: {},
-                },
-              },
-            ],
-          },
-        ]);
+        expect((el as any).schema).to.deep.equal(mockSchema);
       });
     });
 

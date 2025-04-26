@@ -1,4 +1,4 @@
-import { getSchema } from '@delegates/utils/integration-schema';
+import { getIntegrationSchema } from '@delegates/utils/editor-schema';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
@@ -25,7 +25,8 @@ export class IntegrationCardEditor extends LitElement {
    * Uses the Home Assistant web sockets Promise
    */
   _getIntegrationsTask = new Task(this, {
-    task: async ([integration]) => await getSchema(this.hass, integration),
+    task: async ([integration]) =>
+      await getIntegrationSchema(this.hass, integration),
     args: () => [this._config?.integration],
   });
 

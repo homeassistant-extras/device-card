@@ -1,4 +1,4 @@
-import * as integrationSchemaModule from '@delegates/utils/integration-schema';
+import * as integrationSchemaModule from '@delegates/utils/editor-schema';
 import type { HomeAssistant } from '@hass/types';
 import { IntegrationCardEditor } from '@integration/editor';
 import type { Config } from '@integration/types';
@@ -12,7 +12,7 @@ export default () => {
     let card: IntegrationCardEditor;
     let hass: HomeAssistant;
     let dispatchStub: sinon.SinonStub;
-    let getSchemaStub: sinon.SinonStub;
+    let getIntegrationSchemaStub: sinon.SinonStub;
     let mockSchema: any[];
 
     beforeEach(async () => {
@@ -51,9 +51,12 @@ export default () => {
       // Stub the dispatch event method
       dispatchStub = stub(card, 'dispatchEvent');
 
-      // Stub the getSchema function
-      getSchemaStub = stub(integrationSchemaModule, 'getSchema');
-      getSchemaStub.resolves(mockSchema);
+      // Stub the getIntegrationSchema function
+      getIntegrationSchemaStub = stub(
+        integrationSchemaModule,
+        'getIntegrationSchema',
+      );
+      getIntegrationSchemaStub.resolves(mockSchema);
 
       // Set hass and config
       card.hass = hass;
@@ -62,7 +65,7 @@ export default () => {
 
     afterEach(() => {
       dispatchStub.restore();
-      getSchemaStub.restore();
+      getIntegrationSchemaStub.restore();
     });
 
     describe('initialization', () => {

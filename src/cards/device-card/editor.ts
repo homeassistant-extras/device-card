@@ -1,176 +1,10 @@
-import { getDeviceEntities } from '@delegates/utils/card-entities';
+import { getDeviceSchema } from '@delegates/utils/editor-schema';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
 import type { HomeAssistant } from '@hass/types';
 import { html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 import type { Config } from './types';
-
-const getSchema = (entityIds: string[]): HaFormSchema[] => [
-  {
-    name: 'device_id',
-    selector: {
-      device: {},
-    },
-    required: true,
-    label: `Device`,
-  },
-  {
-    name: 'content',
-    label: 'Content',
-    type: 'expandable',
-    flatten: true,
-    icon: 'mdi:text-short',
-    schema: [
-      {
-        name: 'title',
-        required: false,
-        label: 'Card Title',
-        selector: {
-          text: {},
-        },
-      },
-      {
-        name: 'preview_count',
-        required: false,
-        label: 'Preview Count',
-        selector: {
-          text: {
-            type: 'number' as 'number',
-          },
-        },
-      },
-      {
-        name: 'exclude_sections',
-        label: 'Sections to exclude',
-        required: false,
-        selector: {
-          select: {
-            multiple: true,
-            mode: 'list' as 'list',
-            options: [
-              {
-                label: 'Controls',
-                value: 'controls',
-              },
-              {
-                label: 'Configuration',
-                value: 'configurations',
-              },
-              {
-                label: 'Sensors',
-                value: 'sensors',
-              },
-              {
-                label: 'Diagnostic',
-                value: 'diagnostics',
-              },
-            ],
-          },
-        },
-      },
-      {
-        name: 'section_order',
-        label: 'Section display order (click in order)',
-        required: false,
-        selector: {
-          select: {
-            multiple: true,
-            mode: 'list' as 'list',
-            options: [
-              {
-                label: 'Controls',
-                value: 'controls',
-              },
-              {
-                label: 'Configuration',
-                value: 'configurations',
-              },
-              {
-                label: 'Sensors',
-                value: 'sensors',
-              },
-              {
-                label: 'Diagnostic',
-                value: 'diagnostics',
-              },
-            ],
-          },
-        },
-      },
-    ],
-  },
-  {
-    name: 'features',
-    label: 'Features',
-    type: 'expandable',
-    flatten: true,
-    icon: 'mdi:list-box',
-    schema: [
-      {
-        name: 'features',
-        label: 'Enable Features',
-        required: false,
-        selector: {
-          select: {
-            multiple: true,
-            mode: 'list' as 'list',
-            options: [
-              {
-                label: 'Use Entity Picture',
-                value: 'entity_picture',
-              },
-              {
-                label: 'Hide Device Model',
-                value: 'hide_device_model',
-              },
-              {
-                label: 'Compact Layout',
-                value: 'compact',
-              },
-            ],
-          },
-        },
-      },
-      {
-        name: 'exclude_entities',
-        label: 'Entities to exclude',
-        required: false,
-        selector: { entity: { multiple: true, include_entities: entityIds } },
-      },
-    ],
-  },
-  {
-    name: 'interactions',
-    label: 'Interactions',
-    type: 'expandable',
-    flatten: true,
-    icon: 'mdi:gesture-tap',
-    schema: [
-      {
-        name: 'tap_action',
-        label: 'Tap Action',
-        selector: {
-          ui_action: {},
-        },
-      },
-      {
-        name: 'hold_action',
-        label: 'Hold Action',
-        selector: {
-          ui_action: {},
-        },
-      },
-      {
-        name: 'double_tap_action',
-        label: 'Double Tap Action',
-        selector: {
-          ui_action: {},
-        },
-      },
-    ],
-  },
-];
 
 export class DeviceCardEditor extends LitElement {
   /**
@@ -194,17 +28,11 @@ export class DeviceCardEditor extends LitElement {
       return nothing;
     }
 
-    const entities = getDeviceEntities(
-      this.hass,
-      this._config,
-      this._config.device_id,
-    ).map((e) => e.entity_id);
-
     return html`
       <ha-form
         .hass=${this.hass}
         .data=${this._config}
-        .schema=${getSchema(entities)}
+        .schema=${getDeviceSchema(this.hass, this._config)}
         .computeLabel=${(s: HaFormSchema) => s.label}
         @value-changed=${this._valueChanged}
       ></ha-form>
