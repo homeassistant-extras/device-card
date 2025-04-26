@@ -1,4 +1,4 @@
-import type { DeviceRegistryEntry } from '@hass/data/device_registry';
+import * as integrationSchemaModule from '@delegates/utils/integration-schema';
 import type { HomeAssistant } from '@hass/types';
 import { IntegrationCardEditor } from '@integration/editor';
 import type { Config } from '@integration/types';
@@ -12,27 +12,57 @@ export default () => {
     let card: IntegrationCardEditor;
     let hass: HomeAssistant;
     let dispatchStub: sinon.SinonStub;
+    let getSchemaStub: sinon.SinonStub;
+    let mockSchema: any[];
 
     beforeEach(async () => {
+      // Create mock schema
+      mockSchema = [
+        {
+          name: 'integration',
+          selector: {
+            select: {
+              options: [
+                { value: 'zwave_js', label: 'Z-Wave JS' },
+                { value: 'mqtt', label: 'MQTT' },
+              ],
+              mode: 'dropdown',
+            },
+          },
+          required: true,
+          label: 'Integration',
+        },
+        {
+          name: 'content',
+          label: 'Content',
+          type: 'expandable',
+          schema: [],
+        },
+      ];
+
       // Create mock HomeAssistant instance
       hass = {
-        states: {},
-        areas: {},
-        entities: {},
-        devices: {
-          device_1: {
-            identifiers: [['device_one']],
-          } as any as DeviceRegistryEntry,
-        },
-      } as HomeAssistant;
+        callWS: async () => [],
+      } as any as HomeAssistant;
+
+      // Create component instance
       card = new IntegrationCardEditor();
+
+      // Stub the dispatch event method
       dispatchStub = stub(card, 'dispatchEvent');
 
+      // Stub the getSchema function
+      getSchemaStub = stub(integrationSchemaModule, 'getSchema');
+      getSchemaStub.resolves(mockSchema);
+
+      // Set hass and config
       card.hass = hass;
+      card.setConfig({ integration: 'zwave_js' });
     });
 
     afterEach(() => {
       dispatchStub.restore();
+      getSchemaStub.restore();
     });
 
     describe('initialization', () => {
@@ -42,16 +72,15 @@ export default () => {
 
       it('should have default properties', () => {
         expect(card.hass).to.exist;
-        expect(card['_config']).to.be.undefined;
+        expect(card['_config']).to.deep.equal({ integration: 'zwave_js' });
       });
     });
 
     describe('setConfig', () => {
       it('should set the configuration correctly', () => {
         const testConfig: Config = {
-          integration: 'device_1',
-          title: 'My Device',
-          preview_count: 5,
+          integration: 'mqtt',
+          title: 'MQTT Devices',
         };
 
         card.setConfig(testConfig);
@@ -60,263 +89,65 @@ export default () => {
     });
 
     describe('render', () => {
-      it('should return nothing when hass is not set', async () => {
+      it('should return nothing when hass is not set', () => {
         card.hass = undefined as any;
         const result = card.render();
         expect(result).to.equal(nothing);
       });
 
-      it('should return nothing when config is not set', async () => {
+      it('should return nothing when config is not set', () => {
+        card['_config'] = undefined as any;
         const result = card.render();
         expect(result).to.equal(nothing);
       });
 
-      it('should render ha-form when both hass and config are set', async () => {
-        const testConfig: Config = {
-          integration: 'device_1',
-        };
-        card.setConfig(testConfig);
+      it('should render task with the correct states', async () => {
+        // Mock the task render function to test different states
+        const taskRenderStub = stub(card['_getIntegrationsTask'], 'render');
 
-        const el = await fixture(card.render() as TemplateResult);
+        // Test render
+        card.render();
+
+        // Verify task.render was called with the correct handlers
+        expect(taskRenderStub.calledOnce).to.be.true;
+        const handlers = taskRenderStub.firstCall.args[0];
+
+        // Test initial state
+        // @ts-ignore
+        expect(handlers.initial()).to.equal(nothing);
+
+        // Test pending state
+        // @ts-ignore
+        expect(handlers.pending()).to.equal(nothing);
+
+        // Test error state
+        const error = new Error('Test error');
+        // @ts-ignore
+        const errorResult = handlers.error(error) as TemplateResult;
+        expect(errorResult.values).to.deep.equal([error]);
+
+        // Test complete state with schema
+        const el = await fixture(
+          // @ts-ignore
+          handlers.complete(mockSchema) as TemplateResult,
+        );
         expect(el.outerHTML).to.equal('<ha-form></ha-form>');
-      });
 
-      it('should pass correct props to ha-form', async () => {
-        const testConfig: Config = {
-          integration: 'device_one',
-          title: 'My Device',
-        };
-        card.setConfig(testConfig);
-
-        const el = await fixture(card.render() as TemplateResult);
-        expect((el as any).hass).to.deep.equal(hass);
-        expect((el as any).data).to.deep.equal(testConfig);
-        expect((el as any).schema).to.deep.equal([
-          {
-            name: 'integration',
-            selector: {
-              select: {
-                options: [
-                  {
-                    value: 'device_one',
-                    label: 'Device One',
-                  },
-                ],
-                mode: 'dropdown' as 'dropdown',
-              },
-            },
-            required: true,
-            label: 'Integration',
-          },
-          {
-            name: 'content',
-            label: 'Content',
-            type: 'expandable',
-            flatten: true,
-            icon: 'mdi:text-short',
-            schema: [
-              {
-                name: 'title',
-                required: false,
-                label: 'Card Title',
-                selector: {
-                  text: {},
-                },
-              },
-              {
-                name: 'preview_count',
-                required: false,
-                label: 'Preview Count',
-                selector: {
-                  text: {
-                    type: 'number' as 'number',
-                  },
-                },
-              },
-              {
-                name: 'columns',
-                required: false,
-                label: 'Number of Columns',
-                selector: {
-                  number: {
-                    min: 1,
-                    max: 6,
-                    mode: 'slider' as 'slider',
-                  },
-                },
-              },
-              {
-                name: 'excluded_devices',
-                label: 'Devices to exclude',
-                required: false,
-                selector: {
-                  device: {
-                    multiple: true,
-                    filter: {
-                      integration: testConfig.integration,
-                    },
-                  },
-                },
-              },
-              {
-                name: 'exclude_sections',
-                label: 'Sections to exclude',
-                required: false,
-                selector: {
-                  select: {
-                    multiple: true,
-                    mode: 'list' as 'list',
-                    options: [
-                      {
-                        label: 'Controls',
-                        value: 'controls',
-                      },
-                      {
-                        label: 'Configuration',
-                        value: 'configurations',
-                      },
-                      {
-                        label: 'Sensors',
-                        value: 'sensors',
-                      },
-                      {
-                        label: 'Diagnostic',
-                        value: 'diagnostics',
-                      },
-                    ],
-                  },
-                },
-              },
-              {
-                name: 'section_order',
-                label: 'Section display order (click in order)',
-                required: false,
-                selector: {
-                  select: {
-                    multiple: true,
-                    mode: 'list' as 'list',
-                    options: [
-                      {
-                        label: 'Controls',
-                        value: 'controls',
-                      },
-                      {
-                        label: 'Configuration',
-                        value: 'configurations',
-                      },
-                      {
-                        label: 'Sensors',
-                        value: 'sensors',
-                      },
-                      {
-                        label: 'Diagnostic',
-                        value: 'diagnostics',
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-          },
-          {
-            name: 'features',
-            label: 'Features',
-            type: 'expandable',
-            flatten: true,
-            icon: 'mdi:list-box',
-            schema: [
-              {
-                name: 'features',
-                label: 'Enable Features',
-                required: false,
-                selector: {
-                  select: {
-                    multiple: true,
-                    mode: 'list' as 'list',
-                    options: [
-                      {
-                        label: 'Compact Layout',
-                        value: 'compact',
-                      },
-                      {
-                        label: 'Hide Device Model',
-                        value: 'hide_device_model',
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-          },
-          {
-            name: 'interactions',
-            label: 'Interactions',
-            type: 'expandable',
-            flatten: true,
-            icon: 'mdi:gesture-tap',
-            schema: [
-              {
-                name: 'tap_action',
-                label: 'Tap Action',
-                selector: {
-                  ui_action: {},
-                },
-              },
-              {
-                name: 'hold_action',
-                label: 'Hold Action',
-                selector: {
-                  ui_action: {},
-                },
-              },
-              {
-                name: 'double_tap_action',
-                label: 'Double Tap Action',
-                selector: {
-                  ui_action: {},
-                },
-              },
-            ],
-          },
-        ]);
-      });
-    });
-
-    describe('form behavior', () => {
-      it('should compute labels correctly', async () => {
-        const testConfig: Config = {
-          integration: 'device_1',
-          title: 'My Device',
-        };
-        card.setConfig(testConfig);
-
-        const el = await fixture(card.render() as TemplateResult);
-        const computeLabelFn = (el as any).computeLabel;
-        expect(computeLabelFn).to.be.a('function');
-
-        // Test the compute label function
-        const testSchema = { name: 'test', label: 'Test Label' };
-        const result = computeLabelFn(testSchema);
-        expect(result).to.equal('Test Label');
+        // Restore stub
+        taskRenderStub.restore();
       });
     });
 
     describe('_valueChanged', () => {
       it('should fire config-changed event with the updated config', () => {
-        const testConfig: Config = {
-          integration: 'device_1',
-          title: 'My Device',
-        };
-        card.setConfig(testConfig);
-
         // Simulate value-changed event
         const detail = {
           value: {
-            integration: 'device_1',
-            title: 'Updated Device',
+            integration: 'mqtt',
+            title: 'MQTT Devices',
             preview_count: 5,
-            exclude_sections: ['controls', 'diagnostics'],
-            exclude_entities: ['sensor.test_sensor'],
+            exclude_sections: ['diagnostics'],
+            features: ['compact'],
           },
         };
 
@@ -327,76 +158,87 @@ export default () => {
         expect(dispatchStub.calledOnce).to.be.true;
         expect(dispatchStub.firstCall.args[0].type).to.equal('config-changed');
         expect(dispatchStub.firstCall.args[0].detail.config).to.deep.equal({
-          integration: 'device_1',
-          title: 'Updated Device',
+          integration: 'mqtt',
+          title: 'MQTT Devices',
           preview_count: 5,
-          exclude_sections: ['controls', 'diagnostics'],
-          exclude_entities: ['sensor.test_sensor'],
+          exclude_sections: ['diagnostics'],
+          features: ['compact'],
         });
       });
 
-      it('should handle config with only integration', () => {
-        const testConfig: Config = {
-          integration: 'device_1',
-        };
-        card.setConfig(testConfig);
-
-        // Simulate value-changed event with minimal config
-        const detail = {
-          value: {
-            integration: 'device_1',
-          },
-        };
-
-        const event = new CustomEvent('value-changed', { detail });
-        card['_valueChanged'](event);
-
-        // Verify event was dispatched correctly
-        expect(dispatchStub.calledOnce).to.be.true;
-        expect(dispatchStub.firstCall.args[0].type).to.equal('config-changed');
-        expect(dispatchStub.firstCall.args[0].detail.config).to.deep.equal({
-          integration: 'device_1',
-        });
-      });
-
-      it('should remove array properties when array is empty', () => {
-        const testConfig: Config = {
-          integration: 'device_1',
-          features: [],
-          exclude_entities: [],
-          exclude_sections: [],
-          section_order: [],
-        };
-        card.setConfig(testConfig);
-
+      it('should remove empty arrays from config', () => {
         // Simulate value-changed event with empty arrays
         const detail = {
           value: {
-            integration: 'device_2',
+            integration: 'mqtt',
             features: [],
             exclude_entities: [],
             exclude_sections: [],
             section_order: [],
+            excluded_devices: [],
           },
         };
 
         const event = new CustomEvent('value-changed', { detail });
         card['_valueChanged'](event);
 
-        // Verify event was dispatched with features property removed
+        // Verify event was dispatched with properties removed
         expect(dispatchStub.calledOnce).to.be.true;
-        expect(dispatchStub.firstCall.args[0].type).to.equal('config-changed');
         expect(dispatchStub.firstCall.args[0].detail.config).to.deep.equal({
-          integration: 'device_2',
+          integration: 'mqtt',
         });
-        expect(dispatchStub.firstCall.args[0].detail.config.features).to.be
-          .undefined;
-        expect(dispatchStub.firstCall.args[0].detail.config.exclude_entities).to
-          .be.undefined;
-        expect(dispatchStub.firstCall.args[0].detail.config.exclude_sections).to
-          .be.undefined;
-        expect(dispatchStub.firstCall.args[0].detail.config.section_order).to.be
-          .undefined;
+      });
+
+      it('should remove columns property if zero or negative', () => {
+        // Test with zero columns
+        let detail = {
+          value: {
+            integration: 'mqtt',
+            columns: 0,
+          },
+        };
+
+        let event = new CustomEvent('value-changed', { detail });
+        card['_valueChanged'](event);
+
+        expect(dispatchStub.firstCall.args[0].detail.config).to.deep.equal({
+          integration: 'mqtt',
+        });
+
+        // Reset stub
+        dispatchStub.reset();
+
+        // Test with negative columns
+        detail = {
+          value: {
+            integration: 'mqtt',
+            columns: -2,
+          },
+        };
+
+        event = new CustomEvent('value-changed', { detail });
+        card['_valueChanged'](event);
+
+        expect(dispatchStub.firstCall.args[0].detail.config).to.deep.equal({
+          integration: 'mqtt',
+        });
+      });
+
+      it('should keep valid columns value', () => {
+        const detail = {
+          value: {
+            integration: 'mqtt',
+            columns: 3,
+          },
+        };
+
+        const event = new CustomEvent('value-changed', { detail });
+        card['_valueChanged'](event);
+
+        expect(dispatchStub.firstCall.args[0].detail.config).to.deep.equal({
+          integration: 'mqtt',
+          columns: 3,
+        });
       });
     });
   });

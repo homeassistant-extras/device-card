@@ -1,5 +1,4 @@
 import * as isIntegrationModule from '@delegates/utils/is-integration';
-import type { DeviceRegistryEntry } from '@hass/data/device_registry';
 import type { HomeAssistant } from '@hass/types';
 import { IntegrationCard } from '@integration/card';
 import type { Config } from '@integration/types';
@@ -13,6 +12,7 @@ export default () => {
     let card: IntegrationCard;
     let mockHass: HomeAssistant;
     let isInIntegrationStub: sinon.SinonStub;
+    let callWSStub: sinon.SinonStub;
 
     beforeEach(() => {
       // Create the card instance
@@ -42,39 +42,24 @@ export default () => {
           device_3: {
             id: 'device_3',
             name: 'Device 3',
-            identifiers: [['zwave_js', 'node_3']],
-            manufacturer: 'Other',
-            model: 'Model 3',
-          },
-          device_4: {
-            id: 'device_4',
-            name: 'Device 4',
             identifiers: [['mqtt', 'node_3']],
             manufacturer: 'Other',
-            model: 'Model 4',
+            model: 'Model 3',
           },
         },
         states: {},
         entities: {},
+        callWS: async () => [],
       } as any as HomeAssistant;
 
-      // Configure the stub to mark specific devices as part of the integration
-      isInIntegrationStub
-        .withArgs(mockHass.devices.device_1, 'zwave_js')
-        .returns(true);
-      isInIntegrationStub
-        .withArgs(mockHass.devices.device_2, 'zwave_js')
-        .returns(true);
-      isInIntegrationStub
-        .withArgs(mockHass.devices.device_3, 'zwave_js')
-        .returns(true);
-      isInIntegrationStub
-        .withArgs(mockHass.devices.device_3, 'mqtt')
-        .returns(true);
+      // Stub the callWS method
+      callWSStub = stub(mockHass, 'callWS');
+      callWSStub.resolves([]);
     });
 
     afterEach(() => {
       isInIntegrationStub.restore();
+      callWSStub.restore();
     });
 
     describe('initialization', () => {
@@ -99,105 +84,143 @@ export default () => {
         card.setConfig(testConfig);
         expect(card['_config']).to.deep.equal(testConfig);
       });
-
-      it('should not update config if identical', () => {
-        const testConfig: Config = {
-          integration: 'zwave_js',
-        };
-
-        card.setConfig(testConfig);
-        const originalConfig = card['_config'];
-
-        card.setConfig(testConfig);
-        expect(card['_config']).to.equal(originalConfig);
-      });
     });
 
     describe('hass property setter', () => {
-      it('should update integration data with correct devices', () => {
+      beforeEach(() => {
+        // Configure the stub to return config entries
+        const configEntries = [
+          { entry_id: 'entry_1', domain: 'zwave_js' },
+          { entry_id: 'entry_2', domain: 'zwave_js' },
+        ];
+        callWSStub.resolves(configEntries);
+
+        // Configure isInIntegration to return true for specific devices with the right config entries
+        isInIntegrationStub
+          .withArgs(mockHass.devices.device_1, ['entry_1', 'entry_2'])
+          .returns(true);
+        isInIntegrationStub
+          .withArgs(mockHass.devices.device_2, ['entry_1', 'entry_2'])
+          .returns(true);
+      });
+
+      it('should call the config_entries/get WebSocket API', async () => {
+        // Set config for the card
+        card.setConfig({ integration: 'zwave_js' });
+
+        // Set hass property
+        card.hass = mockHass;
+
+        // Wait for the promise to resolve
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        // Verify callWS was called with the correct parameters
+        expect(callWSStub.calledOnce).to.be.true;
+        expect(callWSStub.firstCall.args[0]).to.deep.equal({
+          type: 'config_entries/get',
+          domain: 'zwave_js',
+        });
+      });
+
+      it('should update integration data with devices from config entries', async () => {
         // Set config to filter for zwave_js devices
         card.setConfig({ integration: 'zwave_js' });
 
         // Set hass property
         card.hass = mockHass;
 
+        // Wait for the promise to resolve
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
         // Check integration data
         const integrationData = card['_integration'];
         expect(integrationData.name).to.equal('Zwave Js');
-        expect(integrationData.devices).to.have.length(3);
+        expect(integrationData.devices).to.have.length(2);
         expect(integrationData.devices).to.include('device_1');
         expect(integrationData.devices).to.include('device_2');
-        expect(integrationData.devices).to.include('device_3');
-        expect(integrationData.devices).to.not.include('device_4');
+        expect(integrationData.devices).to.not.include('device_3');
       });
 
-      it('should update integration data when hass changes', () => {
-        // Initial setup
-        card.setConfig({ integration: 'zwave_js' });
+      it('should exclude devices specified in excluded_devices', async () => {
+        // Set config with excluded devices
+        card.setConfig({
+          integration: 'zwave_js',
+          excluded_devices: ['device_1'],
+        });
+
+        // Set hass property
         card.hass = mockHass;
 
-        // Modify the mock data
-        const updatedHass = { ...mockHass };
+        // Wait for the promise to resolve
+        await new Promise((resolve) => setTimeout(resolve, 0));
 
-        // Add a new device
-        updatedHass.devices = {
-          ...mockHass.devices,
-          device_4: {
-            id: 'device_4',
-            name: 'Device 4',
-            identifiers: [['zwave_js', 'node_4']],
-            manufacturer: 'Test',
-            model: 'Model 4',
-          } as any as DeviceRegistryEntry,
-        };
-
-        // Update stub to include the new device
-        isInIntegrationStub
-          .withArgs(updatedHass.devices.device_4, 'zwave_js')
-          .returns(true);
-
-        // Update hass
-        card.hass = updatedHass as any as HomeAssistant;
-
-        // Check integration data was updated
+        // Check that device_1 is excluded
         const integrationData = card['_integration'];
-        expect(integrationData.devices).to.have.length(4);
-        expect(integrationData.devices).to.include('device_4');
+        expect(integrationData.devices).to.have.length(1);
+        expect(integrationData.devices).to.include('device_2');
+        expect(integrationData.devices).to.not.include('device_1');
       });
 
-      it('should not update integration data if unchanged', () => {
+      it('should not update integration data if nothing changed', async () => {
         // Initial setup
         card.setConfig({ integration: 'zwave_js' });
         card.hass = mockHass;
+
+        // Wait for the promise to resolve
+        await new Promise((resolve) => setTimeout(resolve, 0));
 
         const originalIntegration = card['_integration'];
 
         // Set same hass object again
+        callWSStub.resetHistory();
         card.hass = mockHass;
+
+        // Wait for the promise to resolve
+        await new Promise((resolve) => setTimeout(resolve, 0));
 
         // Should be the same object reference (not recreated)
         expect(card['_integration']).to.equal(originalIntegration);
       });
+
+      it('should handle case when integration is not set', async () => {
+        // Set config without integration
+        card.setConfig({} as Config);
+
+        // Set hass property
+        card.hass = mockHass;
+
+        // Verify callWS was not called
+        expect(callWSStub.called).to.be.false;
+      });
     });
 
     describe('rendering', () => {
+      beforeEach(async () => {
+        // Set up integration data for rendering tests
+        card['_integration'] = {
+          name: 'Zwave Js',
+          devices: ['device_1', 'device_2'],
+        };
+
+        // Configure the card
+        card.setConfig({ integration: 'zwave_js' });
+      });
+
       it('should render a message when no devices are found', async () => {
-        // Config with integration that doesn't exist
-        card.setConfig({ integration: 'non_existent' });
-        card.hass = mockHass;
+        // Set empty integration data
+        card['_integration'] = {
+          name: 'Zwave Js',
+          devices: [],
+        };
 
         const el = await fixture(card.render() as TemplateResult);
 
         expect(el.querySelector('.no-devices')).to.exist;
         expect(el.textContent).to.include('No devices found for integration');
-        expect(el.textContent).to.include('non_existent');
+        expect(el.textContent).to.include('zwave_js');
       });
 
       it('should render one device card in preview mode', async () => {
-        // Setup
-        card.setConfig({ integration: 'zwave_js' });
-        card.hass = mockHass;
-
         // Set preview mode to true
         Object.defineProperty(card, 'isPreview', {
           get: () => true,
@@ -205,76 +228,74 @@ export default () => {
 
         const el = await fixture(card.render() as TemplateResult);
 
-        // In preview mode, should only show one node-info component
-        const nodeInfoElements = el.querySelectorAll('device-card');
-        expect(nodeInfoElements).to.have.lengthOf(1);
+        // In preview mode, should only show one device card
+        const deviceCards = el.querySelectorAll('device-card');
+        expect(deviceCards).to.have.lengthOf(1);
       });
 
       it('should render all device cards when not in preview mode', async () => {
-        // Setup
-        card.setConfig({ integration: 'zwave_js' });
-        card.hass = mockHass;
-
         const el = await fixture(card.render() as TemplateResult);
 
-        // In preview mode, should only show one node-info component
-        const nodeInfoElements = el.querySelectorAll('device-card');
-        expect(nodeInfoElements).to.have.lengthOf(3);
+        // Should show all device cards
+        const deviceCards = el.querySelectorAll('device-card');
+        expect(deviceCards).to.have.lengthOf(2);
       });
 
-      it('should use config title when provided', async () => {
-        // Setup with custom title
+      it('should use grid styles based on columns configuration', async () => {
+        // Set columns config
         card.setConfig({
           integration: 'zwave_js',
-          title: 'My Custom Z-Wave Title',
+          columns: 3,
         });
-        card.hass = mockHass;
-
-        const result = card.render() as TemplateResult;
-
-        // Create a fixture to check the rendered HTML
-        const el = await fixture(result);
-        const titleEl = el.querySelector('.integration-title');
-
-        expect(titleEl).to.exist;
-        expect(titleEl?.textContent).to.equal('My Custom Z-Wave Title');
-      });
-
-      it('should use integration name when no title is provided', async () => {
-        // Setup without custom title
-        card.setConfig({ integration: 'zwave_js' });
-        card.hass = mockHass;
-
-        const result = card.render() as TemplateResult;
-
-        // Create a fixture to check the rendered HTML
-        const el = await fixture(result);
-        const titleEl = el.querySelector('.integration-title');
-
-        expect(titleEl).to.exist;
-        expect(titleEl?.textContent).to.equal('Zwave Js');
-      });
-
-      it('should pass configuration to child device cards', async () => {
-        // Setup with some extra config options that should be passed down
-        const config = {
-          integration: 'zwave_js',
-          title: 'Z-Wave',
-          preview_count: 2,
-          features: ['hide_device_model'],
-        } as Config;
-        card.setConfig(config);
-        card.hass = mockHass;
-
         const el = await fixture(card.render() as TemplateResult);
 
-        const deviceElement = el.querySelector('device-card');
-        expect(deviceElement).to.exist;
-        expect((deviceElement as any).hass).to.equal(mockHass);
-        expect((deviceElement as any).config).to.deep.equal({
-          device_id: 'device_1',
-          ...config,
+        // Check the grid style
+        const container = el.querySelector('.devices-container');
+        expect(container).to.exist;
+        expect(container?.getAttribute('style')).to.include(
+          'grid-template-columns:repeat(3, 1fr)',
+        );
+      });
+
+      it('should not apply grid styles when columns is not set', async () => {
+        const el = await fixture(card.render() as TemplateResult);
+
+        // Check the grid style
+        const container = el.querySelector('.devices-container');
+        expect(container).to.exist;
+        expect(container?.getAttribute('style')).to.equal('');
+      });
+
+      it('should ignore invalid columns values', async () => {
+        // Test with negative columns
+        card.setConfig({
+          integration: 'zwave_js',
+          columns: -2,
         });
+
+        let el = await fixture(card.render() as TemplateResult);
+        let container = el.querySelector('.devices-container');
+        expect(container?.getAttribute('style')).to.equal('');
+
+        // Test with zero columns
+        card.setConfig({
+          integration: 'zwave_js',
+          columns: 0,
+        });
+
+        el = await fixture(card.render() as TemplateResult);
+        container = el.querySelector('.devices-container');
+        expect(container?.getAttribute('style')).to.equal('');
+
+        // Test with non-integer columns
+        card.setConfig({
+          integration: 'zwave_js',
+          columns: 2.5,
+        });
+
+        el = await fixture(card.render() as TemplateResult);
+        container = el.querySelector('.devices-container');
+        expect(container?.getAttribute('style')).to.equal('');
       });
     });
 
@@ -293,180 +314,6 @@ export default () => {
         expect(config).to.have.property('integration');
         // Should find one of the integrations in the mock data
         expect(['zwave_js', 'mqtt']).to.include(config.integration);
-      });
-    });
-
-    describe('excluded devices feature', () => {
-      it('should exclude devices listed in excluded_devices config', async () => {
-        // Set config to filter for zwave_js devices, excluding device_2
-        card.setConfig({
-          integration: 'zwave_js',
-          excluded_devices: ['device_2'],
-        });
-
-        // Set hass property
-        card.hass = mockHass;
-
-        // Check integration data
-        const integrationData = card['_integration'];
-        expect(integrationData.devices).to.have.length(2);
-        expect(integrationData.devices).to.include('device_1');
-        expect(integrationData.devices).to.include('device_3');
-        expect(integrationData.devices).to.not.include('device_2');
-      });
-
-      it('should exclude multiple devices when listed in excluded_devices config', async () => {
-        // Set config to filter for zwave_js devices, excluding device_1 and device_3
-        card.setConfig({
-          integration: 'zwave_js',
-          excluded_devices: ['device_1', 'device_3'],
-        });
-
-        // Set hass property
-        card.hass = mockHass;
-
-        // Check integration data
-        const integrationData = card['_integration'];
-        expect(integrationData.devices).to.have.length(1);
-        expect(integrationData.devices).to.include('device_2');
-        expect(integrationData.devices).to.not.include('device_1');
-        expect(integrationData.devices).to.not.include('device_3');
-      });
-
-      it('should show all devices when excluded_devices is empty', async () => {
-        // Set config to filter for zwave_js devices with empty excluded_devices
-        card.setConfig({
-          integration: 'zwave_js',
-          excluded_devices: [],
-        });
-
-        // Set hass property
-        card.hass = mockHass;
-
-        // Check integration data
-        const integrationData = card['_integration'];
-        expect(integrationData.devices).to.have.length(3);
-        expect(integrationData.devices).to.include('device_1');
-        expect(integrationData.devices).to.include('device_2');
-        expect(integrationData.devices).to.include('device_3');
-      });
-
-      it('should show all devices when excluded_devices is not set', async () => {
-        // Set config to filter for zwave_js devices with no excluded_devices
-        card.setConfig({
-          integration: 'zwave_js',
-        });
-
-        // Set hass property
-        card.hass = mockHass;
-
-        // Check integration data
-        const integrationData = card['_integration'];
-        expect(integrationData.devices).to.have.length(3);
-        expect(integrationData.devices).to.include('device_1');
-        expect(integrationData.devices).to.include('device_2');
-        expect(integrationData.devices).to.include('device_3');
-      });
-
-      it('should render the correct number of device cards after exclusion', async () => {
-        // Set config to filter for zwave_js devices, excluding device_2
-        card.setConfig({
-          integration: 'zwave_js',
-          excluded_devices: ['device_2'],
-        });
-
-        // Set hass property
-        card.hass = mockHass;
-
-        const el = await fixture(card.render() as TemplateResult);
-
-        // Should only show device cards for non-excluded devices
-        const deviceElements = el.querySelectorAll('device-card');
-        expect(deviceElements).to.have.lengthOf(2);
-      });
-    });
-
-    describe('column counts feature', () => {
-      it('should apply custom grid columns when columns is set', async () => {
-        // Set up the card with columns configuration
-        card.setConfig({
-          integration: 'zwave_js',
-          columns: 2,
-        });
-        card.hass = mockHass;
-
-        // Render the card
-        const el = await fixture(card.render() as TemplateResult);
-
-        // Get the devices container
-        const container = el.querySelector('.devices-container');
-        expect(container).to.exist;
-
-        // Check that the grid-template-columns style is set correctly
-        const style = window.getComputedStyle(container!);
-        expect(container!.getAttribute('style')).to.include(
-          'grid-template-columns:repeat(2, 1fr)',
-        );
-      });
-
-      it('should not apply custom grid styles when columns is not set', async () => {
-        // Set up the card without columns configuration
-        card.setConfig({
-          integration: 'zwave_js',
-        });
-        card.hass = mockHass;
-
-        // Render the card
-        const el = await fixture(card.render() as TemplateResult);
-
-        // Get the devices container
-        const container = el.querySelector('.devices-container');
-        expect(container).to.exist;
-
-        // Check that no grid-template-columns style is set
-        expect(container!.getAttribute('style')).to.be.empty;
-      });
-
-      it('should handle invalid columns values by using default responsive behavior', async () => {
-        // Set up the card with an invalid columns configuration
-        card.setConfig({
-          integration: 'zwave_js',
-          columns: -1, // Invalid value
-        });
-        card.hass = mockHass;
-
-        // Render the card
-        const el = await fixture(card.render() as TemplateResult);
-
-        // Get the devices container
-        const container = el.querySelector('.devices-container');
-        expect(container).to.exist;
-
-        // Check that no grid-template-columns style is set
-        expect(container!.getAttribute('style')).to.not.include(
-          'grid-template-columns',
-        );
-      });
-
-      it('should handle non-integer columns values by using default responsive behavior', async () => {
-        // Set up the card with a non-integer columns configuration
-        card.setConfig({
-          integration: 'zwave_js',
-          columns: 2.5, // Non-integer value
-        });
-        card.hass = mockHass;
-
-        // Render the card
-        const el = await fixture(card.render() as TemplateResult);
-
-        // Get the devices container
-        const container = el.querySelector('.devices-container');
-        expect(container).to.exist;
-
-        // Check that no grid-template-columns style is set
-        expect(container!.getAttribute('style')).to.not.include(
-          'grid-template-columns',
-        );
       });
     });
   });

@@ -69,24 +69,35 @@ export class IntegrationCard extends LitElement {
       devices: [],
     };
 
+    if (!this._config.integration) {
+      return;
+    }
     // Get all devices from the specified integration
-    if (this._config.integration) {
-      data.name = pascalCase(this._config.integration);
+    data.name = pascalCase(this._config.integration);
 
-      Object.values(hass.devices).forEach((device) => {
-        if (
-          !this._config.excluded_devices?.includes(device.id) &&
-          isInIntegration(device, this._config.integration)
-        ) {
-          data.devices.push(device.id);
+    // Get config entries for the integration domain
+    hass
+      .callWS({
+        type: 'config_entries/get',
+        domain: this._config.integration,
+      })
+      .then((results: any) => {
+        const configEntries = results.map((e: any) => e.entry_id);
+
+        Object.values(hass.devices).forEach((device) => {
+          // Check if device belongs to any of the config entries
+          if (
+            !this._config.excluded_devices?.includes(device.id) &&
+            isInIntegration(device, configEntries)
+          ) {
+            data.devices.push(device.id);
+          }
+        });
+
+        if (!equal(data, this._integration)) {
+          this._integration = data;
         }
       });
-    }
-
-    // Update state if changed
-    if (!equal(data, this._integration)) {
-      this._integration = data;
-    }
   }
 
   // card configuration

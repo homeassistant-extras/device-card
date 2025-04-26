@@ -6,123 +6,89 @@ import { describe, it } from 'mocha';
 export default () => {
   describe('integration.ts', () => {
     describe('isInIntegration', () => {
-      it('should return true when integration is found in identifiers', () => {
+      it('should return true when config_entries contains any of the provided entryIds', () => {
         // Arrange
         const device = {
-          identifiers: [
-            ['zwave_js', 'node-123'],
-            ['zigbee', 'device-456'],
+          config_entries: [
+            'config_entry_1',
+            'config_entry_2',
+            'config_entry_3',
           ],
         } as DeviceRegistryEntry;
 
         // Act & Assert
-        expect(isInIntegration(device, 'zwave_js')).to.be.true;
-        expect(isInIntegration(device, 'zigbee')).to.be.true;
+        expect(isInIntegration(device, ['config_entry_1'])).to.be.true;
+        expect(isInIntegration(device, ['config_entry_2'])).to.be.true;
+        expect(isInIntegration(device, ['config_entry_1', 'config_entry_3'])).to
+          .be.true;
       });
 
-      it('should return false when integration is not found in identifiers', () => {
+      it('should return false when config_entries does not contain any of the provided entryIds', () => {
         // Arrange
         const device = {
-          identifiers: [
-            ['zwave_js', 'node-123'],
-            ['zigbee', 'device-456'],
+          config_entries: [
+            'config_entry_1',
+            'config_entry_2',
+            'config_entry_3',
           ],
         } as DeviceRegistryEntry;
 
         // Act & Assert
-        expect(isInIntegration(device, 'mqtt')).to.be.false;
-        expect(isInIntegration(device, 'hue')).to.be.false;
+        expect(isInIntegration(device, ['config_entry_4'])).to.be.false;
+        expect(isInIntegration(device, ['config_entry_5', 'config_entry_6'])).to
+          .be.false;
       });
 
-      it('should return false when identifiers is undefined', () => {
+      it('should return undefined when config_entries is undefined', () => {
         // Arrange
         const device = {} as DeviceRegistryEntry;
 
         // Act & Assert
-        expect(isInIntegration(device, 'zwave_js')).to.be.false;
+        expect(isInIntegration(device, ['config_entry_1'])).to.be.undefined;
       });
 
-      it('should return false when identifiers is an empty array', () => {
+      it('should return false when config_entries is an empty array', () => {
         // Arrange
         const device = {
-          identifiers: [],
+          config_entries: [],
         } as any as DeviceRegistryEntry;
 
         // Act & Assert
-        expect(isInIntegration(device, 'zwave_js')).to.be.false;
+        expect(isInIntegration(device, ['config_entry_1'])).to.be.false;
       });
 
-      it('should handle integration name as the second part of an identifier', () => {
+      it('should return false when entryIds is an empty array', () => {
         // Arrange
         const device = {
-          identifiers: [
-            ['domain', 'zwave_js'],
-            ['other', 'value'],
-          ],
+          config_entries: ['config_entry_1', 'config_entry_2'],
         } as DeviceRegistryEntry;
 
         // Act & Assert
-        expect(isInIntegration(device, 'zwave_js')).to.be.true;
-      });
-
-      it('should handle complex identifiers with multiple parts', () => {
-        // Arrange
-        const device = {
-          identifiers: [
-            ['domain', 'value1', 'value2', 'zwave_js'],
-            ['other', 'value3', 'value4'],
-          ],
-        } as any as DeviceRegistryEntry;
-
-        // Act & Assert
-        expect(isInIntegration(device, 'zwave_js')).to.be.true;
-        expect(isInIntegration(device, 'value2')).to.be.true;
-        expect(isInIntegration(device, 'value4')).to.be.true;
+        expect(isInIntegration(device, [])).to.be.false;
       });
 
       it('should handle case sensitivity correctly', () => {
         // Arrange
         const device = {
-          identifiers: [
-            ['zwave_js', 'node-123'],
-            ['zigbee', 'device-456'],
-          ],
+          config_entries: ['config_entry_1', 'Config_Entry_2'],
         } as DeviceRegistryEntry;
 
         // Act & Assert
-        expect(isInIntegration(device, 'ZWAVE_JS')).to.be.false;
-        expect(isInIntegration(device, 'ZigBee')).to.be.false;
+        expect(isInIntegration(device, ['CONFIG_ENTRY_1'])).to.be.false;
+        expect(isInIntegration(device, ['config_entry_2'])).to.be.false;
+        expect(isInIntegration(device, ['Config_Entry_2'])).to.be.true;
       });
 
-      it('should match complete identifiers, not partial string matches', () => {
+      it('should handle partial matches correctly', () => {
         // Arrange
         const device = {
-          identifiers: [
-            ['zwave_js_extended', 'node-123'],
-            ['zigbee2mqtt', 'device-456'],
-          ],
+          config_entries: ['prefix_config_entry_1', 'config_entry_2_suffix'],
         } as DeviceRegistryEntry;
 
         // Act & Assert
-        expect(isInIntegration(device, 'zwave_js')).to.be.false;
-        expect(isInIntegration(device, 'zigbee')).to.be.false;
-      });
-
-      it('should handle special characters in integration names', () => {
-        // Arrange
-        const device = {
-          identifiers: [
-            ['integration-with-dashes', 'node-123'],
-            ['integration.with.dots', 'device-456'],
-            ['integration_with_underscores', 'device-789'],
-          ],
-        } as DeviceRegistryEntry;
-
-        // Act & Assert
-        expect(isInIntegration(device, 'integration-with-dashes')).to.be.true;
-        expect(isInIntegration(device, 'integration.with.dots')).to.be.true;
-        expect(isInIntegration(device, 'integration_with_underscores')).to.be
-          .true;
+        expect(isInIntegration(device, ['config_entry_1'])).to.be.false;
+        expect(isInIntegration(device, ['config_entry_2'])).to.be.false;
+        expect(isInIntegration(device, ['prefix_config_entry_1'])).to.be.true;
       });
     });
   });

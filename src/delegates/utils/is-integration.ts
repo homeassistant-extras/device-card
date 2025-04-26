@@ -3,24 +3,12 @@ import type { DeviceRegistryEntry } from '@hass/data/device_registry';
 /**
  * Checks if a device is in a specific integration
  * @param device
- * @param integration
+ * @param entryIds
  * @returns
  */
 export const isInIntegration = (
   device: DeviceRegistryEntry,
-  integration: string,
-): boolean => {
-  if (!device.identifiers) {
-    return false;
-  }
-
-  for (const parts of device.identifiers) {
-    for (const part of parts) {
-      if (part === integration) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-};
+  entryIds: string[],
+): boolean =>
+  device.config_entries &&
+  device.config_entries.some((entryId) => entryIds.includes(entryId));

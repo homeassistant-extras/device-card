@@ -21,7 +21,7 @@ export default () => {
         areas: {},
         entities: {},
         devices: {},
-      } as HomeAssistant;
+      } as any as HomeAssistant;
       card = new DeviceCardEditor();
       dispatchStub = stub(card, 'dispatchEvent');
 
