@@ -7,3 +7,14 @@ export interface Config extends BaseConfig {
   /** Unique identifier for the device */
   device_id: string;
 }
+
+/**
+ * Expansion settings for the device card
+ */
+export interface Expansions {
+  /** * Track expanded state of sections */
+  expandedSections: Record<string, boolean>;
+
+  /** Track expanded state of entity attributes */
+  expandedEntities: Record<string, boolean>;
+}

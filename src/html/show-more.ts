@@ -5,22 +5,26 @@
  * allow sections to be expanded and collapsed.
  */
 
-import type { DeviceCard } from '@device/card';
+import type { Expansions } from '@device/types';
 import type { EntityInformation } from '@type/config';
 import { html, nothing } from 'lit';
 
 /**
  * Toggles the expanded state of a section in the device card
  *
- * @param {DeviceCard} element - The device card component instance
+ * @param {Expansions} expansions - The expansion state of the card
  * @param {string} sectionTitle - The title of the section to toggle
  * @param {Event} e - The click event that triggered the toggle
  */
-const toggleSection = (element: DeviceCard, sectionTitle: string, e: Event) => {
-  const expandedSections = element.expandedSections;
+const toggleSection = (
+  expansions: Expansions,
+  sectionTitle: string,
+  e: Event,
+) => {
+  const expandedSections = expansions.expandedSections;
 
   // Create a new expanded sections object with the toggled section
-  element.expandedSections = {
+  expansions.expandedSections = {
     ...expandedSections,
     [sectionTitle]: !expandedSections[sectionTitle],
   };
@@ -29,19 +33,19 @@ const toggleSection = (element: DeviceCard, sectionTitle: string, e: Event) => {
 /**
  * Renders a chevron (up/down arrow) for expanding/collapsing a section
  *
- * @param {DeviceCard} element - The device card component instance
+ * @param {Expansions} expansions - The expansion state of the card
  * @param {string} title - The title of the section the chevron controls
  * @param {boolean} isExpanded - Whether the section is currently expanded
  * @returns {TemplateResult} A lit-html template for the chevron button
  */
 export const chevron = (
-  element: DeviceCard,
+  expansions: Expansions,
   title: string,
   isExpanded: boolean,
 ) =>
   html`<div
     class="section-chevron ${isExpanded ? 'expanded' : ''}"
-    @click=${(e: Event) => toggleSection(element, title, e)}
+    @click=${(e: Event) => toggleSection(expansions, title, e)}
   >
     <ha-icon icon="mdi:chevron-${isExpanded ? 'up' : 'down'}"></ha-icon>
   </div>`;
@@ -49,7 +53,7 @@ export const chevron = (
 /**
  * Renders the "Show more" footer for a section with hidden entities
  *
- * @param {DeviceCard} element - The device card component instance
+ * @param {Expansions} expansions - The expansion state of the card
  * @param {string} title - The title of the section
  * @param {EntityInformation[]} entities - All entities in the section
  * @param {boolean} isExpanded - Whether the section is currently expanded
@@ -57,7 +61,7 @@ export const chevron = (
  * @returns {TemplateResult} A lit-html template for the show more footer
  */
 export const showMore = (
-  element: DeviceCard,
+  expansion: Expansions,
   title: string,
   entities: EntityInformation[],
   isExpanded: boolean,
@@ -69,7 +73,7 @@ export const showMore = (
       : html`
           <div
             class="show-more"
-            @click=${(e: Event) => toggleSection(element, title, e)}
+            @click=${(e: Event) => toggleSection(expansion, title, e)}
           >
             Show ${entities.length - size} more...
           </div>

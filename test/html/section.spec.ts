@@ -1,5 +1,5 @@
 import * as featureModule from '@config/feature';
-import type { Config } from '@device/types';
+import type { Config, Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import * as rowModule from '@html/row';
 import { renderSection } from '@html/section';
@@ -16,6 +16,7 @@ export default () => {
     let mockHass: HomeAssistant;
     let mockConfig: Config;
     let mockElement: any;
+    let mockExpansions: Expansions;
     let mockEntities: EntityInformation[];
 
     // Stubs for extracted components
@@ -63,6 +64,10 @@ export default () => {
 
       // Mock element with expandedSections property
       mockElement = {
+        expandedEntities: {},
+      };
+
+      mockExpansions = {
         expandedSections: {},
         expandedEntities: {},
       };
@@ -93,6 +98,7 @@ export default () => {
       it('should return nothing when entities array is empty', () => {
         const result = renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -104,6 +110,7 @@ export default () => {
       it('should return nothing when entities is undefined', () => {
         const result = renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -116,6 +123,7 @@ export default () => {
         const sectionTitle = 'Test Section';
         const result = renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           sectionTitle,
@@ -132,6 +140,7 @@ export default () => {
         mockConfig.preview_count = 5; // More than our 3 mock entities
         let result = renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -143,9 +152,10 @@ export default () => {
 
         // Test with many items, expanded
         mockConfig.preview_count = 1; // Less than our 3 mock entities
-        mockElement.expandedSections['Test Section'] = true;
+        mockExpansions.expandedSections['Test Section'] = true;
         result = renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -156,9 +166,10 @@ export default () => {
         expect(el.classList.contains('expanded')).to.be.true;
 
         // Test with many items, collapsed
-        mockElement.expandedSections['Test Section'] = false;
+        mockExpansions.expandedSections['Test Section'] = false;
         result = renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -174,6 +185,7 @@ export default () => {
         mockConfig.preview_count = 3;
         renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -195,10 +207,11 @@ export default () => {
       it('should limit displayed entities when not expanded and preview_count is less than total', async () => {
         // Set preview count to 2 (less than our 3 entities)
         mockConfig.preview_count = 2;
-        mockElement.expandedSections['Test Section'] = false;
+        mockExpansions.expandedSections['Test Section'] = false;
 
         renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -216,10 +229,11 @@ export default () => {
       it('should show all entities when expanded regardless of preview_count', async () => {
         // Set preview count to 1 (less than our 3 entities)
         mockConfig.preview_count = 1;
-        mockElement.expandedSections['Test Section'] = true;
+        mockExpansions.expandedSections['Test Section'] = true;
 
         renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -233,10 +247,11 @@ export default () => {
       it('should call chevron component when section needs expansion', async () => {
         // Set preview count to 1 (less than our 3 entities)
         mockConfig.preview_count = 1;
-        mockElement.expandedSections['Test Section'] = false;
+        mockExpansions.expandedSections['Test Section'] = false;
 
         renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -245,7 +260,7 @@ export default () => {
 
         // Should call chevron with the correct arguments
         expect(chevronStub.calledOnce).to.be.true;
-        expect(chevronStub.firstCall.args[0]).to.equal(mockElement);
+        expect(chevronStub.firstCall.args[0]).to.equal(mockExpansions);
         expect(chevronStub.firstCall.args[1]).to.equal('Test Section');
         expect(chevronStub.firstCall.args[2]).to.be.false; // isExpanded = false
       });
@@ -256,6 +271,7 @@ export default () => {
 
         renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -269,10 +285,11 @@ export default () => {
       it('should call showMore component when section needs expansion', async () => {
         // Set preview count to 1 (less than our 3 entities)
         mockConfig.preview_count = 1;
-        mockElement.expandedSections['Test Section'] = false;
+        mockExpansions.expandedSections['Test Section'] = false;
 
         renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -281,7 +298,7 @@ export default () => {
 
         // Should call showMore with the correct arguments
         expect(showMoreStub.calledOnce).to.be.true;
-        expect(showMoreStub.firstCall.args[0]).to.equal(mockElement);
+        expect(showMoreStub.firstCall.args[0]).to.equal(mockExpansions);
         expect(showMoreStub.firstCall.args[1]).to.equal('Test Section');
         expect(showMoreStub.firstCall.args[2]).to.equal(mockEntities);
         expect(showMoreStub.firstCall.args[3]).to.be.false; // isExpanded = false
@@ -294,6 +311,7 @@ export default () => {
 
         renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -310,6 +328,7 @@ export default () => {
 
         renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -327,6 +346,7 @@ export default () => {
 
         const result = renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -344,6 +364,7 @@ export default () => {
 
         const result = renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -358,13 +379,14 @@ export default () => {
       it('should not show "show more" when compact feature is enabled', async () => {
         // Set preview count to 1 (less than our 3 entities) to trigger "show more"
         mockConfig.preview_count = 1;
-        mockElement.expandedSections['Test Section'] = false;
+        mockExpansions.expandedSections['Test Section'] = false;
 
         // Set hasFeature to return true for 'compact'
         hasFeatureStub.withArgs(mockConfig, 'compact').returns(true);
 
         renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',
@@ -381,13 +403,14 @@ export default () => {
       it('should show "show more" when compact feature is disabled', async () => {
         // Set preview count to 1 (less than our 3 entities) to trigger "show more"
         mockConfig.preview_count = 1;
-        mockElement.expandedSections['Test Section'] = false;
+        mockExpansions.expandedSections['Test Section'] = false;
 
         // Set hasFeature to return false for 'compact'
         hasFeatureStub.withArgs(mockConfig, 'compact').returns(false);
 
         renderSection(
           mockElement,
+          mockExpansions,
           mockHass,
           mockConfig,
           'Test Section',

@@ -8,7 +8,7 @@
 
 import { hasFeature } from '@config/feature';
 import type { DeviceCard } from '@device/card';
-import type { Config } from '@device/types';
+import type { Config, Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';
@@ -19,6 +19,7 @@ import { chevron, showMore } from './show-more';
  * Renders a section of entities with collapsible functionality
  *
  * @param {DeviceCard} element - The device card component instance
+ * @param {Expansions} expansions - The expansion state of the card
  * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {Config} config - The card configuration
  * @param {string} title - The title of the section
@@ -27,6 +28,7 @@ import { chevron, showMore } from './show-more';
  */
 export const renderSection = (
   element: DeviceCard,
+  expansions: Expansions,
   hass: HomeAssistant,
   config: Config,
   title: string,
@@ -44,7 +46,7 @@ export const renderSection = (
   const needsExpansion = entities.length > size;
 
   // Get the current expanded state from the element
-  const isExpanded = element.expandedSections[title] || false;
+  const isExpanded = expansions.expandedSections[title] || false;
 
   // Filter entities based on expanded state
   const displayEntities =
@@ -62,11 +64,11 @@ export const renderSection = (
   return html`<div class="${sectionClass}">
     <div class="section-header">
       <div class="section-title">${title}</div>
-      ${needsExpansion ? chevron(element, title, isExpanded) : nothing}
+      ${needsExpansion ? chevron(expansions, title, isExpanded) : nothing}
     </div>
     ${displayEntities.map((entity) => row(hass, config, entity, element))}
     ${needsExpansion && !isCompact
-      ? showMore(element, title, entities, isExpanded, size)
+      ? showMore(expansions, title, entities, isExpanded, size)
       : nothing}
   </div>`;
 };

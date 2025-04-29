@@ -8,7 +8,7 @@ import { picture } from '@html/picture';
 import type { Device } from '@type/config';
 import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
-import type { Config } from './types';
+import type { Config, Expansions } from './types';
 const equal = require('fast-deep-equal');
 
 export class DeviceCard extends LitElement {
@@ -31,10 +31,13 @@ export class DeviceCard extends LitElement {
   private _hass!: HomeAssistant;
 
   /**
-   * Track expanded state of sections
+   * Track the card's expanded state
    */
   @state()
-  public expandedSections: Record<string, boolean> = {};
+  public _expansions: Expansions = {
+    expandedSections: {},
+    expandedEntities: {},
+  };
 
   /**
    * Track expanded state of entity attributes
@@ -117,7 +120,13 @@ export class DeviceCard extends LitElement {
           </div>
         </div>
 
-        ${renderSections(this, this._hass, this._config, this._device)}
+        ${renderSections(
+          this,
+          this._expansions,
+          this._hass,
+          this._config,
+          this._device,
+        )}
       </ha-card>
     `;
   }

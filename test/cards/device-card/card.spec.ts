@@ -215,6 +215,7 @@ export default () => {
         expect(
           renderSectionsStub.calledWith(
             card,
+            card['_expansions'],
             mockHass,
             card['_config'],
             card['_device'],

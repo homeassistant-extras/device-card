@@ -1,4 +1,4 @@
-import { DeviceCard } from '@device/card';
+import type { Expansions } from '@device/types';
 import { chevron, showMore } from '@html/show-more';
 import { fixture } from '@open-wc/testing-helpers';
 import type { EntityInformation } from '@type/config';
@@ -8,14 +8,15 @@ import { type TemplateResult } from 'lit';
 export default () => {
   describe('show-more.ts', () => {
     // Common test variables
-    let mockElement: DeviceCard;
+    let mockExpansions: Expansions;
     let mockEntities: EntityInformation[];
 
     beforeEach(() => {
       // Create a mock DeviceCard element
-      mockElement = {
+      mockExpansions = {
         expandedSections: {},
-      } as DeviceCard;
+        expandedEntities: {},
+      };
 
       // Create mock entities for testing
       mockEntities = [
@@ -55,26 +56,26 @@ export default () => {
     describe('toggleSection functionality', () => {
       it('should toggle section state when interacting with chevron', async () => {
         // Initial state
-        mockElement.expandedSections = { 'Test Section': false };
+        mockExpansions.expandedSections = { 'Test Section': false };
 
         // Render chevron
-        const result = chevron(mockElement, 'Test Section', false);
+        const result = chevron(mockExpansions, 'Test Section', false);
         const el = (await fixture(result as TemplateResult)) as HTMLElement;
 
         // Simulate click on chevron
         el.click();
 
         // Verify state was toggled
-        expect(mockElement.expandedSections['Test Section']).to.be.true;
+        expect(mockExpansions.expandedSections['Test Section']).to.be.true;
       });
 
       it('should toggle section state when interacting with show more', async () => {
         // Initial state
-        mockElement.expandedSections = { 'Test Section': false };
+        mockExpansions.expandedSections = { 'Test Section': false };
 
         // Render show more
         const result = showMore(
-          mockElement,
+          mockExpansions,
           'Test Section',
           mockEntities,
           false,
@@ -87,13 +88,13 @@ export default () => {
         showMoreEl.click();
 
         // Verify state was toggled
-        expect(mockElement.expandedSections['Test Section']).to.be.true;
+        expect(mockExpansions.expandedSections['Test Section']).to.be.true;
       });
     });
 
     describe('chevron component', () => {
       it('should render a down chevron when section is collapsed', async () => {
-        const result = chevron(mockElement, 'Test Section', false);
+        const result = chevron(mockExpansions, 'Test Section', false);
         const el = await fixture(result as TemplateResult);
 
         const icon = el.querySelector('ha-icon');
@@ -102,7 +103,7 @@ export default () => {
       });
 
       it('should render an up chevron when section is expanded', async () => {
-        const result = chevron(mockElement, 'Test Section', true);
+        const result = chevron(mockExpansions, 'Test Section', true);
         const el = await fixture(result as TemplateResult);
 
         const icon = el.querySelector('ha-icon');
@@ -114,7 +115,7 @@ export default () => {
     describe('showMore component', () => {
       it('should not render show more text when section is expanded', async () => {
         const result = showMore(
-          mockElement,
+          mockExpansions,
           'Test Section',
           mockEntities,
           true,
@@ -128,7 +129,7 @@ export default () => {
 
       it('should show correct count of hidden entities when collapsed', async () => {
         const result = showMore(
-          mockElement,
+          mockExpansions,
           'Test Section',
           mockEntities,
           false,
@@ -143,7 +144,7 @@ export default () => {
       it('should display correct message with different number of hidden entities', async () => {
         // Test with showing 2 of 3 entities (1 hidden)
         const result = showMore(
-          mockElement,
+          mockExpansions,
           'Test Section',
           mockEntities,
           false,
