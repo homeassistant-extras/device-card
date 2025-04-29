@@ -4,6 +4,7 @@ import { computeDomain } from '@hass/common/entity/compute_domain';
 import type { HomeAssistant } from '@hass/types';
 import type { Device, EntityInformation } from '@type/config';
 import { getDeviceEntities } from './card-entities';
+import { matchesPattern } from '@/common/matches';
 
 /**
  * Gets a device with all its entities sorted into appropriate categories
@@ -63,8 +64,15 @@ export const getDevice = (
 const shouldSkipEntity = (
   entity: EntityInformation,
   config: Config,
-): boolean | undefined => {
-  return config.exclude_entities?.includes(entity.entity_id);
+): boolean => {
+  if (!config.exclude_entities?.length) {
+    return false;
+  }
+  
+  // Check if any exclusion pattern matches the entity ID
+  return config.exclude_entities.some((pattern) => 
+    matchesPattern(entity.entity_id, pattern)
+  );
 };
 
 /**

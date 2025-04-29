@@ -141,11 +141,11 @@ export default () => {
         expect(integrationData.devices).to.not.include('device_3');
       });
 
-      it('should exclude devices specified in excluded_devices', async () => {
+      it('should exclude devices specified in exclude_devices', async () => {
         // Set config with excluded devices
         card.setConfig({
           integration: 'zwave_js',
-          excluded_devices: ['device_1'],
+          exclude_devices: ['device_1'],
         });
 
         // Set hass property

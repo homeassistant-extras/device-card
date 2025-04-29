@@ -4,6 +4,7 @@ import type { HomeAssistant } from '@hass/types';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
+import { shouldExcludeDevice } from './exclude-devices';
 import { integrationStyles } from './styles';
 import type { Config, IntegrationData } from './types';
 const equal = require('fast-deep-equal');
@@ -87,7 +88,7 @@ export class IntegrationCard extends LitElement {
         Object.values(hass.devices).forEach((device) => {
           // Check if device belongs to any of the config entries
           if (
-            !this._config.excluded_devices?.includes(device.id) &&
+            !shouldExcludeDevice(this._config, device.id, device.name) &&
             isInIntegration(device, configEntries)
           ) {
             data.devices.push(device.id);

@@ -176,7 +176,7 @@ export default () => {
                 },
               },
               {
-                name: 'excluded_devices',
+                name: 'exclude_devices',
                 label: 'Devices to exclude',
                 required: false,
                 selector: {

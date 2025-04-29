@@ -211,13 +211,15 @@ Most configuration options from the Device Card are supported:
 | title             | string | Device name  | Optional custom title for the card                           |
 | preview_count     | number | All items    | Number of items to preview before showing "Show More" button |
 | columns           | number | _responsive_ | Fix the number of columns for device cards (1-6)             |
-| excluded_devices  | list   | _none_       | Specific device IDs to exclude from the integration display  |
+| exclude_devices   | list   | _none_       | Specific device IDs to exclude from the integration display  |
 | exclude_sections  | list   | _none_       | Sections of entities to exclude. See below.                  |
 | section_order     | list   | _none_       | Custom order for displaying sections. See below.             |
 | features          | list   | See below    | Optional flags to toggle different features                  |
 | tap_action        | object | none         | Action to perform when tapping the card                      |
 | hold_action       | object | none         | Action to perform when holding the card                      |
 | double_tap_action | object | none         | Action when double-tapping the card                          |
+
+**Note** - `exclude_devices` and `exclude_entities` accepts wildcards (\*) and Regex
 
 #### Feature Options
 
@@ -265,7 +267,10 @@ exclude_sections:
   - configurations
   - diagnostics
 exclude_entities:
-  - update.home_assistant_core_update
+  - update.home_assistant_core_update # Exclude by id
+  - '*_uptime' # Exclude all uptime sensors
+  - sensor.esp_* # Exclude all ESP sensors
+  - /.*_(wired|wireless)/ # Regex match ending in wired or wireless
 ```
 
 #### Custom section order
@@ -360,12 +365,17 @@ hold_action:
 
 Basic Configuration with Excluded Devices
 
+You can use wildcard patterns with `*` to exclude devices or entities:
+
 ```yaml
 type: custom:integration-card
 integration: zwave_js
-excluded_devices:
+exclude_devices:
   - b30c9bb17b44450d99ed41c6167e5c92 # Z-Wave Hub
   - 99f45623df8146e8a446f17e92d38272 # Guest Room Switch
+  - esp_*_airfresh # Exclude all ESP air fresh devices
+  - nous* # Exclude all devices starting with "nous"
+  - /.*([Ss]upervisor)/ # Exclude devices ending in supervisor
 ```
 
 ## Project Roadmap

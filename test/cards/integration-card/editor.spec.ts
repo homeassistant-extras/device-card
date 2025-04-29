@@ -178,7 +178,7 @@ export default () => {
             exclude_entities: [],
             exclude_sections: [],
             section_order: [],
-            excluded_devices: [],
+            exclude_devices: [],
           },
         };
 
