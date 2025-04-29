@@ -96,10 +96,6 @@ export default () => {
         expect(state).to.exist;
         expect(state?.entity_id).to.equal('light.fake');
       });
-
-      it('should return correct domain from domain function', () => {
-        const result = getState(mockHass, 'light.test');
-      });
     });
   });
 };
