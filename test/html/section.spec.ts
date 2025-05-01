@@ -18,6 +18,7 @@ export default () => {
     let mockElement: any;
     let mockExpansions: Expansions;
     let mockEntities: EntityInformation[];
+    let mockUpdater: (expansion: Expansions) => void;
 
     // Stubs for extracted components
     let rowStub: sinon.SinonStub;
@@ -72,6 +73,10 @@ export default () => {
         expandedEntities: {},
       };
 
+      mockUpdater = (expansion: Expansions) => {
+        mockExpansions = expansion;
+      };
+
       // Create stubs for the extracted components
       rowStub = stub(rowModule, 'row');
       rowStub.returns(html`<div class="mocked-row"></div>`);
@@ -103,6 +108,7 @@ export default () => {
           mockConfig,
           'Test Section',
           [],
+          mockUpdater,
         );
         expect(result).to.equal(nothing);
       });
@@ -115,6 +121,7 @@ export default () => {
           mockConfig,
           'Test Section',
           undefined as any,
+          mockUpdater,
         );
         expect(result).to.equal(nothing);
       });
@@ -128,6 +135,7 @@ export default () => {
           mockConfig,
           sectionTitle,
           mockEntities,
+          mockUpdater,
         );
         const el = await fixture(result as TemplateResult);
 
@@ -145,6 +153,7 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
         let el = await fixture(result as TemplateResult);
         expect(el.classList.contains('few-items')).to.be.true;
@@ -160,6 +169,7 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
         el = await fixture(result as TemplateResult);
         expect(el.classList.contains('few-items')).to.be.false;
@@ -174,6 +184,7 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
         el = await fixture(result as TemplateResult);
         expect(el.classList.contains('few-items')).to.be.false;
@@ -190,6 +201,7 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
 
         // Should call row once for each entity
@@ -216,6 +228,7 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
 
         // Should only call row for the first 2 entities
@@ -238,6 +251,7 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
 
         // Should call row for all 3 entities
@@ -256,6 +270,7 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
 
         // Should call chevron with the correct arguments
@@ -276,6 +291,7 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
 
         // Should not call chevron
@@ -294,6 +310,7 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
 
         // Should call showMore with the correct arguments
@@ -316,28 +333,11 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
 
         // Should not call showMore
         expect(showMoreStub.called).to.be.false;
-      });
-
-      it('should initialize expandedEntities if it does not exist', async () => {
-        // Remove expandedEntities from the element
-        mockElement.expandedEntities = undefined;
-
-        renderSection(
-          mockElement,
-          mockExpansions,
-          mockHass,
-          mockConfig,
-          'Test Section',
-          mockEntities,
-        );
-
-        // expandedEntities should be initialized
-        expect(mockElement.expandedEntities).to.exist;
-        expect(mockElement.expandedEntities).to.deep.equal({});
       });
 
       it('should apply compact class when compact feature is enabled', async () => {
@@ -351,6 +351,7 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
         const el = await fixture(result as TemplateResult);
 
@@ -369,6 +370,7 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
         const el = await fixture(result as TemplateResult);
 
@@ -391,6 +393,7 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
 
         // Verify showMore was not called (should be hidden in compact mode)
@@ -415,6 +418,7 @@ export default () => {
           mockConfig,
           'Test Section',
           mockEntities,
+          mockUpdater,
         );
 
         // Verify showMore was called (should be visible in normal mode)

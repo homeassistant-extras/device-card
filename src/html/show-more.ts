@@ -20,14 +20,17 @@ const toggleSection = (
   expansions: Expansions,
   sectionTitle: string,
   e: Event,
+  updateExpansions: (expansion: Expansions) => void,
 ) => {
   const expandedSections = expansions.expandedSections;
 
-  // Create a new expanded sections object with the toggled section
-  expansions.expandedSections = {
-    ...expandedSections,
-    [sectionTitle]: !expandedSections[sectionTitle],
-  };
+  updateExpansions({
+    ...expansions,
+    expandedSections: {
+      ...expandedSections,
+      [sectionTitle]: !expandedSections[sectionTitle],
+    },
+  });
 };
 
 /**
@@ -42,10 +45,12 @@ export const chevron = (
   expansions: Expansions,
   title: string,
   isExpanded: boolean,
+  updateExpansions: (expansion: Expansions) => void,
 ) =>
   html`<div
     class="section-chevron ${isExpanded ? 'expanded' : ''}"
-    @click=${(e: Event) => toggleSection(expansions, title, e)}
+    @click=${(e: Event) =>
+      toggleSection(expansions, title, e, updateExpansions)}
   >
     <ha-icon icon="mdi:chevron-${isExpanded ? 'up' : 'down'}"></ha-icon>
   </div>`;
@@ -66,6 +71,7 @@ export const showMore = (
   entities: EntityInformation[],
   isExpanded: boolean,
   size: number,
+  updateExpansions: (expansion: Expansions) => void,
 ) =>
   html`<div class="section-footer">
     ${isExpanded
@@ -73,7 +79,8 @@ export const showMore = (
       : html`
           <div
             class="show-more"
-            @click=${(e: Event) => toggleSection(expansion, title, e)}
+            @click=${(e: Event) =>
+              toggleSection(expansion, title, e, updateExpansions)}
           >
             Show ${entities.length - size} more...
           </div>

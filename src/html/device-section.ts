@@ -28,6 +28,7 @@ export const renderSections = (
   hass: HomeAssistant,
   config: Config,
   device: Device,
+  updateExpansions: (expansion: Expansions) => void,
 ): TemplateResult[] => {
   const sectionConfig = [
     { name: 'Controls', key: 'controls', entities: device.controls },
@@ -75,6 +76,7 @@ export const renderSections = (
         config,
         section.name,
         section.entities,
+        updateExpansions,
       ) as TemplateResult,
   );
 };

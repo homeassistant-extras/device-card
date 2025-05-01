@@ -10,6 +10,7 @@ export default () => {
     // Common test variables
     let mockExpansions: Expansions;
     let mockEntities: EntityInformation[];
+    let mockUpdater: (expansion: Expansions) => void;
 
     beforeEach(() => {
       // Create a mock DeviceCard element
@@ -51,6 +52,10 @@ export default () => {
           isProblemEntity: false,
         } as EntityInformation,
       ];
+
+      mockUpdater = (expansion: Expansions) => {
+        mockExpansions = expansion;
+      };
     });
 
     describe('toggleSection functionality', () => {
@@ -59,7 +64,12 @@ export default () => {
         mockExpansions.expandedSections = { 'Test Section': false };
 
         // Render chevron
-        const result = chevron(mockExpansions, 'Test Section', false);
+        const result = chevron(
+          mockExpansions,
+          'Test Section',
+          false,
+          mockUpdater,
+        );
         const el = (await fixture(result as TemplateResult)) as HTMLElement;
 
         // Simulate click on chevron
@@ -80,6 +90,7 @@ export default () => {
           mockEntities,
           false,
           1,
+          mockUpdater,
         );
         const el = await fixture(result as TemplateResult);
 
@@ -94,7 +105,12 @@ export default () => {
 
     describe('chevron component', () => {
       it('should render a down chevron when section is collapsed', async () => {
-        const result = chevron(mockExpansions, 'Test Section', false);
+        const result = chevron(
+          mockExpansions,
+          'Test Section',
+          false,
+          mockUpdater,
+        );
         const el = await fixture(result as TemplateResult);
 
         const icon = el.querySelector('ha-icon');
@@ -103,7 +119,12 @@ export default () => {
       });
 
       it('should render an up chevron when section is expanded', async () => {
-        const result = chevron(mockExpansions, 'Test Section', true);
+        const result = chevron(
+          mockExpansions,
+          'Test Section',
+          true,
+          mockUpdater,
+        );
         const el = await fixture(result as TemplateResult);
 
         const icon = el.querySelector('ha-icon');
@@ -120,6 +141,7 @@ export default () => {
           mockEntities,
           true,
           1,
+          mockUpdater,
         );
         const el = await fixture(result as TemplateResult);
 
@@ -134,6 +156,7 @@ export default () => {
           mockEntities,
           false,
           1,
+          mockUpdater,
         );
         const el = await fixture(result as TemplateResult);
 
@@ -149,6 +172,7 @@ export default () => {
           mockEntities,
           false,
           2,
+          mockUpdater,
         );
         const el = await fixture(result as TemplateResult);
 

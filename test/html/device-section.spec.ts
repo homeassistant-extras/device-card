@@ -16,7 +16,7 @@ export default () => {
     let mockConfig: Config;
     let mockElement: any;
     let mockExpansions: Expansions;
-    let mockEntities: EntityInformation[];
+    let mockUpdater: (expansion: Expansions) => void;
 
     // Stubs for extracted components
     let rowStub: sinon.SinonStub;
@@ -24,34 +24,6 @@ export default () => {
     let showMoreStub: sinon.SinonStub;
 
     beforeEach(() => {
-      // Create mock entities
-      mockEntities = [
-        {
-          entity_id: 'sensor.test_1',
-          state: '50',
-          translation_key: undefined,
-          attributes: { friendly_name: 'Test 1' },
-          isActive: false,
-          isProblemEntity: false,
-        } as EntityInformation,
-        {
-          entity_id: 'sensor.test_2',
-          state: '75',
-          translation_key: undefined,
-          attributes: { friendly_name: 'Test 2' },
-          isActive: false,
-          isProblemEntity: false,
-        } as EntityInformation,
-        {
-          entity_id: 'sensor.test_3',
-          state: '25',
-          translation_key: undefined,
-          attributes: { friendly_name: 'Test 3' },
-          isActive: false,
-          isProblemEntity: false,
-        } as EntityInformation,
-      ];
-
       // Mock Home Assistant
       mockHass = {} as HomeAssistant;
 
@@ -68,6 +40,10 @@ export default () => {
       mockExpansions = {
         expandedSections: {},
         expandedEntities: {},
+      };
+
+      mockUpdater = (expansion: Expansions) => {
+        mockExpansions = expansion;
       };
 
       // Create stubs for the extracted components
@@ -119,6 +95,7 @@ export default () => {
           mockHass,
           mockConfig,
           mockDevice,
+          mockUpdater,
         );
 
         // Verify renderSection was called in the expected order
@@ -148,6 +125,7 @@ export default () => {
           mockHass,
           mockConfig,
           mockDevice,
+          mockUpdater,
         );
 
         // Verify renderSection was called in the expected custom order
@@ -172,6 +150,7 @@ export default () => {
           mockHass,
           mockConfig,
           mockDevice,
+          mockUpdater,
         );
 
         // Verify renderSection was called with specified section first, then others
@@ -204,6 +183,7 @@ export default () => {
           mockHass,
           mockConfig,
           mockDevice,
+          mockUpdater,
         );
 
         // Verify renderSection was called in default order
@@ -228,6 +208,7 @@ export default () => {
           mockHass,
           mockConfig,
           mockDevice,
+          mockUpdater,
         );
 
         // Verify renderSection was called correctly, skipping invalid section

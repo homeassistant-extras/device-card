@@ -24,6 +24,7 @@ import { chevron, showMore } from './show-more';
  * @param {Config} config - The card configuration
  * @param {string} title - The title of the section
  * @param {EntityInformation[]} entities - The entities to display in this section
+ * @param {function} updateExpansions - Function to update the expansion state
  * @returns {TemplateResult|typeof nothing} A lit-html template for the section or nothing if empty
  */
 export const renderSection = (
@@ -33,6 +34,7 @@ export const renderSection = (
   config: Config,
   title: string,
   entities: EntityInformation[],
+  updateExpansions: (expansion: Expansions) => void,
 ): TemplateResult | typeof nothing => {
   // Don't render anything if there are no entities to display
   if (!entities || entities.length === 0) {
@@ -56,19 +58,23 @@ export const renderSection = (
   const isCompact = hasFeature(config, 'compact');
   const sectionClass = `section ${isExpanded ? 'expanded' : ''} ${!needsExpansion ? 'few-items' : ''} ${isCompact ? 'compact' : ''}`;
 
-  // Initialize expandedEntities if it doesn't exist
-  if (!element.expandedEntities) {
-    element.expandedEntities = {};
-  }
-
   return html`<div class="${sectionClass}">
     <div class="section-header">
       <div class="section-title">${title}</div>
-      ${needsExpansion ? chevron(expansions, title, isExpanded) : nothing}
+      ${needsExpansion
+        ? chevron(expansions, title, isExpanded, updateExpansions)
+        : nothing}
     </div>
     ${displayEntities.map((entity) => row(hass, config, entity, element))}
     ${needsExpansion && !isCompact
-      ? showMore(expansions, title, entities, isExpanded, size)
+      ? showMore(
+          expansions,
+          title,
+          entities,
+          isExpanded,
+          size,
+          updateExpansions,
+        )
       : nothing}
   </div>`;
 };

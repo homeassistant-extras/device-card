@@ -2,6 +2,7 @@ import * as deviceUtils from '@delegates/utils/get-device';
 import * as problemUtils from '@delegates/utils/has-problem';
 import { DeviceCard } from '@device/card';
 import { styles } from '@device/styles';
+import type { Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import * as sectionRenderer from '@html/device-section';
 import * as pictureModule from '@html/picture';
@@ -246,6 +247,45 @@ export default () => {
 
         // Restore the stub
         deviceStub.restore();
+      });
+
+      it('should update expansions when renderSection is called', async () => {
+        // Create spy to capture the update callback
+        let capturedUpdateFn: ((e: Expansions) => void) | undefined;
+        renderSectionsStub.callsFake(
+          (_element, _expansions, _hass, _config, _device, updateFn) => {
+            capturedUpdateFn = updateFn;
+            return [html`<div>Mocked sections</div>`];
+          },
+        );
+
+        // Render card to trigger renderSections
+        card.render();
+
+        // Verify renderSections was called with the correct parameters
+        expect(renderSectionsStub.calledOnce).to.be.true;
+        expect(capturedUpdateFn).to.be.a('function');
+
+        // Store original expansions object reference
+        const originalExpansions = card['_expansions'];
+
+        // Create a new expansions object
+        const newExpansions: Expansions = {
+          expandedSections: { 'Test Section': true },
+          expandedEntities: { 'entity.test': true },
+        };
+
+        // Call the update function with the new expansions object
+        capturedUpdateFn!(newExpansions);
+
+        // Verify that card's _expansions property was updated
+        expect(card['_expansions']).to.deep.equal(newExpansions);
+
+        // Verify that it's not the same object instance (reactive update)
+        expect(card['_expansions']).to.not.equal(originalExpansions);
+
+        // Restore original stub
+        renderSectionsStub.restore();
       });
     });
 

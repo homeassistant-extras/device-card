@@ -126,6 +126,7 @@ export class DeviceCard extends LitElement {
           this._hass,
           this._config,
           this._device,
+          (e) => (this._expansions = e),
         )}
       </ha-card>
     `;
