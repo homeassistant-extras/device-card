@@ -3,7 +3,7 @@ import {
   handleClickAction,
 } from '@delegates/action-handler-delegate';
 import { DeviceCard } from '@device/card';
-import type { Config } from '@device/types';
+import type { Config, Expansions } from '@device/types';
 import * as fireEventModule from '@hass/common/dom/fire_event';
 import type { ActionHandlerEvent } from '@hass/data/lovelace/action_handler';
 import * as actionHandlerDirective from '@hass/panels/lovelace/common/directives/action-handler-directive';
@@ -16,6 +16,8 @@ export default () => {
     let config: Config;
     let fireEventStub: SinonStub;
     let hassActionHandlerStub: SinonStub;
+    let mockExpansions: Expansions;
+    let mockUpdater: (expansion: Expansions) => void;
 
     beforeEach(() => {
       // Set up stubs for the dependencies
@@ -23,6 +25,13 @@ export default () => {
       hassActionHandlerStub = stub(actionHandlerDirective, 'actionHandler');
       config = {
         device_id: 'device_1',
+      };
+      mockExpansions = {
+        expandedSections: {},
+        expandedEntities: {},
+      };
+      mockUpdater = (expansion: Expansions) => {
+        mockExpansions = expansion;
       };
     });
 
@@ -122,7 +131,7 @@ export default () => {
       beforeEach(() => {
         // Create a mock DeviceCard element
         mockElement = new DeviceCard();
-        mockElement.expandedEntities = {};
+        mockExpansions.expandedEntities = {};
 
         // Create a mock entity
         mockEntity = {
@@ -141,7 +150,12 @@ export default () => {
 
       it('should not fire an event if no action is provided', () => {
         // Arrange
-        const handler = handleClickAction(mockElement, config, mockEntity);
+        const handler = handleClickAction(
+          mockElement,
+          mockExpansions,
+          mockEntity,
+          mockUpdater,
+        );
         const event = { detail: {} } as ActionHandlerEvent;
 
         // Act
@@ -153,7 +167,12 @@ export default () => {
 
       it('should fire a "hass-action" event with the correct parameters when an action is provided', () => {
         // Arrange
-        const handler = handleClickAction(mockElement, config, mockEntity);
+        const handler = handleClickAction(
+          mockElement,
+          mockExpansions,
+          mockEntity,
+          mockUpdater,
+        );
         const event = { detail: { action: 'tap' } } as ActionHandlerEvent;
 
         // Act
@@ -180,7 +199,12 @@ export default () => {
           double_tap_action: { action: 'more-info' },
           hold_action: { action: 'none' },
         };
-        const handler = handleClickAction(mockElement, config, mockEntity);
+        const handler = handleClickAction(
+          mockElement,
+          mockExpansions,
+          mockEntity,
+          mockUpdater,
+        );
         const event = { detail: { action: 'hold' } } as ActionHandlerEvent;
 
         // Act
@@ -200,7 +224,12 @@ export default () => {
           tap_action: undefined,
         };
 
-        const handler = handleClickAction(mockElement, config, mockEntity);
+        const handler = handleClickAction(
+          mockElement,
+          mockExpansions,
+          mockEntity,
+          mockUpdater,
+        );
         const event = {
           detail: { action: 'tap' },
           stopPropagation: stub(),
@@ -212,7 +241,8 @@ export default () => {
         // Assert
         expect(fireEventStub.called).to.be.false;
         expect((event.stopPropagation as SinonStub).called).to.be.true; // Fixed assertion
-        expect(mockElement.expandedEntities[mockEntity.entity_id]).to.be.true;
+        expect(mockExpansions.expandedEntities[mockEntity.entity_id]).to.be
+          .true;
       });
 
       it('should not toggle entity attributes when disable_attributes feature is enabled', () => {
@@ -221,7 +251,12 @@ export default () => {
           tap_action: { action: 'none' },
         };
 
-        const handler = handleClickAction(mockElement, config, mockEntity);
+        const handler = handleClickAction(
+          mockElement,
+          mockExpansions,
+          mockEntity,
+          mockUpdater,
+        );
         const event = {
           detail: { action: 'tap' },
           stopPropagation: stub(),
@@ -232,7 +267,7 @@ export default () => {
 
         // Assert
         expect(fireEventStub.calledOnce).to.be.true; // Should still fire the event
-        expect(mockElement.expandedEntities[mockEntity.entity_id]).to.be
+        expect(mockExpansions.expandedEntities[mockEntity.entity_id]).to.be
           .undefined;
       });
 
@@ -241,9 +276,14 @@ export default () => {
         mockEntity.config = {};
 
         // Set the entity as initially expanded
-        mockElement.expandedEntities = { [mockEntity.entity_id]: true };
+        mockExpansions.expandedEntities = { [mockEntity.entity_id]: true };
 
-        const handler = handleClickAction(mockElement, config, mockEntity);
+        const handler = handleClickAction(
+          mockElement,
+          mockExpansions,
+          mockEntity,
+          mockUpdater,
+        );
         const event = {
           detail: { action: 'tap' },
           stopPropagation: stub(),
@@ -253,28 +293,8 @@ export default () => {
         handler.handleEvent(event);
 
         // Assert
-        expect(mockElement.expandedEntities[mockEntity.entity_id]).to.be.false;
-      });
-
-      it('should initialize expandedEntities if it does not exist', () => {
-        // Arrange
-        mockEntity.config = {};
-
-        // Set expandedEntities to undefined
-        mockElement.expandedEntities = undefined!;
-
-        const handler = handleClickAction(mockElement, config, mockEntity);
-        const event = {
-          detail: { action: 'tap' },
-          stopPropagation: stub(),
-        } as unknown as ActionHandlerEvent;
-
-        // Act
-        handler.handleEvent(event);
-
-        // Assert
-        expect(mockElement.expandedEntities).to.be.an('object');
-        expect(mockElement.expandedEntities[mockEntity.entity_id]).to.be.true;
+        expect(mockExpansions.expandedEntities[mockEntity.entity_id]).to.be
+          .false;
       });
     });
   });

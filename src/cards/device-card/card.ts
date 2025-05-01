@@ -40,12 +40,6 @@ export class DeviceCard extends LitElement {
   };
 
   /**
-   * Track expanded state of entity attributes
-   */
-  @state()
-  public expandedEntities: Record<string, boolean> = {};
-
-  /**
    * Returns the component's styles
    */
   static override get styles(): CSSResult {

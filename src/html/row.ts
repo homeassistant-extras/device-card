@@ -9,8 +9,7 @@ import {
   actionHandler,
   handleClickAction,
 } from '@delegates/action-handler-delegate';
-import type { DeviceCard } from '@device/card';
-import type { Config } from '@device/types';
+import type { Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';
@@ -22,16 +21,17 @@ import { stateContent } from './state-content';
  * Renders a single entity row with appropriate styling and components
  *
  * @param {HomeAssistant} hass - The Home Assistant instance
- * @param {Config} config - The configuration for the device card
  * @param {EntityInformation} entity - The entity to render
- * @param {DeviceCard} element - The device card component instance
+ * @param {HTMLElement} element - The device card component instance
+ * @param {Expansions} expansions - The expansion state of the card
  * @returns {TemplateResult} A lit-html template for the entity row
  */
 export const row = (
   hass: HomeAssistant,
-  config: Config,
   entity: EntityInformation,
-  element: DeviceCard,
+  element: HTMLElement,
+  expansions: Expansions,
+  updateExpansions: (expansion: Expansions) => void,
 ): TemplateResult => {
   let statusClassName: string | undefined;
 
@@ -47,7 +47,8 @@ export const row = (
     entity.attributes.unit_of_measurement === '%';
 
   // Check if this entity's details are expanded
-  const isEntityExpanded = element.expandedEntities[entity.entity_id] || false;
+  const isEntityExpanded =
+    expansions.expandedEntities[entity.entity_id] || false;
 
   return html` <div
     class="${[
@@ -55,7 +56,7 @@ export const row = (
       statusClassName,
       isEntityExpanded ? 'expanded-row' : '',
     ].join(' ')}"
-    @action=${handleClickAction(element, config, entity)}
+    @action=${handleClickAction(element, expansions, entity, updateExpansions)}
     .actionHandler=${actionHandler(entity)}
   >
     <div class="row-content">

@@ -7,7 +7,6 @@
  */
 
 import { hasFeature } from '@config/feature';
-import type { DeviceCard } from '@device/card';
 import type { Config, Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/config';
@@ -18,7 +17,7 @@ import { chevron, showMore } from './show-more';
 /**
  * Renders a section of entities with collapsible functionality
  *
- * @param {DeviceCard} element - The device card component instance
+ * @param {HTMLElement} element - The card component instance
  * @param {Expansions} expansions - The expansion state of the card
  * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {Config} config - The card configuration
@@ -28,7 +27,7 @@ import { chevron, showMore } from './show-more';
  * @returns {TemplateResult|typeof nothing} A lit-html template for the section or nothing if empty
  */
 export const renderSection = (
-  element: DeviceCard,
+  element: HTMLElement,
   expansions: Expansions,
   hass: HomeAssistant,
   config: Config,
@@ -65,7 +64,9 @@ export const renderSection = (
         ? chevron(expansions, title, isExpanded, updateExpansions)
         : nothing}
     </div>
-    ${displayEntities.map((entity) => row(hass, config, entity, element))}
+    ${displayEntities.map((entity) =>
+      row(hass, entity, element, expansions, updateExpansions),
+    )}
     ${needsExpansion && !isCompact
       ? showMore(
           expansions,

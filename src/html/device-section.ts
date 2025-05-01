@@ -6,7 +6,6 @@
  * expandable/collapsible behavior.
  */
 
-import type { DeviceCard } from '@device/card';
 import type { Config, Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import type { Device, EntityInformation } from '@type/config';
@@ -15,7 +14,7 @@ import { renderSection } from './section';
 
 /**
  * Renders sections in the order specified by config or in default order
- * @param {DeviceCard} element - The device card component instance
+ * @param {HTMLElement} element - The card component instance
  * @param {Expansions} expansions - The expansions object for managing section states
  * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {Config} config - The card configuration
@@ -23,7 +22,7 @@ import { renderSection } from './section';
  * @returns {TemplateResult[]} Array of section templates
  */
 export const renderSections = (
-  element: DeviceCard,
+  element: HTMLElement,
   expansions: Expansions,
   hass: HomeAssistant,
   config: Config,

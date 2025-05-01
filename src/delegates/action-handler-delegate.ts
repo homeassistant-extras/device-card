@@ -1,5 +1,4 @@
-import type { DeviceCard } from '@device/card';
-import type { Config } from '@device/types';
+import type { Expansions } from '@device/types';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { ActionHandlerEvent } from '@hass/data/lovelace/action_handler';
 import { actionHandler as hassActionHandler } from '@hass/panels/lovelace/common/directives/action-handler-directive';
@@ -9,28 +8,27 @@ import type { EntityInformation } from '@type/config';
 /**
  * Toggles the expanded state of an entity row to show/hide attributes
  *
- * @param {DeviceCard} element - The device card component instance
+ * @param {HTMLElement} element - The card component instance
+ * @param {Expansions} expansions - The expansions object for managing entity states
  * @param {string} entityId - The entity ID to toggle
  * @param {Event} e - The click event that triggered the toggle
  */
 const toggleEntityAttributes = (
-  element: DeviceCard,
+  expansions: Expansions,
   entityId: string,
   e: Event,
+  updateExpansions: (expansion: Expansions) => void,
 ) => {
   // Prevent event from bubbling up
   e.stopPropagation();
 
-  // Initialize expandedEntities if it doesn't exist
-  if (!element.expandedEntities) {
-    element.expandedEntities = {};
-  }
-
-  // Create a new expandedEntities object with the toggled entity
-  element.expandedEntities = {
-    ...element.expandedEntities,
-    [entityId]: !element.expandedEntities[entityId],
-  };
+  updateExpansions({
+    ...expansions,
+    expandedEntities: {
+      ...expansions.expandedEntities,
+      [entityId]: !expansions.expandedEntities[entityId],
+    },
+  } as Expansions);
 };
 
 /**
@@ -75,8 +73,8 @@ export const actionHandler = (entity: EntityInformation) => {
  * an event listener. When an action event occurs, it will extract the action type
  * from the event and fire a 'hass-action' event with the appropriate configuration.
  *
- * @param {DeviceCard} element - The DOM element that will receive the action
- * @param {Config} config - The configuration for the device card
+ * @param {HTMLElement} element - The DOM element that will receive the action
+ * @param {Expansions} expansions - The expansions object for managing entity states
  * @param {EntityInformation} entity - The entity information containing configuration and state
  * @returns {Object} An object with a handleEvent method that processes actions
  *
@@ -92,9 +90,10 @@ export const actionHandler = (entity: EntityInformation) => {
  * ```
  */
 export const handleClickAction = (
-  element: DeviceCard,
-  config: Config,
+  element: HTMLElement,
+  expansions: Expansions,
   entity: EntityInformation,
+  updateExpansions: (expansion: Expansions) => void,
 ): { handleEvent: (ev: ActionHandlerEvent) => void } => {
   return {
     /**
@@ -110,7 +109,12 @@ export const handleClickAction = (
 
       // If the action is 'tap' and no specific tap action is set, toggle entity attributes
       if (action === 'tap' && !entity.config?.tap_action) {
-        toggleEntityAttributes(element, entity.entity_id, ev);
+        toggleEntityAttributes(
+          expansions,
+          entity.entity_id,
+          ev,
+          updateExpansions,
+        );
         return;
       }
 

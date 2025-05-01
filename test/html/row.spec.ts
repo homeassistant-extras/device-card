@@ -1,6 +1,6 @@
 import * as actionHandlerModule from '@/delegates/action-handler-delegate';
 import { DeviceCard } from '@device/card';
-import type { Config } from '@device/types';
+import type { Config, Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import * as attributesModule from '@html/attributes';
 import * as percentBarModule from '@html/percent';
@@ -22,6 +22,8 @@ export default () => {
     let percentBarStub: sinon.SinonStub;
     let attributesStub: sinon.SinonStub;
     let actionHandlerStub: sinon.SinonStub;
+    let mockExpansions: Expansions;
+    let mockUpdater: (expansion: Expansions) => void;
 
     beforeEach(() => {
       // Create stubs for imported components
@@ -64,6 +66,15 @@ export default () => {
         isActive: false,
         isProblemEntity: false,
       } as EntityInformation;
+
+      mockExpansions = {
+        expandedSections: {},
+        expandedEntities: {},
+      };
+
+      mockUpdater = (expansion: Expansions) => {
+        mockExpansions = expansion;
+      };
     });
 
     afterEach(() => {
@@ -76,7 +87,13 @@ export default () => {
 
     describe('row rendering', () => {
       it('should render a basic row with state content', async () => {
-        const result = row(mockHass, config, mockEntity, mockElement);
+        const result = row(
+          mockHass,
+          mockEntity,
+          mockElement,
+          mockExpansions,
+          mockUpdater,
+        );
         const el = await fixture(result as TemplateResult);
 
         // Check basic structure
@@ -90,7 +107,13 @@ export default () => {
       });
 
       it('should render a percentage bar for entities with percentage measurements', async () => {
-        const result = row(mockHass, config, mockEntity, mockElement);
+        const result = row(
+          mockHass,
+          mockEntity,
+          mockElement,
+          mockExpansions,
+          mockUpdater,
+        );
         await fixture(result as TemplateResult);
 
         // Check that percentBar was called
@@ -109,7 +132,13 @@ export default () => {
           },
         };
 
-        const result = row(mockHass, config, nonPercentEntity, mockElement);
+        const result = row(
+          mockHass,
+          nonPercentEntity,
+          mockElement,
+          mockExpansions,
+          mockUpdater,
+        );
         await fixture(result as TemplateResult);
 
         // Check that percentBar was not called
@@ -124,7 +153,13 @@ export default () => {
           isActive: true,
         };
 
-        const result = row(mockHass, config, problemEntity, mockElement);
+        const result = row(
+          mockHass,
+          problemEntity,
+          mockElement,
+          mockExpansions,
+          mockUpdater,
+        );
         const el = await fixture(result as TemplateResult);
 
         // Check that status-error class is applied
@@ -139,7 +174,13 @@ export default () => {
           isActive: false,
         };
 
-        const result = row(mockHass, config, problemEntity, mockElement);
+        const result = row(
+          mockHass,
+          problemEntity,
+          mockElement,
+          mockExpansions,
+          mockUpdater,
+        );
         const el = await fixture(result as TemplateResult);
 
         // Check that status-ok class is applied
@@ -150,9 +191,15 @@ export default () => {
     describe('entity attributes toggling', () => {
       it('should not show attributes when entity is collapsed', async () => {
         // Set entity as not expanded
-        mockElement.expandedEntities = { [mockEntity.entity_id]: false };
+        mockExpansions.expandedEntities = { [mockEntity.entity_id]: false };
 
-        const result = row(mockHass, config, mockEntity, mockElement);
+        const result = row(
+          mockHass,
+          mockEntity,
+          mockElement,
+          mockExpansions,
+          mockUpdater,
+        );
         await fixture(result as TemplateResult);
 
         // Check that attributes was not called
@@ -161,9 +208,15 @@ export default () => {
 
       it('should show attributes when entity is expanded', async () => {
         // Set entity as expanded
-        mockElement.expandedEntities = { [mockEntity.entity_id]: true };
+        mockExpansions.expandedEntities = { [mockEntity.entity_id]: true };
 
-        const result = row(mockHass, config, mockEntity, mockElement);
+        const result = row(
+          mockHass,
+          mockEntity,
+          mockElement,
+          mockExpansions,
+          mockUpdater,
+        );
         await fixture(result as TemplateResult);
 
         // Check that attributes was called with entity attributes
@@ -175,9 +228,15 @@ export default () => {
 
       it('should apply expanded-row class when entity is expanded', async () => {
         // Set entity as expanded
-        mockElement.expandedEntities = { [mockEntity.entity_id]: true };
+        mockExpansions.expandedEntities = { [mockEntity.entity_id]: true };
 
-        const result = row(mockHass, config, mockEntity, mockElement);
+        const result = row(
+          mockHass,
+          mockEntity,
+          mockElement,
+          mockExpansions,
+          mockUpdater,
+        );
         const el = await fixture(result as TemplateResult);
 
         // Check that expanded-row class is applied
@@ -185,7 +244,13 @@ export default () => {
       });
 
       it('should attach action handlers', async () => {
-        const result = row(mockHass, config, mockEntity, mockElement);
+        const result = row(
+          mockHass,
+          mockEntity,
+          mockElement,
+          mockExpansions,
+          mockUpdater,
+        );
         const el = await fixture(result as TemplateResult);
 
         // Verify action handler was attached

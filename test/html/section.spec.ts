@@ -210,9 +210,8 @@ export default () => {
         // Check that row was called with the correct arguments
         mockEntities.forEach((entity, index) => {
           expect(rowStub.getCall(index).args[0]).to.equal(mockHass);
-          expect(rowStub.getCall(index).args[1]).to.equal(mockConfig);
-          expect(rowStub.getCall(index).args[2]).to.equal(entity);
-          expect(rowStub.getCall(index).args[3]).to.equal(mockElement);
+          expect(rowStub.getCall(index).args[1]).to.equal(entity);
+          expect(rowStub.getCall(index).args[2]).to.equal(mockElement);
         });
       });
 
@@ -235,8 +234,8 @@ export default () => {
         expect(rowStub.callCount).to.equal(2);
 
         // Check that row was called with the correct entities
-        expect(rowStub.firstCall.args[2]).to.equal(mockEntities[0]);
-        expect(rowStub.secondCall.args[2]).to.equal(mockEntities[1]);
+        expect(rowStub.firstCall.args[1]).to.equal(mockEntities[0]);
+        expect(rowStub.secondCall.args[1]).to.equal(mockEntities[1]);
       });
 
       it('should show all entities when expanded regardless of preview_count', async () => {
