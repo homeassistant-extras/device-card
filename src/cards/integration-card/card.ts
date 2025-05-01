@@ -127,7 +127,7 @@ export class IntegrationCard extends LitElement {
    * @returns {TemplateResult} The rendered HTML template
    */
   override render(): TemplateResult | typeof nothing {
-    if (!this._integration || !this._integration.devices.length) {
+    if (!this._integration?.devices?.length) {
       return html`<ha-card>
         <div class="card-content">
           <div class="no-devices">
@@ -140,8 +140,8 @@ export class IntegrationCard extends LitElement {
 
     // For preview, only show one device
     const devicesToShow = this.isPreview
-      ? this._integration.devices.slice(0, 1)
-      : this._integration.devices;
+      ? this._integration?.devices?.slice(0, 1)
+      : this._integration?.devices;
 
     const title = this._config.title ?? this._integration.name;
 

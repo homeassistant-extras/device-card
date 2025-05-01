@@ -17,14 +17,15 @@ export const matchesPattern = (
   }
 
   // Check if it's a regex pattern (enclosed in slashes)
-  const regexMatch = pattern.match(/^\/(.+)\/$/);
+  const regexPattern = /^\/(.+)\/$/;
+  const regexMatch = regexPattern.exec(pattern);
   if (regexMatch) {
     try {
       const regex = new RegExp(regexMatch[1] as string);
       return regex.test(str);
     } catch (e) {
       // If regex is invalid, fall back to treating it as a literal string
-      console.warn(`Invalid regex pattern: ${pattern}`);
+      console.warn(`Invalid regex pattern: ${pattern}`, e);
       return str === pattern;
     }
   }
