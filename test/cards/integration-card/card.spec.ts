@@ -161,6 +161,36 @@ export default () => {
         expect(integrationData.devices).to.not.include('device_1');
       });
 
+      // Add a test for include and exclude together
+      it('should handle both include_devices and exclude_devices together', async () => {
+        // Set config with included and excluded devices
+        card.setConfig({
+          integration: 'zwave_js',
+          include_devices: ['device_1'],
+          exclude_devices: ['device_*'],
+        });
+
+        // Configure isInIntegration to return true for both devices
+        isInIntegrationStub
+          .withArgs(mockHass.devices.device_1, ['entry_1', 'entry_2'])
+          .returns(true);
+        isInIntegrationStub
+          .withArgs(mockHass.devices.device_2, ['entry_1', 'entry_2'])
+          .returns(true);
+
+        // Set hass property
+        card.hass = mockHass;
+
+        // Wait for the promise to resolve
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        // Check that include patterns worked but exclude patterns were also applied
+        const integrationData = card['_integration'];
+        expect(integrationData.devices).to.have.length(1);
+        expect(integrationData.devices).to.include('device_1');
+        expect(integrationData.devices).to.not.include('device_2');
+      });
+
       it('should not update integration data if nothing changed', async () => {
         // Initial setup
         card.setConfig({ integration: 'zwave_js' });

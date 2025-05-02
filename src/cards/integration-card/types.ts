@@ -12,6 +12,9 @@ export interface Config extends BaseConfig {
   /** Integration domain to display devices for */
   integration: string;
 
+  /** List of device IDs to include in the display (takes precedence over exclusions) */
+  include_devices?: string[];
+
   /** List of device IDs to exclude from the display */
   exclude_devices?: string[];
 

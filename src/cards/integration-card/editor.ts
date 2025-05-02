@@ -85,8 +85,9 @@ export class IntegrationCardEditor extends LitElement {
     if (!config.exclude_devices?.length) {
       delete config.exclude_devices;
     }
-
-    // Remove columns if set to 0 or invalid
+    if (!config.include_devices?.length) {
+      delete config.include_devices;
+    }
     if (!config.columns || config.columns <= 0) {
       delete config.columns;
     }

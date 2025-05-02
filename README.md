@@ -211,7 +211,8 @@ Most configuration options from the Device Card are supported:
 | title             | string | Device name  | Optional custom title for the card                           |
 | preview_count     | number | All items    | Number of items to preview before showing "Show More" button |
 | columns           | number | _responsive_ | Fix the number of columns for device cards (1-6)             |
-| exclude_devices   | list   | _none_       | Specific device IDs to exclude from the integration display  |
+| include_devices   | list   | _none_       | Specific devices to include - higher priority than excludes  |
+| exclude_devices   | list   | _none_       | Specific devices to exclude from the integration display     |
 | exclude_sections  | list   | _none_       | Sections of entities to exclude. See below.                  |
 | section_order     | list   | _none_       | Custom order for displaying sections. See below.             |
 | features          | list   | See below    | Optional flags to toggle different features                  |
@@ -219,7 +220,7 @@ Most configuration options from the Device Card are supported:
 | hold_action       | object | none         | Action to perform when holding the card                      |
 | double_tap_action | object | none         | Action when double-tapping the card                          |
 
-**Note** - `exclude_devices` and `exclude_entities` accepts wildcards (\*) and Regex
+**Note** - `include_devices`, `exclude_devices` and `exclude_entities` accepts wildcards (\*) and Regex
 
 #### Feature Options
 
@@ -365,7 +366,7 @@ hold_action:
 
 Basic Configuration with Excluded Devices
 
-You can use wildcard patterns with `*` to exclude devices or entities:
+You can use wildcard patterns with `*` to include, exclude devices or entities:
 
 ```yaml
 type: custom:integration-card

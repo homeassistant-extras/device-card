@@ -5,6 +5,7 @@ import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { shouldExcludeDevice } from './exclude-devices';
+import { shouldIncludeDevice } from './include-devices';
 import { integrationStyles } from './styles';
 import type { Config, IntegrationData } from './types';
 const equal = require('fast-deep-equal');
@@ -86,11 +87,17 @@ export class IntegrationCard extends LitElement {
         const configEntries = results.map((e: any) => e.entry_id);
 
         Object.values(hass.devices).forEach((device) => {
-          // Check if device belongs to any of the config entries
-          if (
-            !shouldExcludeDevice(this._config, device.id, device.name) &&
-            isInIntegration(device, configEntries)
-          ) {
+          var isIncluded = shouldIncludeDevice(
+            this._config,
+            device.id,
+            device.name,
+          );
+
+          var isExcluded =
+            !isIncluded &&
+            shouldExcludeDevice(this._config, device.id, device.name);
+
+          if (!isExcluded && isInIntegration(device, configEntries)) {
             data.devices.push(device.id);
           }
         });

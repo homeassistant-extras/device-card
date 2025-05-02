@@ -78,6 +78,19 @@ const contentSchema = (integration?: string): HaFormSchema => {
         },
       },
       {
+        name: 'include_devices',
+        label: 'Devices to include',
+        required: false,
+        selector: {
+          device: {
+            multiple: true,
+            filter: {
+              integration: integration,
+            },
+          },
+        },
+      },
+      {
         name: 'exclude_devices',
         label: 'Devices to exclude',
         required: false,
@@ -153,7 +166,8 @@ const contentSchema = (integration?: string): HaFormSchema => {
 
   if (!integration) {
     schema.schema = schema.schema.filter(
-      (s) => !['exclude_devices', 'columns'].includes(s.name),
+      (s) =>
+        !['include_devices', 'exclude_devices', 'columns'].includes(s.name),
     );
   }
 

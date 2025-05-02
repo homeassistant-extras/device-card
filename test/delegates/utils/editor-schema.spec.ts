@@ -176,6 +176,19 @@ export default () => {
                 },
               },
               {
+                name: 'include_devices',
+                label: 'Devices to include',
+                required: false,
+                selector: {
+                  device: {
+                    multiple: true,
+                    filter: {
+                      integration: integrationName,
+                    },
+                  },
+                },
+              },
+              {
                 name: 'exclude_devices',
                 label: 'Devices to exclude',
                 required: false,

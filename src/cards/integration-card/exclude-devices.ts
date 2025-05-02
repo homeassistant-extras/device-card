@@ -5,6 +5,7 @@ import type { Config } from './types';
  * Checks if a device ID should be excluded based on the configuration
  * @param config
  * @param deviceId
+ * @param deviceName
  * @returns
  */
 export const shouldExcludeDevice = (
@@ -16,7 +17,7 @@ export const shouldExcludeDevice = (
     return false;
   }
 
-  // Check if any exclusion pattern matches the device ID
+  // Check if any exclusion pattern matches the device ID or name
   return config.exclude_devices.some(
     (pattern) =>
       matchesPattern(deviceId, pattern) || matchesPattern(deviceName, pattern),
