@@ -149,7 +149,7 @@ export class IntegrationCard extends LitElement {
     const gridStyles = this._getGridStyles();
 
     return html`
-      <div class="integration-wrapper">
+      <div>
         ${title ? html`<h1 class="integration-title">${title}</h1>` : nothing}
 
         <div class="devices-container" style=${styleMap(gridStyles)}>

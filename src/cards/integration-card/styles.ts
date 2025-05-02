@@ -13,10 +13,6 @@ export const integrationStyles = css`
     --card-gap: 16px;
   }
 
-  .integration-wrapper {
-    padding: var(--card-padding);
-  }
-
   .integration-title {
     font-size: var(--title-font-size);
     font-weight: var(--title-font-weight);
@@ -32,12 +28,6 @@ export const integrationStyles = css`
     gap: var(--card-gap);
   }
 
-  @media (max-width: 600px) {
-    .devices-container {
-      grid-template-columns: 1fr;
-    }
-  }
-
   .no-devices {
     padding: 32px 16px;
     text-align: center;
@@ -50,10 +40,5 @@ export const integrationStyles = css`
     .devices-container {
       grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     }
-  }
-
-  /* Styles for when in a dashboard edit preview */
-  :host([editor]) .devices-container {
-    grid-template-columns: 1fr;
   }
 `;
