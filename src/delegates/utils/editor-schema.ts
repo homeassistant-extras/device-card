@@ -39,43 +39,134 @@ const INTERACTIONS_SCHEMA: HaFormSchema = {
   ],
 };
 
-const contentSchema = (integration?: string): HaFormSchema => {
+/**
+ * Generates the schema for the device card's content configuration
+ * This includes options for title, preview count, section exclusion,
+ *
+ */
+const CONTENT_SCHEMA: HaFormSchema = {
+  name: 'content',
+  label: 'Content',
+  type: 'expandable',
+  flatten: true,
+  icon: 'mdi:text-short',
+  schema: [
+    {
+      name: 'title',
+      required: false,
+      label: 'Card Title',
+      selector: {
+        text: {},
+      },
+    },
+    {
+      name: 'preview_count',
+      required: false,
+      label: 'Preview Count',
+      selector: {
+        text: {
+          type: 'number' as 'number',
+        },
+      },
+    },
+    {
+      name: 'exclude_sections',
+      label: 'Sections to exclude',
+      required: false,
+      selector: {
+        select: {
+          multiple: true,
+          mode: 'list' as const,
+          options: [
+            {
+              label: 'Controls',
+              value: 'controls',
+            },
+            {
+              label: 'Configuration',
+              value: 'configurations',
+            },
+            {
+              label: 'Sensors',
+              value: 'sensors',
+            },
+            {
+              label: 'Diagnostic',
+              value: 'diagnostics',
+            },
+          ],
+        },
+      },
+    },
+    {
+      name: 'section_order',
+      label: 'Section display order (click in order)',
+      required: false,
+      selector: {
+        select: {
+          multiple: true,
+          mode: 'list' as const,
+          options: [
+            {
+              label: 'Controls',
+              value: 'controls',
+            },
+            {
+              label: 'Configuration',
+              value: 'configurations',
+            },
+            {
+              label: 'Sensors',
+              value: 'sensors',
+            },
+            {
+              label: 'Diagnostic',
+              value: 'diagnostics',
+            },
+          ],
+        },
+      },
+    },
+  ],
+};
+
+/**
+ * Generates the schema for the integration card's layout configuration
+ * This includes options for the number of columns, device inclusion/exclusion,
+ *
+ * @param {string} integration - The current integration domain (if already selected)
+ * @returns {HaFormSchema} The complete schema for device card content configuration
+ */
+const layoutSchema = (integration?: string): HaFormSchema => {
   const schema = {
-    name: 'content',
-    label: 'Content',
+    name: 'layout',
+    label: 'Integration Layout',
     type: 'expandable',
     flatten: true,
-    icon: 'mdi:text-short',
+    icon: 'mdi:view-grid-plus',
     schema: [
       {
-        name: 'title',
-        required: false,
-        label: 'Card Title',
-        selector: {
-          text: {},
-        },
-      },
-      {
-        name: 'preview_count',
-        required: false,
-        label: 'Preview Count',
-        selector: {
-          text: {
-            type: 'number' as 'number',
+        type: 'grid',
+        name: '',
+        schema: [
+          {
+            name: 'columns',
+            required: false,
+            label: 'Number of Columns',
+            selector: {
+              number: {
+                min: 1,
+                max: 6,
+                mode: 'box' as 'box',
+              },
+            },
           },
-        },
-      },
-      {
-        name: 'columns',
-        required: false,
-        label: 'Number of Columns',
-        selector: {
-          number: {
-            min: 1,
-            max: 6,
-            mode: 'slider' as 'slider',
+          {
+            name: 'hide_integration_title',
+            label: 'Hide Title',
+            selector: { boolean: {} },
           },
-        },
+        ],
       },
       {
         name: 'include_devices',
@@ -103,73 +194,8 @@ const contentSchema = (integration?: string): HaFormSchema => {
           },
         },
       },
-      {
-        name: 'exclude_sections',
-        label: 'Sections to exclude',
-        required: false,
-        selector: {
-          select: {
-            multiple: true,
-            mode: 'list' as const,
-            options: [
-              {
-                label: 'Controls',
-                value: 'controls',
-              },
-              {
-                label: 'Configuration',
-                value: 'configurations',
-              },
-              {
-                label: 'Sensors',
-                value: 'sensors',
-              },
-              {
-                label: 'Diagnostic',
-                value: 'diagnostics',
-              },
-            ],
-          },
-        },
-      },
-      {
-        name: 'section_order',
-        label: 'Section display order (click in order)',
-        required: false,
-        selector: {
-          select: {
-            multiple: true,
-            mode: 'list' as const,
-            options: [
-              {
-                label: 'Controls',
-                value: 'controls',
-              },
-              {
-                label: 'Configuration',
-                value: 'configurations',
-              },
-              {
-                label: 'Sensors',
-                value: 'sensors',
-              },
-              {
-                label: 'Diagnostic',
-                value: 'diagnostics',
-              },
-            ],
-          },
-        },
-      },
     ],
   };
-
-  if (!integration) {
-    schema.schema = schema.schema.filter(
-      (s) =>
-        !['include_devices', 'exclude_devices', 'columns'].includes(s.name),
-    );
-  }
 
   return schema as HaFormSchema;
 };
@@ -273,7 +299,8 @@ export const getIntegrationSchema = async (
       required: true,
       label: 'Integration',
     },
-    contentSchema(integration),
+    CONTENT_SCHEMA,
+    layoutSchema(integration),
     featuresSchema(integration),
     INTERACTIONS_SCHEMA,
   ];
@@ -303,7 +330,7 @@ export const getDeviceSchema = (
       required: true,
       label: `Device`,
     },
-    contentSchema(),
+    CONTENT_SCHEMA,
     featuresSchema(undefined, entities),
     INTERACTIONS_SCHEMA,
   ];

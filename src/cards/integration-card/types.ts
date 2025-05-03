@@ -20,6 +20,9 @@ export interface Config extends BaseConfig {
 
   /** Fixed number of columns for device display (overrides responsive behavior) */
   columns?: number;
+
+  /** Hide the integration title */
+  hide_integration_title?: boolean;
 }
 
 /**

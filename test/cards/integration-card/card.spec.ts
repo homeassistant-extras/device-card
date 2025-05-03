@@ -236,18 +236,41 @@ export default () => {
         card.setConfig({ integration: 'zwave_js' });
       });
 
-      it('should render a message when no devices are found', async () => {
-        // Set empty integration data
+      // Test for hide_integration_title flag
+      it('should hide the integration title when hide_integration_title is true', async () => {
+        // Set up integration data
         card['_integration'] = {
           name: 'Zwave Js',
-          devices: [],
+          devices: ['device_1', 'device_2'],
         };
+
+        // Configure card with hide_integration_title flag
+        card.setConfig({
+          integration: 'zwave_js',
+          hide_integration_title: true,
+        });
+
+        const el = await fixture(card.render() as TemplateResult);
+
+        // Verify that the title element doesn't exist
+        const titleElement = el.querySelector('.integration-title');
+        expect(titleElement).to.be.null;
+      });
+
+      // Test for Loading message
+      it('should render a loading message when integration is not yet loaded', async () => {
+        // Set integration to undefined to simulate loading state
+        (card as any)._integration = undefined;
+
+        // Configure card
+        card.setConfig({
+          integration: 'zwave_js',
+        });
 
         const el = await fixture(card.render() as TemplateResult);
 
         expect(el.querySelector('.no-devices')).to.exist;
-        expect(el.textContent).to.include('No devices found for integration');
-        expect(el.textContent).to.include('zwave_js');
+        expect(el.textContent).to.include('Loading...');
       });
 
       it('should render one device card in preview mode', async () => {

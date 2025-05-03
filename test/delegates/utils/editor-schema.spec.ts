@@ -164,44 +164,6 @@ export default () => {
                 },
               },
               {
-                name: 'columns',
-                required: false,
-                label: 'Number of Columns',
-                selector: {
-                  number: {
-                    min: 1,
-                    max: 6,
-                    mode: 'slider' as 'slider',
-                  },
-                },
-              },
-              {
-                name: 'include_devices',
-                label: 'Devices to include',
-                required: false,
-                selector: {
-                  device: {
-                    multiple: true,
-                    filter: {
-                      integration: integrationName,
-                    },
-                  },
-                },
-              },
-              {
-                name: 'exclude_devices',
-                label: 'Devices to exclude',
-                required: false,
-                selector: {
-                  device: {
-                    multiple: true,
-                    filter: {
-                      integration: integrationName,
-                    },
-                  },
-                },
-              },
-              {
                 name: 'exclude_sections',
                 label: 'Sections to exclude',
                 required: false,
@@ -256,6 +218,64 @@ export default () => {
                         value: 'diagnostics',
                       },
                     ],
+                  },
+                },
+              },
+            ],
+          },
+          {
+            name: 'layout',
+            label: 'Integration Layout',
+            type: 'expandable',
+            flatten: true,
+            icon: 'mdi:view-grid-plus',
+            schema: [
+              {
+                type: 'grid',
+                name: '',
+                schema: [
+                  {
+                    name: 'columns',
+                    required: false,
+                    label: 'Number of Columns',
+                    selector: {
+                      number: {
+                        min: 1,
+                        max: 6,
+                        mode: 'box' as 'box',
+                      },
+                    },
+                  },
+                  {
+                    name: 'hide_integration_title',
+                    label: 'Hide Title',
+                    selector: { boolean: {} },
+                  },
+                ],
+              },
+              {
+                name: 'include_devices',
+                label: 'Devices to include',
+                required: false,
+                selector: {
+                  device: {
+                    multiple: true,
+                    filter: {
+                      integration: integrationName,
+                    },
+                  },
+                },
+              },
+              {
+                name: 'exclude_devices',
+                label: 'Devices to exclude',
+                required: false,
+                selector: {
+                  device: {
+                    multiple: true,
+                    filter: {
+                      integration: integrationName,
+                    },
                   },
                 },
               },

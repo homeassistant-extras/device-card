@@ -135,12 +135,12 @@ export class IntegrationCard extends LitElement {
    */
   override render(): TemplateResult | typeof nothing {
     if (!this._integration?.devices?.length) {
+      const message = this._integration
+        ? `No devices found for integration: ${this._config.integration}`
+        : 'Loading...';
       return html`<ha-card>
         <div class="card-content">
-          <div class="no-devices">
-            No devices found for integration:
-            ${this._config.integration || 'not specified'}
-          </div>
+          <div class="no-devices">${message}</div>
         </div>
       </ha-card>`;
     }
@@ -157,7 +157,9 @@ export class IntegrationCard extends LitElement {
 
     return html`
       <div>
-        ${title ? html`<h1 class="integration-title">${title}</h1>` : nothing}
+        ${title && !this._config.hide_integration_title
+          ? html`<h1 class="integration-title">${title}</h1>`
+          : nothing}
 
         <div class="devices-container" style=${styleMap(gridStyles)}>
           ${devicesToShow.map((deviceId) => {

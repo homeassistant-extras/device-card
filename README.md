@@ -206,29 +206,23 @@ For `section_order`, the default order is: Controls, Configuration, Sensors, Dia
 
 Most configuration options from the Device Card are supported:
 
-| Name              | Type   | Default      | Description                                                  |
-| ----------------- | ------ | ------------ | ------------------------------------------------------------ |
-| integration       | string | **Required** | The Home Assistant integration domain (e.g., zwave_js, hue)  |
-| title             | string | Device name  | Optional custom title for the card                           |
-| preview_count     | number | All items    | Number of items to preview before showing "Show More" button |
-| columns           | number | _responsive_ | Fix the number of columns for device cards (1-6)             |
-| include_devices   | list   | _none_       | Specific devices to include - higher priority than excludes  |
-| exclude_devices   | list   | _none_       | Specific devices to exclude from the integration display     |
-| exclude_sections  | list   | _none_       | Sections of entities to exclude. See below.                  |
-| section_order     | list   | _none_       | Custom order for displaying sections. See below.             |
-| features          | list   | See below    | Optional flags to toggle different features                  |
-| tap_action        | object | none         | Action to perform when tapping the card                      |
-| hold_action       | object | none         | Action to perform when holding the card                      |
-| double_tap_action | object | none         | Action when double-tapping the card                          |
+| Name                   | Type    | Default      | Description                                                  |
+| ---------------------- | ------- | ------------ | ------------------------------------------------------------ |
+| integration            | string  | **Required** | The Home Assistant integration domain (e.g., zwave_js, hue)  |
+| title                  | string  | Device name  | Optional custom title for the card                           |
+| hide_integration_title | boolean | False        | Optional flag to hide the integration card title.            |
+| preview_count          | number  | All items    | Number of items to preview before showing "Show More" button |
+| columns                | number  | _responsive_ | Fix the number of columns for device cards (1-6)             |
+| include_devices        | list    | _none_       | Specific devices to include - higher priority than excludes  |
+| exclude_devices        | list    | _none_       | Specific devices to exclude from the integration display     |
+| exclude_sections       | list    | _none_       | Sections of entities to exclude. See below.                  |
+| section_order          | list    | _none_       | Custom order for displaying sections. See below.             |
+| features               | list    | See above    | Optional flags to toggle different features                  |
+| tap_action             | object  | none         | Action to perform when tapping the card                      |
+| hold_action            | object  | none         | Action to perform when holding the card                      |
+| double_tap_action      | object  | none         | Action when double-tapping the card                          |
 
 **Note** - `include_devices`, `exclude_devices` and `exclude_entities` accepts wildcards (\*) and Regex
-
-#### Feature Options
-
-| Name              | Type | Description                              |
-| ----------------- | ---- | ---------------------------------------- |
-| hide_device_model | flag | Hides the device model information       |
-| compact           | flag | Uses compact layout with reduced spacing |
 
 ## Example Configurations
 
