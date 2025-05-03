@@ -233,6 +233,7 @@ export default () => {
               {
                 type: 'grid',
                 name: '',
+                label: '',
                 schema: [
                   {
                     name: 'columns',
@@ -347,7 +348,7 @@ export default () => {
               {
                 type: 'grid',
                 name: '',
-                label: 'Sort Options',
+                label: '',
                 schema: [
                   {
                     name: 'type',
@@ -445,6 +446,16 @@ export default () => {
             },
             required: true,
             label: `Device`,
+          },
+          {
+            name: 'entity_id',
+            required: false,
+            label: 'Display Entity State',
+            selector: {
+              entity: {
+                multiple: false,
+              },
+            },
           },
           {
             name: 'content',
@@ -601,7 +612,7 @@ export default () => {
               {
                 type: 'grid',
                 name: '',
-                label: 'Sort Options',
+                label: '',
                 schema: [
                   {
                     name: 'type',

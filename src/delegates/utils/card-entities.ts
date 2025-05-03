@@ -41,7 +41,7 @@ export const getDeviceEntities = (
           ...state.attributes,
           friendly_name: name,
         },
-      } as EntityInformation;
+      };
     })
     .filter((e) => e !== undefined) as EntityInformation[];
   return deviceEntities;

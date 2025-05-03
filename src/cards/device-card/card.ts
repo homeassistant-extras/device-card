@@ -5,6 +5,7 @@ import { styles } from '@device/styles';
 import type { HomeAssistant } from '@hass/types';
 import { renderSections } from '@html/device-section';
 import { picture } from '@html/picture';
+import { pinnedEntity } from '@html/pinned-entity';
 import type { Device } from '@type/config';
 import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
@@ -112,6 +113,7 @@ export class DeviceCard extends LitElement {
     const hideTitle = hasFeature(this._config, 'hide_title');
     const hideDeviceModel = hasFeature(this._config, 'hide_device_model');
     const hideHeader = hideTitle && hideDeviceModel;
+    const entity = pinnedEntity(this._hass, this._config.entity_id);
 
     // Prepare header content
     let headerContent: TemplateResult | typeof nothing = nothing;
@@ -132,8 +134,12 @@ export class DeviceCard extends LitElement {
           title="${this.collapse ? 'Expand' : 'Collapse'}"
         >
           <div class="title">${titleContent} ${modelContent}</div>
+          ${entity}
         </div>
       `;
+    } else if (entity) {
+      // If header is hidden but we have an entity state to show
+      headerContent = html`<div class="entity-state-only">${entity}</div>`;
     }
 
     return html`

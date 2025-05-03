@@ -1,3 +1,5 @@
+// test/cards/device-card/card.spec.ts (Updated with entity state display tests)
+
 import * as deviceUtils from '@delegates/utils/get-device';
 import * as problemUtils from '@delegates/utils/has-problem';
 import { DeviceCard } from '@device/card';
@@ -6,6 +8,7 @@ import type { Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import * as sectionRenderer from '@html/device-section';
 import * as pictureModule from '@html/picture';
+import * as pinnedEntityModule from '@html/pinned-entity';
 import { fixture } from '@open-wc/testing-helpers';
 import type { Device } from '@type/config';
 import { expect } from 'chai';
@@ -20,11 +23,13 @@ export default () => {
     let hasProblemStub: sinon.SinonStub;
     let getDeviceStub: sinon.SinonStub;
     let renderSectionsStub: sinon.SinonStub;
+    let pinnedEntityStub: sinon.SinonStub;
 
     beforeEach(() => {
       hasProblemStub = stub(problemUtils, 'hasProblem');
       getDeviceStub = stub(deviceUtils, 'getDevice');
       renderSectionsStub = stub(sectionRenderer, 'renderSections');
+      pinnedEntityStub = stub(pinnedEntityModule, 'pinnedEntity');
 
       card = new DeviceCard();
       mockHass = {
@@ -34,6 +39,15 @@ export default () => {
             name: 'Device',
             model: 'Feeder',
             model_id: 'Plus Pro',
+          },
+        },
+        states: {
+          'sensor.test_progress': {
+            entity_id: 'sensor.test_progress',
+            state: '75.5',
+            attributes: {
+              unit_of_measurement: '%',
+            },
           },
         },
       } as any as HomeAssistant;
@@ -92,6 +106,9 @@ export default () => {
       hasProblemStub.returns(false);
       getDeviceStub.returns(mockUnit);
       renderSectionsStub.returns(html`<div class="section">Mock Section</div>`);
+      pinnedEntityStub.returns(
+        html`<div class="pinned-entity-state">75.5%</div>`,
+      );
 
       card.setConfig({ device_id: 'device_1' });
       card.hass = mockHass as HomeAssistant;
@@ -101,6 +118,7 @@ export default () => {
       hasProblemStub.restore();
       getDeviceStub.restore();
       renderSectionsStub.restore();
+      pinnedEntityStub.restore();
     });
 
     describe('setConfig', () => {
@@ -383,6 +401,48 @@ export default () => {
 
         // Check tooltip text is "Collapse"
         expect(header?.getAttribute('title')).to.equal('Expand');
+      });
+
+      // New tests for entity state display feature
+      it('should render entity state when entity_id is provided', async () => {
+        // Set up the card with an entity_id
+        card.setConfig({
+          device_id: 'device_1',
+          entity_id: 'sensor.test_progress',
+        });
+
+        // Render the card
+        const element = await fixture(card.render() as TemplateResult);
+
+        // Verify pinnedEntity was called with the right parameters
+        expect(pinnedEntityStub.calledOnce).to.be.true;
+        expect(pinnedEntityStub.calledWith(mockHass, 'sensor.test_progress')).to
+          .be.true;
+
+        // Verify the pinned entity state was rendered in the card
+        const stateElement = element.querySelector('.pinned-entity-state');
+        expect(stateElement).to.exist;
+        expect(stateElement?.textContent).to.equal('75.5%');
+      });
+
+      it('should still render entity state when header is hidden', async () => {
+        // Set up the card with an entity_id and hide_title + hide_device_model features
+        card.setConfig({
+          device_id: 'device_1',
+          entity_id: 'sensor.test_progress',
+          features: ['hide_title', 'hide_device_model'],
+        });
+
+        // Render the card
+        const element = await fixture(card.render() as TemplateResult);
+
+        // Verify pinnedEntity was called
+        expect(pinnedEntityStub.calledOnce).to.be.true;
+
+        // Verify entity state is shown in entity-state-only container
+        const stateElement = element.querySelector('.pinned-entity-state');
+        expect(stateElement).to.exist;
+        expect(stateElement?.textContent).to.equal('75.5%');
       });
     });
 

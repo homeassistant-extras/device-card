@@ -5,12 +5,17 @@
 import type { UiAction } from '../panels/lovelace/components/hui-action-editor';
 
 export type Selector =
+  | BooleanSelector
   | EntitySelector
   | DeviceSelector
   | NumberSelector
   | SelectSelector
   | StringSelector
   | UiActionSelector;
+
+export interface BooleanSelector {
+  boolean: {} | null;
+}
 
 interface EntitySelectorFilter {
   domain?: string | readonly string[];

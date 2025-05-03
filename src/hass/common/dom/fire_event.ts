@@ -69,11 +69,11 @@ export const fireEvent = <HassEvent extends ValidHassDomEvent>(
 ) => {
   options = options || {};
   // @ts-ignore
-  detail = detail === null || detail === undefined ? {} : detail;
+  detail = detail ?? {};
   const event = new Event(type, {
-    bubbles: options.bubbles === undefined ? true : options.bubbles,
+    bubbles: options.bubbles ?? true,
     cancelable: Boolean(options.cancelable),
-    composed: options.composed === undefined ? true : options.composed,
+    composed: options.composed ?? true,
   });
   (event as any).detail = detail;
   node.dispatchEvent(event);

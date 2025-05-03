@@ -24,6 +24,9 @@ export const styles = css`
     margin-bottom: 8px;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   /* Remove bottom border when collapsed */
@@ -41,6 +44,26 @@ export const styles = css`
     font-weight: 500;
     display: flex;
     flex-direction: column;
+  }
+
+  /* Entity state in header */
+  .entity-state {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* For when header is hidden but entity state is shown */
+  .entity-state-only {
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-align: right;
+    margin-right: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--divider-color);
+    margin-bottom: 8px;
   }
 
   /* Style for when card is on fire */

@@ -6,6 +6,9 @@ import type { BaseConfig } from '@type/config';
 export interface Config extends BaseConfig {
   /** Unique identifier for the device */
   device_id: string;
+
+  /** Optional entity ID to display state in header */
+  entity_id?: string;
 }
 
 /**

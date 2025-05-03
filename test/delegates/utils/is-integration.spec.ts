@@ -44,7 +44,7 @@ export default () => {
         const device = {} as DeviceRegistryEntry;
 
         // Act & Assert
-        expect(isInIntegration(device, ['config_entry_1'])).to.be.undefined;
+        expect(isInIntegration(device, ['config_entry_1'])).to.be.false;
       });
 
       it('should return false when config_entries is an empty array', () => {

@@ -10,5 +10,4 @@ export const isInIntegration = (
   device: DeviceRegistryEntry,
   entryIds: string[],
 ): boolean =>
-  device.config_entries &&
-  device.config_entries.some((entryId) => entryIds.includes(entryId));
+  device.config_entries?.some((entryId) => entryIds.includes(entryId)) ?? false;

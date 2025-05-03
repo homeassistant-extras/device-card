@@ -145,7 +145,7 @@ const SORT_SCHEMA: HaFormSchema = {
     {
       type: 'grid',
       name: '',
-      label: 'Sort Options',
+      label: '',
       schema: [
         {
           name: 'type',
@@ -189,7 +189,7 @@ const SORT_SCHEMA: HaFormSchema = {
  * @returns {HaFormSchema} The complete schema for device card content configuration
  */
 const layoutSchema = (integration?: string): HaFormSchema => {
-  const schema = {
+  return {
     name: 'layout',
     label: 'Integration Layout',
     type: 'expandable',
@@ -199,6 +199,7 @@ const layoutSchema = (integration?: string): HaFormSchema => {
       {
         type: 'grid',
         name: '',
+        label: '',
         schema: [
           {
             name: 'columns',
@@ -247,8 +248,6 @@ const layoutSchema = (integration?: string): HaFormSchema => {
       },
     ],
   };
-
-  return schema as HaFormSchema;
 };
 
 const featuresSchema = (
@@ -385,6 +384,16 @@ export const getDeviceSchema = (
       },
       required: true,
       label: `Device`,
+    },
+    {
+      name: 'entity_id',
+      required: false,
+      label: 'Display Entity State',
+      selector: {
+        entity: {
+          multiple: false,
+        },
+      },
     },
     CONTENT_SCHEMA,
     featuresSchema(undefined, entities),

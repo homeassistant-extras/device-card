@@ -264,6 +264,14 @@ features:
   - entity_picture
 ```
 
+#### With Pinned Entity State
+
+```yaml
+type: custom:device-card
+device_id: 1a2b3c4d5e6f7g8h9i0j
+entity_id: sensor.octoprint_print_progress
+```
+
 #### With Collapsed as Default
 
 ```yaml
@@ -327,6 +335,8 @@ features:
   - compact
 ```
 
+#### With custom action
+
 Set hold action as more-info to keep attribute exansion for `tap_action`
 
 ```yaml
@@ -336,25 +346,26 @@ hold_action:
   action: more-info
 ```
 
-Entities can be sorted by adding a `sort` configuration:
+#### With `sort` configuration
 
-````yaml
+```yaml
 type: custom:device-card
 device_id: 1a2b3c4d5e6f7g8h9i0j
 sort:
   type: name
   direction: asc
+```
 
 ### Integration Card
 
-Basic Configuration
+#### Basic Configuration
 
 ```yaml
 type: custom:integration-card
 integration: zwave_js
-````
+```
 
-Custom Title and Compact Layout
+#### Custom Title and Compact Layout
 
 ```yaml
 type: custom:integration-card
@@ -365,7 +376,7 @@ features:
   - hide_device_model
 ```
 
-Excluding Sections
+#### Excluding Sections
 
 ```yaml
 type: custom:integration-card
@@ -376,7 +387,7 @@ exclude_sections:
   - configurations
 ```
 
-Custom Actions for All Device Cards
+#### Custom Actions for All Device Cards
 
 ```yaml
 type: custom:integration-card
@@ -388,7 +399,7 @@ hold_action:
   navigation_path: /config/devices
 ```
 
-Basic Configuration with Excluded Devices
+#### Basic Configuration with Excluded Devices
 
 You can use wildcard patterns with `*` to include, exclude devices or entities:
 
