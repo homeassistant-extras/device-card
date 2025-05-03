@@ -165,7 +165,14 @@ export class IntegrationCard extends LitElement {
               <device-card
                 .config=${{
                   device_id: deviceId,
-                  ...this._config,
+                  preview_count: this._config.preview_count,
+                  exclude_entities: this._config.exclude_entities,
+                  exclude_sections: this._config.exclude_sections,
+                  section_order: this._config.section_order,
+                  tap_action: this._config.tap_action,
+                  hold_action: this._config.hold_action,
+                  double_tap_action: this._config.double_tap_action,
+                  features: this._config.features,
                 }}
                 .hass=${this._hass}
               ></device-card>
