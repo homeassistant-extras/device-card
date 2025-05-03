@@ -29,6 +29,36 @@
 </p>
 <br>
 
+# Table of Contents
+
+- [Overview](#overview)
+  - [Device Card](#device-card)
+  - [Integration Card](#integration-card)
+- [Features](#features)
+  - [Device Information Display](#device-information-display)
+  - [Problem Detection](#problem-detection)
+  - [Entity Pictures](#entity-pictures)
+  - [Expandable Sections](#expandable-sections)
+  - [Entity Attributes](#entity-attributes)
+  - [Pinned Entity State](#pinned-entity-state)
+  - [Percent Gauges](#percent-gauges)
+  - [Collapsible Card](#collapsible-card)
+  - [Compact Mode](#compact-mode)
+  - [Advanced Sorting](#advanced-sorting)
+  - [Pattern Matching](#pattern-matching)
+  - [Entity Interactions](#entity-interactions)
+  - [Visual Styling](#visual-styling)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration Options](#configuration-options)
+- [Example Configurations](#example-configurations)
+- [Project Roadmap](#project-roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+- [Code Quality](#code-quality)
+- [Build Status](#build-status)
+
 ## Overview
 
 ### Device Card
@@ -85,6 +115,38 @@ With an optional flag, you can showcase entity pictures when available. There mu
 - This behavior can be disabled by setting `tap_action` to "none"
 
 ![attributes](assets/attributes.png)
+
+### Pinned Entity State
+
+Display a specific entity's state prominently in the card header, providing instant visibility for your most important information. Perfect for temperature sensors, battery levels, or any critical value you want to monitor at a glance.
+
+![pinned-entity-state](assets/pinned-entity-state.png)
+
+### Percent Gauges
+
+Visual percentage indicators for entities with percentage values. Gauges automatically change color based on the value (red for low, yellow for medium, green for high), making it easy to visually assess battery levels, sensor readings, and more.
+
+![percent-gauges](assets/percent-gauges.png)
+
+### Collapsible Card
+
+Cards can be configured to start in a collapsed state, allowing you to keep dashboards clean while still having quick access to detailed information when needed. Simply click the header to expand and reveal all sections.
+
+![collapsible-card](assets/collapsible-card.png)
+
+### Compact Mode
+
+A space-efficient layout option that reduces padding and margins, allowing you to fit more information in the same space. Ideal for information-dense dashboards or smaller screens.
+
+![compact-mode](assets/compact-mode.png)
+
+### Advanced Sorting
+
+Customize how entities are sorted within each section. Sort by domain, entity ID, name, or state value in either ascending or descending order. This makes it easier to prioritize the most relevant information for your needs.
+
+### Pattern Matching
+
+Use wildcards and regular expressions in your entity and device exclusion patterns. This powerful feature allows for more flexible configuration, making it easy to include or exclude groups of entities based on naming patterns.
 
 ### Entity Interactions
 
