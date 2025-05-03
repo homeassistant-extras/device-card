@@ -86,19 +86,28 @@ export class IntegrationCard extends LitElement {
       .then((results: any) => {
         const configEntries = results.map((e: any) => e.entry_id);
 
+        // Simplified device inclusion/exclusion logic
         Object.values(hass.devices).forEach((device) => {
-          var isIncluded = shouldIncludeDevice(
-            this._config,
-            device.id,
-            device.name,
-          );
+          // Check if device belongs to the integration first
+          if (isInIntegration(device, configEntries)) {
+            const hasIncludeList =
+              this._config.include_devices?.length ?? 0 > 0;
+            const isIncluded = hasIncludeList
+              ? shouldIncludeDevice(this._config, device.id, device.name)
+              : true; // If no include list, all devices are considered "included"
 
-          var isExcluded =
-            !isIncluded &&
-            shouldExcludeDevice(this._config, device.id, device.name);
+            const isExcluded = shouldExcludeDevice(
+              this._config,
+              device.id,
+              device.name,
+            );
 
-          if (!isExcluded && isInIntegration(device, configEntries)) {
-            data.devices.push(device.id);
+            // Add device if:
+            // 1. It passes the inclusion check (either matches a pattern or no patterns specified)
+            // 2. It doesn't match any exclusion pattern
+            if (isIncluded && !isExcluded) {
+              data.devices.push(device.id);
+            }
           }
         });
 
@@ -130,7 +139,7 @@ export class IntegrationCard extends LitElement {
   }
 
   /**
-   * Renders the lit element card
+   * renders the lit element card
    * @returns {TemplateResult} The rendered HTML template
    */
   override render(): TemplateResult | typeof nothing {

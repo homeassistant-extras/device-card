@@ -213,7 +213,7 @@ Most configuration options from the Device Card are supported:
 | hide_integration_title | boolean | False        | Optional flag to hide the integration card title.            |
 | preview_count          | number  | All items    | Number of items to preview before showing "Show More" button |
 | columns                | number  | _responsive_ | Fix the number of columns for device cards (1-6)             |
-| include_devices        | list    | _none_       | Specific devices to include - higher priority than excludes  |
+| include_devices        | list    | _none_       | Include only specific devices for the integration            |
 | exclude_devices        | list    | _none_       | Specific devices to exclude from the integration display     |
 | exclude_sections       | list    | _none_       | Sections of entities to exclude. See below.                  |
 | section_order          | list    | _none_       | Custom order for displaying sections. See below.             |
@@ -372,6 +372,31 @@ exclude_devices:
   - esp_*_airfresh # Exclude all ESP air fresh devices
   - nous* # Exclude all devices starting with "nous"
   - /.*([Ss]upervisor)/ # Exclude devices ending in supervisor
+```
+
+In this example we would include only `device_1`
+
+```yaml
+type: custom:integration-card
+integration: zwave_js
+include_devices:
+  - device_1
+  - device_2
+  - device_3
+exclude_devices:
+  - device_2
+  - device_3
+  - device_4
+```
+
+In this example we would include only these 2 devices
+
+```yaml
+type: custom:integration-card
+integration: zwave_js
+include_devices:
+  - device_1
+  - device_2
 ```
 
 ## Project Roadmap

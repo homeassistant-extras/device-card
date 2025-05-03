@@ -141,12 +141,60 @@ export default () => {
         expect(integrationData.devices).to.not.include('device_3');
       });
 
+      it('should include devices specified in include_devices', async () => {
+        // Set config with included devices
+        card.setConfig({
+          integration: 'zwave_js',
+          include_devices: ['device_1'],
+        });
+
+        // Configure isInIntegration to return true for both devices
+        isInIntegrationStub
+          .withArgs(mockHass.devices.device_1, ['entry_1', 'entry_2'])
+          .returns(true);
+        isInIntegrationStub
+          .withArgs(mockHass.devices.device_2, ['entry_1', 'entry_2'])
+          .returns(true);
+
+        // Configure the config entries
+        callWSStub.resolves([
+          { entry_id: 'entry_1', domain: 'zwave_js' },
+          { entry_id: 'entry_2', domain: 'zwave_js' },
+        ]);
+
+        // Set hass property
+        card.hass = mockHass;
+
+        // Wait for the promise to resolve
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        // Check that device_1 is excluded
+        const integrationData = card['_integration'];
+        expect(integrationData.devices).to.have.length(1);
+        expect(integrationData.devices).to.include('device_1');
+        expect(integrationData.devices).to.not.include('device_2');
+      });
+
       it('should exclude devices specified in exclude_devices', async () => {
         // Set config with excluded devices
         card.setConfig({
           integration: 'zwave_js',
           exclude_devices: ['device_1'],
         });
+
+        // Configure isInIntegration to return true for both devices
+        isInIntegrationStub
+          .withArgs(mockHass.devices.device_1, ['entry_1', 'entry_2'])
+          .returns(true);
+        isInIntegrationStub
+          .withArgs(mockHass.devices.device_2, ['entry_1', 'entry_2'])
+          .returns(true);
+
+        // Configure the config entries
+        callWSStub.resolves([
+          { entry_id: 'entry_1', domain: 'zwave_js' },
+          { entry_id: 'entry_2', domain: 'zwave_js' },
+        ]);
 
         // Set hass property
         card.hass = mockHass;
@@ -166,8 +214,8 @@ export default () => {
         // Set config with included and excluded devices
         card.setConfig({
           integration: 'zwave_js',
-          include_devices: ['device_1'],
-          exclude_devices: ['device_*'],
+          include_devices: ['device_1', 'device_2'],
+          exclude_devices: ['device_2'],
         });
 
         // Configure isInIntegration to return true for both devices
@@ -177,6 +225,12 @@ export default () => {
         isInIntegrationStub
           .withArgs(mockHass.devices.device_2, ['entry_1', 'entry_2'])
           .returns(true);
+
+        // Configure the config entries
+        callWSStub.resolves([
+          { entry_id: 'entry_1', domain: 'zwave_js' },
+          { entry_id: 'entry_2', domain: 'zwave_js' },
+        ]);
 
         // Set hass property
         card.hass = mockHass;
