@@ -177,6 +177,7 @@ The card will automatically:
 | exclude_sections  | list   | _none_       | Sections of entities to exclude. See below.                  |
 | exclude_entities  | list   | _none_       | Entities to remove from the card.                            |
 | section_order     | list   | _none_       | Custom order for displaying sections. See below.             |
+| sort              | object | See below    | Sort options for entities                                    |
 | features          | list   | See below    | Optional flags to toggle different features                  |
 | tap_action        | object | none         | Action to perform when tapping the card                      |
 | hold_action       | object | none         | Action to perform when holding the card                      |
@@ -190,6 +191,15 @@ The card will automatically:
 | hide_device_model | flag | Hides the device model information       |
 | hide_title        | flag | Hides the device card title              |
 | compact           | flag | Uses compact layout with reduced spacing |
+
+#### Sorting Options
+
+Here's the markdown table for the sorting feature:
+
+| Option    | Type   | Default  | Description                                               |
+| --------- | ------ | -------- | --------------------------------------------------------- |
+| type      | string | Required | Sorting method: `domain`, `entity_id`, `name`, or `state` |
+| direction | string | asc      | Sort direction: `asc` (ascending) or `desc` (descending)  |
 
 #### Section Options
 
@@ -316,6 +326,15 @@ hold_action:
   action: more-info
 ```
 
+Entities can be sorted by adding a `sort` configuration:
+
+````yaml
+type: custom:device-card
+device_id: 1a2b3c4d5e6f7g8h9i0j
+sort:
+  type: name
+  direction: asc
+
 ### Integration Card
 
 Basic Configuration
@@ -323,7 +342,7 @@ Basic Configuration
 ```yaml
 type: custom:integration-card
 integration: zwave_js
-```
+````
 
 Custom Title and Compact Layout
 

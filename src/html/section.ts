@@ -6,6 +6,7 @@
  * expandable/collapsible behavior.
  */
 
+import { sortEntities } from '@common/sort';
 import { hasFeature } from '@config/feature';
 import type { Config, Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
@@ -49,9 +50,12 @@ export const renderSection = (
   // Get the current expanded state from the element
   const isExpanded = expansions.expandedSections[title] || false;
 
-  // Filter entities based on expanded state
+  // Sort and filter entities based on expanded state
+  const sortedEntities = sortEntities(entities, config.sort);
   const displayEntities =
-    needsExpansion && !isExpanded ? entities.slice(0, size) : entities;
+    needsExpansion && !isExpanded
+      ? sortedEntities.slice(0, size)
+      : sortedEntities;
 
   // Determine section class based on expanded state, number of items, and compact feature
   const isCompact = hasFeature(config, 'compact');

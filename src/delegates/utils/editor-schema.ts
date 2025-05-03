@@ -131,6 +131,57 @@ const CONTENT_SCHEMA: HaFormSchema = {
 };
 
 /**
+ * Generates the schema for the sort options in the device card
+ * This includes options for sorting by domain, entity ID, name, or state
+ *
+ */
+const SORT_SCHEMA: HaFormSchema = {
+  name: 'sort',
+  label: 'Sort Options',
+  type: 'expandable',
+  flatten: false,
+  icon: 'mdi:sort',
+  schema: [
+    {
+      type: 'grid',
+      name: '',
+      label: 'Sort Options',
+      schema: [
+        {
+          name: 'type',
+          label: 'Sort Type',
+          required: true,
+          selector: {
+            select: {
+              options: [
+                { value: 'domain', label: 'Domain' },
+                { value: 'entity_id', label: 'Entity ID' },
+                { value: 'name', label: 'Name' },
+                { value: 'state', label: 'State' },
+              ],
+              mode: 'dropdown' as 'dropdown',
+            },
+          },
+        },
+        {
+          name: 'direction',
+          label: 'Sort Direction',
+          selector: {
+            select: {
+              options: [
+                { value: 'asc', label: 'Ascending' },
+                { value: 'desc', label: 'Descending' },
+              ],
+              mode: 'dropdown' as 'dropdown',
+            },
+          },
+        },
+      ],
+    },
+  ],
+};
+
+/**
  * Generates the schema for the integration card's layout configuration
  * This includes options for the number of columns, device inclusion/exclusion,
  *
@@ -302,6 +353,7 @@ export const getIntegrationSchema = async (
     CONTENT_SCHEMA,
     layoutSchema(integration),
     featuresSchema(integration),
+    SORT_SCHEMA,
     INTERACTIONS_SCHEMA,
   ];
 };
@@ -332,6 +384,7 @@ export const getDeviceSchema = (
     },
     CONTENT_SCHEMA,
     featuresSchema(undefined, entities),
+    SORT_SCHEMA,
     INTERACTIONS_SCHEMA,
   ];
 };

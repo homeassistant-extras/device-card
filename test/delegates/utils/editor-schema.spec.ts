@@ -334,6 +334,51 @@ export default () => {
             ],
           },
           {
+            name: 'sort',
+            label: 'Sort Options',
+            type: 'expandable',
+            flatten: false,
+            icon: 'mdi:sort',
+            schema: [
+              {
+                type: 'grid',
+                name: '',
+                label: 'Sort Options',
+                schema: [
+                  {
+                    name: 'type',
+                    label: 'Sort Type',
+                    required: true,
+                    selector: {
+                      select: {
+                        options: [
+                          { value: 'domain', label: 'Domain' },
+                          { value: 'entity_id', label: 'Entity ID' },
+                          { value: 'name', label: 'Name' },
+                          { value: 'state', label: 'State' },
+                        ],
+                        mode: 'dropdown' as 'dropdown',
+                      },
+                    },
+                  },
+                  {
+                    name: 'direction',
+                    label: 'Sort Direction',
+                    selector: {
+                      select: {
+                        options: [
+                          { value: 'asc', label: 'Ascending' },
+                          { value: 'desc', label: 'Descending' },
+                        ],
+                        mode: 'dropdown' as 'dropdown',
+                      },
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          {
             name: 'interactions',
             label: 'Interactions',
             type: 'expandable',
@@ -535,6 +580,51 @@ export default () => {
                     ],
                   },
                 },
+              },
+            ],
+          },
+          {
+            name: 'sort',
+            label: 'Sort Options',
+            type: 'expandable',
+            flatten: false,
+            icon: 'mdi:sort',
+            schema: [
+              {
+                type: 'grid',
+                name: '',
+                label: 'Sort Options',
+                schema: [
+                  {
+                    name: 'type',
+                    label: 'Sort Type',
+                    required: true,
+                    selector: {
+                      select: {
+                        options: [
+                          { value: 'domain', label: 'Domain' },
+                          { value: 'entity_id', label: 'Entity ID' },
+                          { value: 'name', label: 'Name' },
+                          { value: 'state', label: 'State' },
+                        ],
+                        mode: 'dropdown' as 'dropdown',
+                      },
+                    },
+                  },
+                  {
+                    name: 'direction',
+                    label: 'Sort Direction',
+                    selector: {
+                      select: {
+                        options: [
+                          { value: 'asc', label: 'Ascending' },
+                          { value: 'desc', label: 'Descending' },
+                        ],
+                        mode: 'dropdown' as 'dropdown',
+                      },
+                    },
+                  },
+                ],
               },
             ],
           },

@@ -1,3 +1,4 @@
+import * as sortEntitiesModule from '@common/sort';
 import * as featureModule from '@config/feature';
 import type { Config, Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
@@ -5,7 +6,7 @@ import * as rowModule from '@html/row';
 import { renderSection } from '@html/section';
 import * as showMoreModule from '@html/show-more';
 import { fixture } from '@open-wc/testing-helpers';
-import type { EntityInformation } from '@type/config';
+import type { EntityInformation, SortConfig } from '@type/config';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -25,6 +26,7 @@ export default () => {
     let chevronStub: sinon.SinonStub;
     let showMoreStub: sinon.SinonStub;
     let hasFeatureStub: sinon.SinonStub;
+    let sortEntitiesStub: sinon.SinonStub;
 
     beforeEach(() => {
       // Create mock entities
@@ -89,6 +91,9 @@ export default () => {
 
       hasFeatureStub = stub(featureModule, 'hasFeature');
       hasFeatureStub.returns(false);
+
+      sortEntitiesStub = stub(sortEntitiesModule, 'sortEntities');
+      sortEntitiesStub.returns(mockEntities);
     });
 
     afterEach(() => {
@@ -97,6 +102,7 @@ export default () => {
       chevronStub.restore();
       showMoreStub.restore();
       hasFeatureStub.restore();
+      sortEntitiesStub.restore();
     });
 
     describe('renderSection', () => {
@@ -422,6 +428,29 @@ export default () => {
 
         // Verify showMore was called (should be visible in normal mode)
         expect(showMoreStub.called).to.be.true;
+      });
+
+      it('should call sortEntities with the correct parameters', async () => {
+        const sortConfig: SortConfig = { type: 'name', direction: 'asc' };
+        mockConfig.sort = sortConfig;
+
+        renderSection(
+          mockElement,
+          mockExpansions,
+          mockHass,
+          mockConfig,
+          'Test Section',
+          mockEntities,
+          mockUpdater,
+        );
+
+        // Verify sortEntities was called with the correct parameters
+        expect(sortEntitiesStub.calledOnce).to.be.true;
+        expect(sortEntitiesStub.firstCall.args[0]).to.equal(mockEntities);
+        expect(sortEntitiesStub.firstCall.args[1]).to.equal(sortConfig);
+
+        // Restore the stub
+        sortEntitiesStub.restore();
       });
     });
   });

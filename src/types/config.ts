@@ -25,6 +25,9 @@ export interface BaseConfig {
   /** The order in which sections should be displayed */
   section_order?: string[];
 
+  /** The order in which entities should be displayed */
+  sort?: SortConfig;
+
   /** Action to perform on tap */
   tap_action?: ActionConfig;
 
@@ -44,6 +47,14 @@ export type Features =
   | 'entity_picture'
   | 'hide_device_model'
   | 'hide_title';
+
+/**
+ * Configuration settings for sorting entities within the card.
+ */
+export interface SortConfig {
+  type: 'domain' | 'entity_id' | 'name' | 'state';
+  direction?: 'asc' | 'desc';
+}
 
 /**
  * Represents the states of various sensors in a Z-Wave device
