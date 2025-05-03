@@ -188,6 +188,7 @@ The card will automatically:
 | ----------------- | ---- | ---------------------------------------- |
 | entity_picture    | flag | Show entity picture when available       |
 | hide_device_model | flag | Hides the device model information       |
+| hide_title        | flag | Hides the device card title              |
 | compact           | flag | Uses compact layout with reduced spacing |
 
 #### Section Options

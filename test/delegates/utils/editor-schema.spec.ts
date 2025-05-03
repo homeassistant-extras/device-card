@@ -286,6 +286,10 @@ export default () => {
                         value: 'hide_device_model',
                       },
                       {
+                        label: 'Hide Title',
+                        value: 'hide_title',
+                      },
+                      {
                         label: 'Compact Layout',
                         value: 'compact',
                       },
@@ -481,6 +485,10 @@ export default () => {
                       {
                         label: 'Hide Device Model',
                         value: 'hide_device_model',
+                      },
+                      {
+                        label: 'Hide Title',
+                        value: 'hide_title',
                       },
                       {
                         label: 'Compact Layout',

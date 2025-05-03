@@ -210,6 +210,49 @@ export default () => {
         expect(modelElement).to.be.null;
       });
 
+      it('should not display title when hide_title flag is set', async () => {
+        // Configure the card with the hide_title feature
+        card.setConfig({
+          device_id: 'device_1',
+          features: ['hide_title'],
+        });
+
+        const el = await fixture(card.render() as TemplateResult);
+
+        // Header should still exist
+        const headerElement = el.querySelector('.card-header');
+        expect(headerElement).to.exist;
+
+        // Title element should not exist
+        const titleElement = headerElement!.querySelector(
+          '.title span:not(.model)',
+        );
+        expect(titleElement).to.be.null;
+
+        // Model should still be shown
+        const modelElement = headerElement!.querySelector('.model');
+        expect(modelElement).to.exist;
+        expect(modelElement!.textContent).to.equal('Feeder Plus Pro');
+      });
+
+      it('should not display header when both hide_title and hide_device_model are set', async () => {
+        // Configure the card with both hide flags
+        card.setConfig({
+          device_id: 'device_1',
+          features: ['hide_title', 'hide_device_model'],
+        });
+
+        const el = await fixture(card.render() as TemplateResult);
+
+        // Header should not exist at all
+        const headerElement = el.querySelector('.card-header');
+        expect(headerElement).to.be.null;
+
+        // Card should still render the sections
+        const sectionElements = el.querySelectorAll('.section');
+        expect(sectionElements.length).to.be.greaterThan(0);
+      });
+
       it('should call renderSections', () => {
         card.render();
         expect(renderSectionsStub.callCount).to.equal(1);

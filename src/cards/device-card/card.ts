@@ -102,18 +102,32 @@ export class DeviceCard extends LitElement {
     }
 
     const problem = hasProblem(this._device);
+    const hideTitle = hasFeature(this._config, 'hide_title');
+    const hideDeviceModel = hasFeature(this._config, 'hide_device_model');
+    const hideHeader = hideTitle && hideDeviceModel;
+
+    // Prepare header content
+    let headerContent: TemplateResult | typeof nothing = nothing;
+
+    if (!hideHeader) {
+      const titleContent = hideTitle
+        ? nothing
+        : html`<span>${this._config.title ?? this._device.name}</span>`;
+
+      const modelContent = hideDeviceModel
+        ? nothing
+        : html`<span class="model">${this._device.model}</span>`;
+
+      headerContent = html`
+        <div class="card-header">
+          <div class="title">${titleContent} ${modelContent}</div>
+        </div>
+      `;
+    }
 
     return html`
       <ha-card class="${problem ? 'problem' : ''}">
-        <div class="card-header">
-          <div class="title">
-            <span>${this._config.title ?? this._device.name}</span>
-            ${hasFeature(this._config, 'hide_device_model')
-              ? nothing
-              : html`<span class="model">${this._device.model}</span>`}
-          </div>
-        </div>
-
+        ${headerContent}
         ${renderSections(
           this,
           this._expansions,

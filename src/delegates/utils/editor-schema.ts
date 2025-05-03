@@ -203,6 +203,10 @@ const featuresSchema = (
                 value: 'hide_device_model',
               },
               {
+                label: 'Hide Title',
+                value: 'hide_title',
+              },
+              {
                 label: 'Compact Layout',
                 value: 'compact',
               },
