@@ -91,7 +91,8 @@ export class IntegrationCard extends LitElement {
           // Check if device belongs to the integration first
           if (isInIntegration(device, configEntries)) {
             const hasIncludeList =
-              this._config.include_devices?.length ?? 0 > 0;
+              !!this._config.include_devices &&
+              this._config.include_devices.length > 0;
             const isIncluded = hasIncludeList
               ? shouldIncludeDevice(this._config, device.id, device.name)
               : true; // If no include list, all devices are considered "included"
@@ -131,7 +132,7 @@ export class IntegrationCard extends LitElement {
       (device) => device.identifiers && device.identifiers.length > 0,
     );
 
-    const integration = device?.identifiers?.[0]?.[0] || '';
+    const integration = device?.identifiers?.[0]?.[0] ?? '';
 
     return {
       integration: integration,

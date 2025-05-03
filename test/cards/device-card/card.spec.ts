@@ -116,6 +116,17 @@ export default () => {
         card.setConfig(config);
         expect(card['_config']).to.equal(originalConfig);
       });
+
+      it('should initialize internal collapsed state from config', () => {
+        expect((card as any).collapse).to.be.false;
+
+        card.setConfig({
+          device_id: 'device_1',
+          features: ['collapse'],
+        });
+
+        expect((card as any).collapse).to.be.true;
+      });
     });
 
     describe('hass property setter', () => {
@@ -171,6 +182,11 @@ export default () => {
         const el = await fixture(card.render() as TemplateResult);
         expect(el.tagName.toLowerCase()).to.equal('ha-card');
         expect(el.querySelectorAll('.section')).to.have.length(1);
+
+        // not collapsed
+        const header = el.querySelector('.card-header');
+        expect(header).to.exist;
+        expect(header?.classList.contains('collapsed')).to.be.false;
       });
 
       it('should add problem class when problem exists', async () => {
@@ -329,6 +345,44 @@ export default () => {
 
         // Restore original stub
         renderSectionsStub.restore();
+      });
+
+      it('should not render sections when collapsed', async () => {
+        card.setConfig({
+          device_id: 'device_1',
+          features: ['collapse'],
+        });
+
+        // Render the card
+        const el = await fixture(card.render() as TemplateResult);
+        const header = el.querySelector('.card-header');
+
+        // Check that renderSections is not called
+        expect(renderSectionsStub.called).to.be.false;
+        expect(header).to.exist;
+        expect(header?.classList.contains('collapsed')).to.be.true;
+      });
+
+      it('should show correct tooltip text based on collapsed state', async () => {
+        // Render collapsed card
+        let el = await fixture(card.render() as TemplateResult);
+        let header = el.querySelector('.card-header');
+
+        // Check tooltip text is "Expand"
+        expect(header?.getAttribute('title')).to.equal('Collapse');
+
+        // Set to not collapsed
+        card.setConfig({
+          device_id: 'device_1',
+          features: ['collapse'],
+        });
+
+        // Re-render
+        el = await fixture(card.render() as TemplateResult);
+        header = el.querySelector('.card-header');
+
+        // Check tooltip text is "Collapse"
+        expect(header?.getAttribute('title')).to.equal('Expand');
       });
     });
 

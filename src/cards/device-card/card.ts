@@ -40,6 +40,12 @@ export class DeviceCard extends LitElement {
   };
 
   /**
+   * Internal collapsed state, separate from the config
+   */
+  @state()
+  private collapse = false;
+
+  /**
    * Returns the component's styles
    */
   static override get styles(): CSSResult {
@@ -53,6 +59,7 @@ export class DeviceCard extends LitElement {
   setConfig(config: Config) {
     if (!equal(config, this._config)) {
       this._config = config;
+      this.collapse = hasFeature(config, 'collapse');
     }
   }
 
@@ -119,7 +126,11 @@ export class DeviceCard extends LitElement {
         : html`<span class="model">${this._device.model}</span>`;
 
       headerContent = html`
-        <div class="card-header">
+        <div
+          class="card-header ${this.collapse ? 'collapsed' : ''}"
+          @click="${() => (this.collapse = !this.collapse)}"
+          title="${this.collapse ? 'Expand' : 'Collapse'}"
+        >
           <div class="title">${titleContent} ${modelContent}</div>
         </div>
       `;
@@ -128,14 +139,16 @@ export class DeviceCard extends LitElement {
     return html`
       <ha-card class="${problem ? 'problem' : ''}">
         ${headerContent}
-        ${renderSections(
-          this,
-          this._expansions,
-          this._hass,
-          this._config,
-          this._device,
-          (e) => (this._expansions = e),
-        )}
+        ${!this.collapse
+          ? renderSections(
+              this,
+              this._expansions,
+              this._hass,
+              this._config,
+              this._device,
+              (e) => (this._expansions = e),
+            )
+          : nothing}
       </ha-card>
     `;
   }

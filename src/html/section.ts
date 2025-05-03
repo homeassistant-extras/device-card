@@ -42,7 +42,7 @@ export const renderSection = (
   }
 
   // Determine how many entities to preview based on config
-  const size = config.preview_count || 3;
+  const size = config.preview_count ?? 3;
 
   // Check if this section needs collapsible functionality
   const needsExpansion = entities.length > size;

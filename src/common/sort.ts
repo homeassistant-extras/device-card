@@ -38,8 +38,8 @@ export const sortEntities = (
         valueB = b.entity_id;
         break;
       case 'name':
-        valueA = a.attributes.friendly_name || a.entity_id;
-        valueB = b.attributes.friendly_name || b.entity_id;
+        valueA = a.attributes.friendly_name ?? a.entity_id;
+        valueB = b.attributes.friendly_name ?? b.entity_id;
         break;
       case 'state':
         valueA = a.state;
@@ -50,8 +50,8 @@ export const sortEntities = (
     }
 
     // Handle null or undefined values
-    if (valueA === undefined || valueA === null) valueA = '';
-    if (valueB === undefined || valueB === null) valueB = '';
+    valueA ??= '';
+    valueB ??= '';
 
     // Standard string comparison
     if (valueA < valueB) return isReverse ? 1 : -1;

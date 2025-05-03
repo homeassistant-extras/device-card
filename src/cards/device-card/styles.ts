@@ -22,6 +22,18 @@ export const styles = css`
     line-height: 35px;
     border-bottom: 1px solid var(--divider-color);
     margin-bottom: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  /* Remove bottom border when collapsed */
+  .card-header.collapsed {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  .card-header:hover {
+    background-color: var(--secondary-background-color);
   }
 
   .title {

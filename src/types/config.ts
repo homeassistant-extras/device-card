@@ -43,6 +43,7 @@ export interface BaseConfig {
 
 /** Features to enable or disable functionality */
 export type Features =
+  | 'collapse'
   | 'compact'
   | 'entity_picture'
   | 'hide_device_model'

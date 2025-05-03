@@ -1,10 +1,10 @@
+import { matchesPattern } from '@/common/matches';
 import { getDevice as getHassDevice } from '@delegates/retrievers/device';
 import type { Config } from '@device/types';
 import { computeDomain } from '@hass/common/entity/compute_domain';
 import type { HomeAssistant } from '@hass/types';
 import type { Device, EntityInformation } from '@type/config';
 import { getDeviceEntities } from './card-entities';
-import { matchesPattern } from '@/common/matches';
 
 /**
  * Gets a device with all its entities sorted into appropriate categories
@@ -28,7 +28,7 @@ export const getDevice = (
     return undefined;
   }
 
-  device.name = hassDevice.name || 'Device';
+  device.name = hassDevice.name ?? 'Device';
   device.model = [
     hassDevice.manufacturer,
     hassDevice.model,
@@ -68,10 +68,10 @@ const shouldSkipEntity = (
   if (!config.exclude_entities?.length) {
     return false;
   }
-  
+
   // Check if any exclusion pattern matches the entity ID
-  return config.exclude_entities.some((pattern) => 
-    matchesPattern(entity.entity_id, pattern)
+  return config.exclude_entities.some((pattern) =>
+    matchesPattern(entity.entity_id, pattern),
   );
 };
 

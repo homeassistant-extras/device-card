@@ -86,7 +86,9 @@ export default () => {
 
         expect(() =>
           getEntity(hassWithNullEntities, 'light.living_room'),
-        ).to.throw();
+        ).to.throw(
+          "Cannot read properties of null (reading 'light.living_room')",
+        );
       });
     });
   });

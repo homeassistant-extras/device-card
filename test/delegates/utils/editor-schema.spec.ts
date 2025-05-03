@@ -313,6 +313,10 @@ export default () => {
                         label: 'Compact Layout',
                         value: 'compact',
                       },
+                      {
+                        label: 'Start Collapsed',
+                        value: 'collapse',
+                      },
                     ],
                   },
                 },
@@ -558,6 +562,10 @@ export default () => {
                       {
                         label: 'Compact Layout',
                         value: 'compact',
+                      },
+                      {
+                        label: 'Start Collapsed',
+                        value: 'collapse',
                       },
                     ],
                   },

@@ -191,6 +191,7 @@ The card will automatically:
 | hide_device_model | flag | Hides the device model information       |
 | hide_title        | flag | Hides the device card title              |
 | compact           | flag | Uses compact layout with reduced spacing |
+| collapse          | flag | Initially displays the card collapsed    |
 
 #### Sorting Options
 
@@ -261,6 +262,15 @@ type: custom:device-card
 device_id: 1a2b3c4d5e6f7g8h9i0j
 features:
   - entity_picture
+```
+
+#### With Collapsed as Default
+
+```yaml
+type: custom:device-card
+device_id: 1a2b3c4d5e6f7g8h9i0j
+features:
+  - collapse
 ```
 
 #### Excluding some entities and sections
