@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { stub, type SinonStub } from 'sinon';
-import { version } from '..//package.json';
+import { version } from '../package.json';
 
 describe('index.ts', () => {
   let customElementsStub: SinonStub;

@@ -43,6 +43,6 @@ export const getDeviceEntities = (
         },
       };
     })
-    .filter((e) => e !== undefined) as EntityInformation[];
+    .filter((e) => e !== undefined);
   return deviceEntities;
 };
