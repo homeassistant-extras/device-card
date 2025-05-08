@@ -79,12 +79,12 @@ export class IntegrationCard extends LitElement {
 
     // Get config entries for the integration domain
     hass
-      .callWS({
+      .callWS<{ entry_id: string }[]>({
         type: 'config_entries/get',
         domain: this._config.integration,
       })
-      .then((results: any) => {
-        const configEntries = results.map((e: any) => e.entry_id);
+      .then((results) => {
+        const configEntries = results.map((e) => e.entry_id);
 
         // Simplified device inclusion/exclusion logic
         Object.values(hass.devices).forEach((device) => {

@@ -327,9 +327,11 @@ export const getIntegrationSchema = async (
 ): Promise<HaFormSchema[]> => {
   // Get all integrations from the manifest
   const manifests = (
-    (await hass.callWS({
+    await hass.callWS<
+      { name: string; domain: string; integration_type: string }[]
+    >({
       type: 'manifest/list',
-    })) as { name: string; domain: string; integration_type: string }[]
+    })
   ).filter(
     (m) =>
       !m.integration_type ||
