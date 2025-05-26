@@ -19,10 +19,15 @@ jobs:
         env:
           AUTHOR_EMAIL: ${{ github.event.commits[0].author.email }}
         run: |
-          if [[ ! "$AUTHOR_EMAIL" == *"@users.noreply.github.com"* ]]; then
+          # Allow dependabot emails specifically
+          if [[ "$AUTHOR_EMAIL" == *"dependabot[bot]@users.noreply.github.com"* ]]; then
             echo "should_run=true" >> $GITHUB_OUTPUT
-          else
+          # Skip other noreply emails
+          elif [[ "$AUTHOR_EMAIL" == *"@users.noreply.github.com"* ]]; then
             echo "should_run=false" >> $GITHUB_OUTPUT
+          # Allow all other emails
+          else
+            echo "should_run=true" >> $GITHUB_OUTPUT
           fi
 
   bump-version:

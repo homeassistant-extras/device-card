@@ -1,5 +1,6 @@
 import type { Config } from '@device/types';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
+import type { IntegrationManifest } from '@hass/data/integration';
 import type { HomeAssistant } from '@hass/types';
 import { getDeviceEntities } from './card-entities';
 
@@ -327,15 +328,13 @@ export const getIntegrationSchema = async (
 ): Promise<HaFormSchema[]> => {
   // Get all integrations from the manifest
   const manifests = (
-    await hass.callWS<
-      { name: string; domain: string; integration_type: string }[]
-    >({
+    await hass.callWS<IntegrationManifest[]>({
       type: 'manifest/list',
     })
-  ).filter(
-    (m) =>
-      !m.integration_type ||
-      ['device', 'hub', 'service', 'integration'].includes(m.integration_type),
+  ).filter((m) =>
+    ['device', 'hub', 'service', 'integration'].includes(
+      m.integration_type ?? 'unknown',
+    ),
   );
 
   manifests.sort((a, b) => a.name.localeCompare(b.name));

@@ -192,6 +192,9 @@ Add the card to your dashboard using the UI editor or YAML:
 
 ### Card Editor
 
+> [!CAUTION]
+> The editor may delete advanced settings, such as regex or wildcards. Make a copy of the card config prior to using the UI editor.
+
 The card is fully configurable in the UI editor. Simply select "Custom: Device Card" when adding a new card to your dashboard, then select your device from the dropdown.
 
 ![editor](assets/editor.png)
@@ -241,9 +244,9 @@ The card will automatically:
 | section_order     | list   | _none_       | Custom order for displaying sections. See below.             |
 | sort              | object | See below    | Sort options for entities                                    |
 | features          | list   | See below    | Optional flags to toggle different features                  |
-| tap_action        | object | none         | Action to perform when tapping the card                      |
-| hold_action       | object | none         | Action to perform when holding the card                      |
-| double_tap_action | object | none         | Action when double-tapping the card                          |
+| tap_action        | object | _none_       | Action to perform when tapping the card                      |
+| hold_action       | object | _none_       | Action to perform when holding the card                      |
+| double_tap_action | object | _none_       | Action when double-tapping the card                          |
 
 #### Feature Options
 
@@ -505,11 +508,23 @@ include_devices:
 
 - [x] **`Initial design`**: Create initial card design
 - [x] **`Enhanced customization`**: Add more customization options
-- [x] **`Custom section order and exclusions`**: Set the order in which sections are displayed & exclude things
-- [x] **`Entity interactions`**: Configure tap, hold, and double-tap actions
+- [x] **`Custom section order and exclusions`**: Set the order in which sections are displayed & exclude things - thanks @andrewjswan
+- [x] **`Entity interactions`**: Configure tap, hold, and double-tap actions - thanks @andrewjswan
 - [x] **`Status badges`**: Quick status badges for device state
-- [x] **`Entity filtering`**: Filter specific entities from display
-- [x] **`Integration Card`**: Rollup to see all devices
+- [x] **`Entity filtering`**: Filter specific entities from display - thanks @andrewjswan
+- [x] **`Integration Card`**: Rollup to see all devices - thanks @andrewjswan
+- [x] **`Hide device model`**: Option to hide device model information - thanks @andrewjswan
+- [x] **`Compact layout`**: Space-efficient layout option - thanks @andrewjswan
+- [x] **`Column control`**: Ability to define column count for integration card - thanks @andrewjswan
+- [x] **`Device exclusion`**: Ability to exclude devices from integration card - thanks @andrewjswan
+- [x] **`Wildcard/regex filtering`**: Exclude devices/entities by wildcard or regex patterns - thanks @andrewjswan
+- [x] **`Device inclusion`**: Include only specific devices option - thanks @andrewjswan
+- [x] **`Entity sorting`**: Add ability to sort entities - thanks @andrewjswan
+- [x] **`Card expansion`**: Ability to expand/collapse the device card - thanks @fgamache1
+- [x] **`Pinned entity state`**: Add pinned state entity display - thanks @fgamache1
+- [x] **`Integration title control`**: Modify/hide integration card title - thanks @andrewjswan
+- [x] **`Hide title feature`**: Device card can remove title
+- [x] **`Section exclusion`**: Add ability to exclude sections - thanks u/ctallc
 
 ## Contributing
 
