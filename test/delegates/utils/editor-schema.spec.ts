@@ -63,13 +63,12 @@ export default () => {
         // Assert
         // @ts-ignore
         const options = schema[0]!.selector.select.options;
-        expect(options).to.have.lengthOf(5); // Should only include the valid ones
+        expect(options).to.have.lengthOf(4); // Should only include the valid ones
         expect(options.map((o: any) => o.value)).to.include.members([
           'valid_device',
           'valid_hub',
-          'valid_service',
           'valid_integration',
-          'no_type',
+          'valid_service',
         ]);
         expect(options.map((o: any) => o.value)).to.not.include('invalid_type');
       });
