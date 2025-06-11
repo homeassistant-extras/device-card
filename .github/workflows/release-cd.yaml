@@ -1,9 +1,8 @@
-name: Bump & Tag
+name: Release & Deploy
 
 on:
   push:
     branches:
-      - 'main'
       - 'release'
 
 permissions:
@@ -31,7 +30,7 @@ jobs:
           fi
 
   bump-version:
-    name: 'Bump Version or Tag'
+    name: 'Bump Version and Tag'
     needs: check-committer
     runs-on: ubuntu-latest
     permissions:
@@ -58,7 +57,7 @@ jobs:
         id: bump
         uses: 'phips28/gh-action-bump-version@master'
         with:
-          version-type: ${{ github.ref == 'refs/heads/release' && 'minor' || '' }}
+          version-type: 'minor'
           commit-message: 'chore: bumps version to {{version}}'
           bump-policy: 'ignore'
           skip-push: 'true'
@@ -78,50 +77,12 @@ jobs:
           git push --follow-tags
           git push --tags
 
-  sonarqube:
-    name: 'Sonar Qube Scan'
-    needs: check-committer
-    runs-on: ubuntu-latest
-
-    if: ${{ needs.check-committer.outputs.should_run == 'true' && github.ref == 'refs/heads/main' }}
-
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Run NPM coverage
-        uses: anna-money/github-actions-npm@master
-        with:
-          target: 'test:coverage'
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  hacs-validation:
-    name: 'HACS Validation'
-    needs: check-committer
-    runs-on: 'ubuntu-latest'
-
-    if: ${{ needs.check-committer.outputs.should_run == 'true' }}
-
-    steps:
-      - name: 'Checkout the repository'
-        uses: 'actions/checkout@v4'
-
-      - name: 'Run HACS validation'
-        uses: 'hacs/action@main'
-        with:
-          category: 'plugin'
-
   create-release:
     name: 'Create Release'
     needs: bump-version
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
-    if: github.ref == 'refs/heads/release'
 
     steps:
       - uses: actions/checkout@v3
@@ -161,6 +122,7 @@ jobs:
           echo "pr_title=$PR_TITLE" >> $GITHUB_OUTPUT
       - uses: ncipollo/release-action@v1
         with:
+          makeLatest: true
           artifacts: 'dist/**'
           generateReleaseNotes: true
           tag: ${{ needs.bump-version.outputs.newTag }}
@@ -173,8 +135,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
-    if: github.ref == 'refs/heads/release'
 
     steps:
       - uses: actions/create-github-app-token@v1
