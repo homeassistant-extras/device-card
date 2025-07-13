@@ -37,7 +37,7 @@ export const matchesPattern = (
       .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // Escape special regex chars
       .replace(/\*/g, '.*'); // Convert * to .*
 
-    const regex = new RegExp(`^${regexPattern}$`);
+    const regex = new RegExp(`^${regexPattern}$`, 'i');
     return regex.test(str);
   }
 
