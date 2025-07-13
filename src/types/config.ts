@@ -47,7 +47,8 @@ export type Features =
   | 'compact'
   | 'entity_picture'
   | 'hide_device_model'
-  | 'hide_title';
+  | 'hide_title'
+  | 'hide_entity_state';
 
 /**
  * Configuration settings for sorting entities within the card.

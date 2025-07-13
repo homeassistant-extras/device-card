@@ -284,6 +284,10 @@ const featuresSchema = (
                 value: 'hide_title',
               },
               {
+                label: 'Hide Entity State',
+                value: 'hide_entity_state',
+              },
+              {
                 label: 'Compact Layout',
                 value: 'compact',
               },
@@ -367,29 +371,35 @@ export const getIntegrationSchema = async (
  * Creates a complete configuration schema with device-specific options
  * including entity selection and entity picture features
  *
- * @param {string[]} entityIds - Array of entity IDs associated with the device
+ * @param {HomeAssistant} hass - The Home Assistant instance
+ * @param {Config} config - The current configuration
  * @returns {HaFormSchema[]} The complete schema array for the device card configuration
  */
 export const getDeviceSchema = (
   hass: HomeAssistant,
   config: Config,
 ): HaFormSchema[] => {
-  const entities = getDeviceEntities(hass, config, config.device_id).map(
-    (e) => e.entity_id,
-  );
+  // Get entities for the device (if device_id is available)
+  let entities: string[] = [];
+  if (config.device_id) {
+    entities = getDeviceEntities(hass, config, config.device_id).map(
+      (e) => e.entity_id,
+    );
+  }
+
   return [
     {
       name: 'device_id',
       selector: {
         device: {},
       },
-      required: true,
+      required: false,
       label: `Device`,
     },
     {
       name: 'entity_id',
       required: false,
-      label: 'Display Entity State',
+      label: 'Entity (alternative to device selection or for display state)',
       selector: {
         entity: {
           multiple: false,

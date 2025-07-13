@@ -10,7 +10,7 @@ import * as sectionRenderer from '@html/device-section';
 import * as pictureModule from '@html/picture';
 import * as pinnedEntityModule from '@html/pinned-entity';
 import { fixture } from '@open-wc/testing-helpers';
-import type { Device } from '@type/config';
+import type { Device, Features } from '@type/config';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -405,18 +405,18 @@ describe('card.ts', () => {
     // New tests for entity state display feature
     it('should render entity state when entity_id is provided', async () => {
       // Set up the card with an entity_id
-      card.setConfig({
+      const config = {
         device_id: 'device_1',
         entity_id: 'sensor.test_progress',
-      });
+      };
+      card.setConfig(config);
 
       // Render the card
       const element = await fixture(card.render() as TemplateResult);
 
       // Verify pinnedEntity was called with the right parameters
       expect(pinnedEntityStub.calledOnce).to.be.true;
-      expect(pinnedEntityStub.calledWith(mockHass, 'sensor.test_progress')).to
-        .be.true;
+      expect(pinnedEntityStub.calledWith(mockHass, config)).to.be.true;
 
       // Verify the pinned entity state was rendered in the card
       const stateElement = element.querySelector('.pinned-entity-state');
@@ -426,11 +426,12 @@ describe('card.ts', () => {
 
     it('should still render entity state when header is hidden', async () => {
       // Set up the card with an entity_id and hide_title + hide_device_model features
-      card.setConfig({
+      const config = {
         device_id: 'device_1',
         entity_id: 'sensor.test_progress',
-        features: ['hide_title', 'hide_device_model'],
-      });
+        features: ['hide_title', 'hide_device_model'] as Features[],
+      };
+      card.setConfig(config);
 
       // Render the card
       const element = await fixture(card.render() as TemplateResult);
@@ -442,6 +443,30 @@ describe('card.ts', () => {
       const stateElement = element.querySelector('.pinned-entity-state');
       expect(stateElement).to.exist;
       expect(stateElement?.textContent).to.equal('75.5%');
+    });
+
+    it('should hide entity state when hide_entity_state feature is enabled', async () => {
+      // Set up the card with an entity_id and hide_entity_state feature
+      const config = {
+        device_id: 'device_1',
+        entity_id: 'sensor.test_progress',
+        features: ['hide_entity_state'] as Features[],
+      };
+      card.setConfig(config);
+
+      // Mock pinnedEntity to return nothing (as it would with hide_entity_state)
+      pinnedEntityStub.returns(nothing);
+
+      // Render the card
+      const element = await fixture(card.render() as TemplateResult);
+
+      // Verify pinnedEntity was called
+      expect(pinnedEntityStub.calledOnce).to.be.true;
+      expect(pinnedEntityStub.calledWith(mockHass, config)).to.be.true;
+
+      // Verify the pinned entity state was NOT rendered in the card
+      const stateElement = element.querySelector('.pinned-entity-state');
+      expect(stateElement).to.not.exist;
     });
   });
 

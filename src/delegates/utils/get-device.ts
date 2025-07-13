@@ -1,5 +1,6 @@
 import { matchesPattern } from '@/common/matches';
 import { getDevice as getHassDevice } from '@delegates/retrievers/device';
+import { getEntity } from '@delegates/retrievers/entity';
 import type { Config } from '@device/types';
 import { computeDomain } from '@hass/common/entity/compute_domain';
 import type { HomeAssistant } from '@hass/types';
@@ -24,7 +25,18 @@ export const getDevice = (
     configurations: [],
   };
 
-  const hassDevice = getHassDevice(hass, config.device_id);
+  // Determine device_id from config.device_id or by resolving config.entity_id
+  const deviceId =
+    config.device_id ??
+    (config.entity_id
+      ? getEntity(hass, config.entity_id)?.device_id
+      : undefined);
+
+  if (!deviceId) {
+    return undefined;
+  }
+
+  const hassDevice = getHassDevice(hass, deviceId);
   if (!hassDevice) {
     return undefined;
   }

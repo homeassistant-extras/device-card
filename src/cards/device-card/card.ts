@@ -113,7 +113,7 @@ export class DeviceCard extends LitElement {
     const hideTitle = hasFeature(this._config, 'hide_title');
     const hideDeviceModel = hasFeature(this._config, 'hide_device_model');
     const hideHeader = hideTitle && hideDeviceModel;
-    const entity = pinnedEntity(this._hass, this._config.entity_id);
+    const entity = pinnedEntity(this._hass, this._config);
 
     // Prepare header content
     let headerContent: TemplateResult | typeof nothing = nothing;

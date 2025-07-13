@@ -1,4 +1,6 @@
+import { hasFeature } from '@config/feature';
 import { getState } from '@delegates/retrievers/state';
+import type { Config } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import { nothing, type TemplateResult } from 'lit';
 import { stateDisplay } from './state-display';
@@ -6,16 +8,21 @@ import { stateDisplay } from './state-display';
 /**
  * Renders a state display for a pinned entity
  * @param {HomeAssistant} hass - The Home Assistant instance
- * @param {string} [entityId] - The ID of the entity to render
- * @returns {TemplateResult | typeof nothing} A lit-html template for the state display or nothing if no entityId is provided
+ * @param {Config} config - The configuration object
+ * @returns {TemplateResult | typeof nothing} A lit-html template for the state display or nothing if no entityId is provided or feature is hidden
  */
 export const pinnedEntity = (
   hass: HomeAssistant,
-  entityId?: string,
+  config: Config,
 ): TemplateResult | typeof nothing => {
-  if (!entityId) return nothing;
+  // Check if the hide_entity_state feature is enabled
+  if (hasFeature(config, 'hide_entity_state')) {
+    return nothing;
+  }
 
-  const state = getState(hass, entityId);
+  if (!config.entity_id) return nothing;
+
+  const state = getState(hass, config.entity_id);
   if (!state) return nothing;
 
   return stateDisplay(hass, state);

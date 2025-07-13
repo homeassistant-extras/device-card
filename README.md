@@ -212,6 +212,13 @@ type: custom:device-card
 device_id: YOUR_DEVICE_ID
 ```
 
+Alternatively, you can use an entity ID and the card will automatically determine the device:
+
+```yaml
+type: custom:device-card
+entity_id: sensor.your_entity_id
+```
+
 The card will automatically:
 
 - Display the device name and model information
@@ -234,19 +241,22 @@ The card will automatically:
 
 ### Device Card
 
-| Name              | Type   | Default      | Description                                                  |
-| ----------------- | ------ | ------------ | ------------------------------------------------------------ |
-| device_id         | string | **Required** | The Home Assistant device ID for your device                 |
-| title             | string | Device name  | Optional custom title for the card                           |
-| preview_count     | number | All items    | Number of items to preview before showing "Show More" button |
-| exclude_sections  | list   | _none_       | Sections of entities to exclude. See below.                  |
-| exclude_entities  | list   | _none_       | Entities to remove from the card.                            |
-| section_order     | list   | _none_       | Custom order for displaying sections. See below.             |
-| sort              | object | See below    | Sort options for entities                                    |
-| features          | list   | See below    | Optional flags to toggle different features                  |
-| tap_action        | object | _none_       | Action to perform when tapping the card                      |
-| hold_action       | object | _none_       | Action to perform when holding the card                      |
-| double_tap_action | object | _none_       | Action when double-tapping the card                          |
+| Name              | Type   | Default     | Description                                                  |
+| ----------------- | ------ | ----------- | ------------------------------------------------------------ |
+| device_id         | string | Optional\*  | The Home Assistant device ID for your device                 |
+| entity_id         | string | Optional\*  | Entity ID - card will automatically determine the device     |
+| title             | string | Device name | Optional custom title for the card                           |
+| preview_count     | number | All items   | Number of items to preview before showing "Show More" button |
+| exclude_sections  | list   | _none_      | Sections of entities to exclude. See below.                  |
+| exclude_entities  | list   | _none_      | Entities to remove from the card.                            |
+| section_order     | list   | _none_      | Custom order for displaying sections. See below.             |
+| sort              | object | See below   | Sort options for entities                                    |
+| features          | list   | See below   | Optional flags to toggle different features                  |
+| tap_action        | object | _none_      | Action to perform when tapping the card                      |
+| hold_action       | object | _none_      | Action to perform when holding the card                      |
+| double_tap_action | object | _none_      | Action when double-tapping the card                          |
+
+\*Either `device_id` or `entity_id` is required. If `entity_id` is provided, the card will automatically determine the device.
 
 #### Feature Options
 
@@ -255,6 +265,7 @@ The card will automatically:
 | entity_picture    | flag | Show entity picture when available       |
 | hide_device_model | flag | Hides the device model information       |
 | hide_title        | flag | Hides the device card title              |
+| hide_entity_state | flag | Hides the entity state display in header |
 | compact           | flag | Uses compact layout with reduced spacing |
 | collapse          | flag | Initially displays the card collapsed    |
 
@@ -344,6 +355,22 @@ type: custom:device-card
 device_id: 1a2b3c4d5e6f7g8h9i0j
 features:
   - collapse
+```
+
+#### Using Entity ID Instead of Device ID
+
+```yaml
+type: custom:device-card
+entity_id: sensor.living_room_temperature
+```
+
+#### With Hidden Entity State
+
+```yaml
+type: custom:device-card
+entity_id: sensor.octoprint_print_progress
+features:
+  - hide_entity_state
 ```
 
 #### Excluding some entities and sections
@@ -525,6 +552,7 @@ include_devices:
 - [x] **`Integration title control`**: Modify/hide integration card title - thanks @andrewjswan
 - [x] **`Hide title feature`**: Device card can remove title
 - [x] **`Section exclusion`**: Add ability to exclude sections - thanks @ctallc
+- [x] **`Entity ID support`**: Alternative to device_id - card automatically determines device - thanks @potat0man
 - [x] **`Random bugs`**: pointing out issues to improve card - thanks @PedroKTFC!
 
 ## Contributing
