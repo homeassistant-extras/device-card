@@ -1,6 +1,6 @@
 {
   "name": "device-card",
-  "version": "0.13.5",
+  "version": "0.14.0",
   "author": "Patrick Masters",
   "license": "ISC",
   "description": "Custom Home Assistant card to show info about your devices.",
