@@ -524,7 +524,8 @@ include_devices:
 - [x] **`Pinned entity state`**: Add pinned state entity display - thanks @fgamache1
 - [x] **`Integration title control`**: Modify/hide integration card title - thanks @andrewjswan
 - [x] **`Hide title feature`**: Device card can remove title
-- [x] **`Section exclusion`**: Add ability to exclude sections - thanks u/ctallc
+- [x] **`Section exclusion`**: Add ability to exclude sections - thanks @ctallc
+- [x] **`Random bugs`**: pointing out issues to improve card - thanks @PedroKTFC!
 
 ## Contributing
 

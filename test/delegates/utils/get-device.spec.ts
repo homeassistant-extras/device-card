@@ -54,205 +54,382 @@ export default () => {
       computeDomainStub.restore();
     });
 
-    describe('getDevice', () => {
-      it('should return undefined if device not found', () => {
-        getDeviceStub.returns(undefined);
-        const result = getDevice(mockHass, mockConfig);
-        expect(result).to.be.undefined;
+    it('should return undefined if device not found', () => {
+      getDeviceStub.returns(undefined);
+      const result = getDevice(mockHass, mockConfig);
+      expect(result).to.be.undefined;
+    });
+
+    it('should initialize unit with device name and model', () => {
+      const result = getDevice(mockHass, mockConfig);
+      expect(result).to.not.be.undefined;
+      expect(result?.name).to.equal('Device');
+      expect(result?.model).to.equal('Feeder Plus Pro');
+    });
+
+    it('should use default name if device name is missing', () => {
+      getDeviceStub.returns({
+        ...mockHass.devices.device_1,
+        name: null,
       });
 
-      it('should initialize unit with device name and model', () => {
-        const result = getDevice(mockHass, mockConfig);
-        expect(result).to.not.be.undefined;
-        expect(result?.name).to.equal('Device');
-        expect(result?.model).to.equal('Feeder Plus Pro');
+      const result = getDevice(mockHass, mockConfig);
+      expect(result?.name).to.equal('Device');
+    });
+
+    it('should categorize entities correctly', () => {
+      const mockEntities: EntityInformation[] = [
+        {
+          entity_id: 'sensor.petkit_battery',
+          state: '75',
+          attributes: { device_class: 'battery' },
+          category: undefined,
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+        {
+          entity_id: 'switch.petkit_power',
+          state: 'on',
+          attributes: {},
+          category: undefined,
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+        {
+          entity_id: 'sensor.petkit_problem',
+          state: 'off',
+          attributes: { device_class: 'problem' },
+          category: undefined,
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+        {
+          entity_id: 'text.petkit_config',
+          state: 'default',
+          attributes: {},
+          category: 'config',
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+        {
+          entity_id: 'sensor.petkit_diagnostic',
+          state: 'ok',
+          attributes: {},
+          category: 'diagnostic',
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+      ];
+
+      getDeviceEntitiesStub.returns(mockEntities);
+
+      const result = getDevice(mockHass, mockConfig);
+
+      expect(result?.sensors).to.have.length(2);
+      expect(result?.controls).to.have.length(1);
+      expect(result?.diagnostics).to.have.length(1);
+      expect(result?.configurations).to.have.length(1);
+
+      // Verify correct categorization
+      expect(result?.sensors[0]!.entity_id).to.equal('sensor.petkit_battery');
+      expect(result?.controls[0]!.entity_id).to.equal('switch.petkit_power');
+      expect(result?.diagnostics[0]!.entity_id).to.equal(
+        'sensor.petkit_diagnostic',
+      );
+      expect(result?.configurations[0]!.entity_id).to.equal(
+        'text.petkit_config',
+      );
+    });
+
+    it('should categorize control entities based on domain', () => {
+      computeDomainStub.withArgs('text.control').returns('text');
+      computeDomainStub.withArgs('button.control').returns('button');
+      computeDomainStub.withArgs('switch.control').returns('switch');
+      computeDomainStub.withArgs('select.control').returns('select');
+      computeDomainStub.withArgs('sensor.data').returns('sensor');
+
+      const mockEntities: EntityInformation[] = [
+        {
+          entity_id: 'text.control',
+          state: 'some text',
+          attributes: {},
+          category: undefined,
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+        {
+          entity_id: 'button.control',
+          state: 'idle',
+          attributes: {},
+          category: undefined,
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+        {
+          entity_id: 'switch.control',
+          state: 'on',
+          attributes: {},
+          category: undefined,
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+        {
+          entity_id: 'select.control',
+          state: 'option1',
+          attributes: {},
+          category: undefined,
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+        {
+          entity_id: 'sensor.data',
+          state: '42',
+          attributes: {},
+          category: undefined,
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+      ];
+
+      getDeviceEntitiesStub.returns(mockEntities);
+
+      const result = getDevice(mockHass, mockConfig);
+
+      expect(result?.controls).to.have.length(4);
+      expect(result?.sensors).to.have.length(1);
+
+      // Verify control entities are correctly identified
+      const controlIds = result?.controls.map((c) => c.entity_id);
+      expect(controlIds).to.include('text.control');
+      expect(controlIds).to.include('button.control');
+      expect(controlIds).to.include('switch.control');
+      expect(controlIds).to.include('select.control');
+    });
+
+    it('should exclude entities listed in exclude_entities config', () => {
+      const mockEntities: EntityInformation[] = [
+        {
+          entity_id: 'sensor.petkit_battery',
+          state: '75',
+          attributes: { device_class: 'battery' },
+          category: undefined,
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+        {
+          entity_id: 'sensor.petkit_temperature',
+          state: '22',
+          attributes: { device_class: 'temperature' },
+          category: undefined,
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+      ];
+
+      getDeviceEntitiesStub.returns(mockEntities);
+
+      // Reset section exclusions
+      mockConfig.exclude_sections = [];
+
+      // Configure to exclude one of the entities
+      mockConfig.exclude_entities = ['sensor.petkit_temperature'];
+
+      const result = getDevice(mockHass, mockConfig);
+
+      // Should only have one sensor and it should be the battery, not the temperature
+      expect(result?.sensors).to.have.length(1);
+      expect(result?.sensors[0]!.entity_id).to.equal('sensor.petkit_battery');
+    });
+
+    it('should categorize sensor domains as sensors', () => {
+      const sensorDomains = [
+        'sensor',
+        'binary_sensor',
+        'calendar',
+        'camera',
+        'device_tracker',
+        'image',
+        'weather',
+      ];
+
+      const mockEntities: EntityInformation[] = sensorDomains.map((domain) => ({
+        entity_id: `${domain}.test_entity`,
+        state: 'test',
+        attributes: {},
+        category: undefined,
+        translation_key: undefined,
+        isActive: false,
+        isProblemEntity: false,
+      }));
+
+      getDeviceEntitiesStub.returns(mockEntities);
+
+      const result = getDevice(mockHass, mockConfig);
+
+      expect(result?.sensors).to.have.length(sensorDomains.length);
+      expect(result?.controls).to.have.length(0);
+
+      // Verify all sensor domains are categorized as sensors
+      sensorDomains.forEach((domain) => {
+        const entityId = `${domain}.test_entity`;
+        const found = result?.sensors.find((s) => s.entity_id === entityId);
+        expect(found).to.not.be.undefined;
       });
+    });
 
-      it('should use default name if device name is missing', () => {
-        getDeviceStub.returns({
-          ...mockHass.devices.device_1,
-          name: null,
-        });
+    it('should categorize non-sensor domains as controls by default', () => {
+      const controlDomains = [
+        'text',
+        'button',
+        'number',
+        'switch',
+        'select',
+        'input_text',
+        'input_boolean',
+        'input_number',
+        'input_select',
+        'input_datetime',
+        'cover',
+        'light',
+        'climate',
+        'fan',
+        'vacuum',
+        'media_player',
+        'lock',
+        'alarm_control_panel',
+        'scene',
+        'script',
+        'automation',
+        'timer',
+        'counter',
+        'input_datetime',
+        'zone',
+        'person',
+        'group',
+        'zone',
+        'scene',
+        'script',
+        'automation',
+        'timer',
+        'counter',
+        'input_datetime',
+        'zone',
+        'person',
+        'group',
+      ];
 
-        const result = getDevice(mockHass, mockConfig);
-        expect(result?.name).to.equal('Device');
+      const mockEntities: EntityInformation[] = controlDomains.map(
+        (domain) => ({
+          entity_id: `${domain}.test_entity`,
+          state: 'test',
+          attributes: {},
+          category: undefined,
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        }),
+      );
+
+      getDeviceEntitiesStub.returns(mockEntities);
+
+      const result = getDevice(mockHass, mockConfig);
+
+      expect(result?.controls).to.have.length(controlDomains.length);
+      expect(result?.sensors).to.have.length(0);
+
+      // Verify all control domains are categorized as controls
+      controlDomains.forEach((domain) => {
+        const entityId = `${domain}.test_entity`;
+        const found = result?.controls.find((c) => c.entity_id === entityId);
+        expect(found).to.not.be.undefined;
       });
+    });
 
-      it('should categorize entities correctly', () => {
-        const mockEntities: EntityInformation[] = [
-          {
-            entity_id: 'sensor.petkit_battery',
-            state: '75',
-            attributes: { device_class: 'battery' },
-            category: undefined,
-            translation_key: undefined,
-            isActive: false,
-            isProblemEntity: false,
-          },
-          {
-            entity_id: 'switch.petkit_power',
-            state: 'on',
-            attributes: {},
-            category: undefined,
-            translation_key: undefined,
-            isActive: false,
-            isProblemEntity: false,
-          },
-          {
-            entity_id: 'sensor.petkit_problem',
-            state: 'off',
-            attributes: { device_class: 'problem' },
-            category: undefined,
-            translation_key: undefined,
-            isActive: false,
-            isProblemEntity: false,
-          },
-          {
-            entity_id: 'text.petkit_config',
-            state: 'default',
-            attributes: {},
-            category: 'config',
-            translation_key: undefined,
-            isActive: false,
-            isProblemEntity: false,
-          },
-          {
-            entity_id: 'sensor.petkit_diagnostic',
-            state: 'ok',
-            attributes: {},
-            category: 'diagnostic',
-            translation_key: undefined,
-            isActive: false,
-            isProblemEntity: false,
-          },
-        ];
+    it('should respect exclude_sections configuration', () => {
+      const mockEntities: EntityInformation[] = [
+        {
+          entity_id: 'sensor.temperature',
+          state: '22',
+          attributes: {},
+          category: undefined,
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+        {
+          entity_id: 'switch.living_room',
+          state: 'on',
+          attributes: {},
+          category: undefined,
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+        {
+          entity_id: 'sensor.diagnostic',
+          state: 'ok',
+          attributes: {},
+          category: 'diagnostic',
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+        {
+          entity_id: 'text.config',
+          state: 'default',
+          attributes: {},
+          category: 'config',
+          translation_key: undefined,
+          isActive: false,
+          isProblemEntity: false,
+        },
+      ];
 
-        getDeviceEntitiesStub.returns(mockEntities);
+      getDeviceEntitiesStub.returns(mockEntities);
 
-        const result = getDevice(mockHass, mockConfig);
+      // Test excluding sensors
+      mockConfig.exclude_sections = ['sensors'];
+      let result = getDevice(mockHass, mockConfig);
+      expect(result?.sensors).to.have.length(0);
+      expect(result?.controls).to.have.length(1);
+      expect(result?.diagnostics).to.have.length(1);
+      expect(result?.configurations).to.have.length(1);
 
-        expect(result?.sensors).to.have.length(2);
-        expect(result?.controls).to.have.length(1);
-        expect(result?.diagnostics).to.have.length(1);
-        expect(result?.configurations).to.have.length(1);
+      // Test excluding controls
+      mockConfig.exclude_sections = ['controls'];
+      result = getDevice(mockHass, mockConfig);
+      expect(result?.sensors).to.have.length(1);
+      expect(result?.controls).to.have.length(0);
+      expect(result?.diagnostics).to.have.length(1);
+      expect(result?.configurations).to.have.length(1);
 
-        // Verify correct categorization
-        expect(result?.sensors[0]!.entity_id).to.equal('sensor.petkit_battery');
-        expect(result?.controls[0]!.entity_id).to.equal('switch.petkit_power');
-        expect(result?.diagnostics[0]!.entity_id).to.equal(
-          'sensor.petkit_diagnostic',
-        );
-        expect(result?.configurations[0]!.entity_id).to.equal(
-          'text.petkit_config',
-        );
-      });
+      // Test excluding diagnostics
+      mockConfig.exclude_sections = ['diagnostics'];
+      result = getDevice(mockHass, mockConfig);
+      expect(result?.sensors).to.have.length(1);
+      expect(result?.controls).to.have.length(1);
+      expect(result?.diagnostics).to.have.length(0);
+      expect(result?.configurations).to.have.length(1);
 
-      it('should categorize control entities based on domain', () => {
-        computeDomainStub.withArgs('text.control').returns('text');
-        computeDomainStub.withArgs('button.control').returns('button');
-        computeDomainStub.withArgs('switch.control').returns('switch');
-        computeDomainStub.withArgs('select.control').returns('select');
-        computeDomainStub.withArgs('sensor.data').returns('sensor');
-
-        const mockEntities: EntityInformation[] = [
-          {
-            entity_id: 'text.control',
-            state: 'some text',
-            attributes: {},
-            category: undefined,
-            translation_key: undefined,
-            isActive: false,
-            isProblemEntity: false,
-          },
-          {
-            entity_id: 'button.control',
-            state: 'idle',
-            attributes: {},
-            category: undefined,
-            translation_key: undefined,
-            isActive: false,
-            isProblemEntity: false,
-          },
-          {
-            entity_id: 'switch.control',
-            state: 'on',
-            attributes: {},
-            category: undefined,
-            translation_key: undefined,
-            isActive: false,
-            isProblemEntity: false,
-          },
-          {
-            entity_id: 'select.control',
-            state: 'option1',
-            attributes: {},
-            category: undefined,
-            translation_key: undefined,
-            isActive: false,
-            isProblemEntity: false,
-          },
-          {
-            entity_id: 'sensor.data',
-            state: '42',
-            attributes: {},
-            category: undefined,
-            translation_key: undefined,
-            isActive: false,
-            isProblemEntity: false,
-          },
-        ];
-
-        getDeviceEntitiesStub.returns(mockEntities);
-
-        const result = getDevice(mockHass, mockConfig);
-
-        expect(result?.controls).to.have.length(4);
-        expect(result?.sensors).to.have.length(1);
-
-        // Verify control entities are correctly identified
-        const controlIds = result?.controls.map((c) => c.entity_id);
-        expect(controlIds).to.include('text.control');
-        expect(controlIds).to.include('button.control');
-        expect(controlIds).to.include('switch.control');
-        expect(controlIds).to.include('select.control');
-      });
-
-      it('should exclude entities listed in exclude_entities config', () => {
-        const mockEntities: EntityInformation[] = [
-          {
-            entity_id: 'sensor.petkit_battery',
-            state: '75',
-            attributes: { device_class: 'battery' },
-            category: undefined,
-            translation_key: undefined,
-            isActive: false,
-            isProblemEntity: false,
-          },
-          {
-            entity_id: 'sensor.petkit_temperature',
-            state: '22',
-            attributes: { device_class: 'temperature' },
-            category: undefined,
-            translation_key: undefined,
-            isActive: false,
-            isProblemEntity: false,
-          },
-        ];
-
-        getDeviceEntitiesStub.returns(mockEntities);
-
-        // Reset section exclusions
-        mockConfig.exclude_sections = [];
-
-        // Configure to exclude one of the entities
-        mockConfig.exclude_entities = ['sensor.petkit_temperature'];
-
-        const result = getDevice(mockHass, mockConfig);
-
-        // Should only have one sensor and it should be the battery, not the temperature
-        expect(result?.sensors).to.have.length(1);
-        expect(result?.sensors[0]!.entity_id).to.equal('sensor.petkit_battery');
-      });
+      // Test excluding configurations
+      mockConfig.exclude_sections = ['configurations'];
+      result = getDevice(mockHass, mockConfig);
+      expect(result?.sensors).to.have.length(1);
+      expect(result?.controls).to.have.length(1);
+      expect(result?.diagnostics).to.have.length(1);
+      expect(result?.configurations).to.have.length(0);
     });
   });
 };

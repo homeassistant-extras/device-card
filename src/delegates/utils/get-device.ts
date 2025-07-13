@@ -4,6 +4,7 @@ import type { Config } from '@device/types';
 import { computeDomain } from '@hass/common/entity/compute_domain';
 import type { HomeAssistant } from '@hass/types';
 import type { Device, EntityInformation } from '@type/config';
+import { SENSOR_ENTITIES } from '../../hass/common/const';
 import { getDeviceEntities } from './card-entities';
 
 /**
@@ -97,14 +98,12 @@ const addEntityToDevice = (
     }
   } else {
     const domain = computeDomain(entity.entity_id);
-    const isControl = ['text', 'button', 'number', 'switch', 'select'].includes(
-      domain,
-    );
+    const isSensor = SENSOR_ENTITIES.includes(domain);
 
-    if (isControl && !config.exclude_sections?.includes('controls')) {
-      device.controls.push(entity);
-    } else if (!isControl && !config.exclude_sections?.includes('sensors')) {
+    if (isSensor && !config.exclude_sections?.includes('sensors')) {
       device.sensors.push(entity);
+    } else if (!config.exclude_sections?.includes('controls')) {
+      device.controls.push(entity);
     }
   }
 };
