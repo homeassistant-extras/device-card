@@ -161,6 +161,16 @@ Use wildcards and regular expressions in your entity and device exclusion patter
 - Responsive layout that works on both desktop and mobile
 - Clear visual hierarchy for easy reading
 
+## Supported Languages
+
+This card supports multiple languages:
+
+- **English** (en) - Default
+- **French** (fr) - Français
+- **Portuguese** (pt) - Português
+
+The card will automatically detect your Home Assistant language setting and display the appropriate translations. If your language is not supported, it will fall back to English.
+
 ## Installation
 
 ### HACS (Recommended)
@@ -554,6 +564,7 @@ include_devices:
 - [x] **`Section exclusion`**: Add ability to exclude sections - thanks @ctallc
 - [x] **`Entity ID support`**: Alternative to device_id - card automatically determines device - thanks @potat0man
 - [x] **`Random bugs`**: pointing out issues to improve card - thanks @PedroKTFC!
+- [x] **`Translations / Localization`**: support for multiple languages and localized text - thanks @Bsector
 
 ## Contributing
 

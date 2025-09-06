@@ -1,6 +1,7 @@
 import { pascalCase } from '@/common/pascal-case';
 import { isInIntegration } from '@delegates/utils/is-integration';
 import type { HomeAssistant } from '@hass/types';
+import { localize } from '@localize/localize';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -146,8 +147,8 @@ export class IntegrationCard extends LitElement {
   override render(): TemplateResult | typeof nothing {
     if (!this._integration?.devices?.length) {
       const message = this._integration
-        ? `No devices found for integration: ${this._config.integration}`
-        : 'Loading...';
+        ? `${localize(this._hass, 'card.no_devices_found')} ${this._config.integration}`
+        : localize(this._hass, 'card.loading');
       return html`<ha-card>
         <div class="card-content">
           <div class="no-devices">${message}</div>

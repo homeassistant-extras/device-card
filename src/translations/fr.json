@@ -1,0 +1,19 @@
+{
+  "card": {
+    "device_name": "Nom de l'appareil",
+    "expand": "Développer",
+    "collapse": "Réduire",
+    "loading": "Chargement...",
+    "no_devices_found": "Aucun appareil trouvé pour l'intégration :",
+    "device_card_name": "Carte d'Appareil",
+    "device_card_description": "Une carte pour résumer le statut d'un Appareil.",
+    "integration_card_name": "Carte d'Intégration",
+    "integration_card_description": "Une carte pour afficher tous les appareils d'une intégration spécifique."
+  },
+  "sections": {
+    "controls": "Contrôles",
+    "configuration": "Configuration",
+    "sensors": "Capteurs",
+    "diagnostic": "Diagnostic"
+  }
+}

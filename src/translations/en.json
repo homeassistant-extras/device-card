@@ -1,0 +1,19 @@
+{
+  "card": {
+    "device_name": "Device Name",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "loading": "Loading...",
+    "no_devices_found": "No devices found for integration:",
+    "device_card_name": "Device Card",
+    "device_card_description": "A card to summarize the status of a Device.",
+    "integration_card_name": "Integration Card",
+    "integration_card_description": "A card to display all devices from a specific integration."
+  },
+  "sections": {
+    "controls": "Controls",
+    "configuration": "Configuration",
+    "sensors": "Sensors",
+    "diagnostic": "Diagnostic"
+  }
+}

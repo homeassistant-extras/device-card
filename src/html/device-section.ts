@@ -8,6 +8,7 @@
 
 import type { Config, Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
+import { localize } from '@localize/localize';
 import type { Device, EntityInformation } from '@type/config';
 import { type TemplateResult } from 'lit';
 import { renderSection } from './section';
@@ -30,15 +31,23 @@ export const renderSections = (
   updateExpansions: (expansion: Expansions) => void,
 ): TemplateResult[] => {
   const sectionConfig = [
-    { name: 'Controls', key: 'controls', entities: device.controls },
     {
-      name: 'Configuration',
+      name: localize(hass, 'sections.controls'),
+      key: 'controls',
+      entities: device.controls,
+    },
+    {
+      name: localize(hass, 'sections.configuration'),
       key: 'configurations',
       entities: device.configurations,
     },
-    { name: 'Sensors', key: 'sensors', entities: device.sensors },
     {
-      name: 'Diagnostic',
+      name: localize(hass, 'sections.sensors'),
+      key: 'sensors',
+      entities: device.sensors,
+    },
+    {
+      name: localize(hass, 'sections.diagnostic'),
       key: 'diagnostics',
       entities: device.diagnostics,
     },

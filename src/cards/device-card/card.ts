@@ -6,6 +6,7 @@ import type { HomeAssistant } from '@hass/types';
 import { renderSections } from '@html/device-section';
 import { picture } from '@html/picture';
 import { pinnedEntity } from '@html/pinned-entity';
+import { localize } from '@localize/localize';
 import type { Device } from '@type/config';
 import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
@@ -131,7 +132,9 @@ export class DeviceCard extends LitElement {
         <div
           class="card-header ${this.collapse ? 'collapsed' : ''}"
           @click="${() => (this.collapse = !this.collapse)}"
-          title="${this.collapse ? 'Expand' : 'Collapse'}"
+          title="${this.collapse
+            ? localize(this._hass, 'card.expand')
+            : localize(this._hass, 'card.collapse')}"
         >
           <div class="title">${titleContent} ${modelContent}</div>
           ${entity}

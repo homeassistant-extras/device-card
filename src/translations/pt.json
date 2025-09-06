@@ -1,0 +1,19 @@
+{
+  "card": {
+    "device_name": "Nome do Dispositivo",
+    "expand": "Expandir",
+    "collapse": "Recolher",
+    "loading": "Carregando...",
+    "no_devices_found": "Nenhum dispositivo encontrado para a integração:",
+    "device_card_name": "Cartão de Dispositivo",
+    "device_card_description": "Um cartão para resumir o status de um Dispositivo.",
+    "integration_card_name": "Cartão de Integração",
+    "integration_card_description": "Um cartão para exibir todos os dispositivos de uma integração específica."
+  },
+  "sections": {
+    "controls": "Controles",
+    "configuration": "Configuração",
+    "sensors": "Sensores",
+    "diagnostic": "Diagnóstico"
+  }
+}

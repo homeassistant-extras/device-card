@@ -25,6 +25,7 @@
       "@hass/*": ["./src/hass/*"],
       "@common/*": ["./src/common/*"],
       "@config/*": ["./src/config/*"],
+      "@localize/*": ["./src/localize/*"],
       "@theme/*": ["./src/theme/*"],
       "@html/*": ["./src/html/*"],
       "@delegates/*": ["./src/delegates/*"],
