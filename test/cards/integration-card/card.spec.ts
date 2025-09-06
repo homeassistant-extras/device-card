@@ -48,6 +48,7 @@ describe('integration-card.ts', () => {
       },
       states: {},
       entities: {},
+      language: 'en',
       callWS: async () => [],
     } as any as HomeAssistant;
 
@@ -319,6 +320,9 @@ describe('integration-card.ts', () => {
       card.setConfig({
         integration: 'zwave_js',
       });
+
+      // Set hass property
+      card.hass = mockHass;
 
       const el = await fixture(card.render() as TemplateResult);
 
