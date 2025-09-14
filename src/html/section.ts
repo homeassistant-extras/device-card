@@ -25,9 +25,9 @@ import { chevron, showMore } from './show-more';
  * @param {string} title - The title of the section
  * @param {EntityInformation[]} entities - The entities to display in this section
  * @param {function} updateExpansions - Function to update the expansion state
- * @returns {TemplateResult|typeof nothing} A lit-html template for the section or nothing if empty
+ * @returns {Promise<TemplateResult|typeof nothing>} A lit-html template for the section or nothing if empty
  */
-export const renderSection = (
+export const renderSection = async (
   element: HTMLElement,
   expansions: Expansions,
   hass: HomeAssistant,
@@ -35,7 +35,7 @@ export const renderSection = (
   title: string,
   entities: EntityInformation[],
   updateExpansions: (expansion: Expansions) => void,
-): TemplateResult | typeof nothing => {
+): Promise<TemplateResult | typeof nothing> => {
   // Don't render anything if there are no entities to display
   if (!entities || entities.length === 0) {
     return nothing;
@@ -61,6 +61,12 @@ export const renderSection = (
   const isCompact = hasFeature(config, 'compact');
   const sectionClass = `section ${isExpanded ? 'expanded' : ''} ${!needsExpansion ? 'few-items' : ''} ${isCompact ? 'compact' : ''}`;
 
+  // Render all rows asynchronously
+  const rowPromises = displayEntities.map((entity) =>
+    row(hass, entity, element, expansions, updateExpansions),
+  );
+  const rowResults = await Promise.all(rowPromises);
+
   return html`<div class="${sectionClass}">
     <div class="section-header">
       <div class="section-title">${title}</div>
@@ -68,9 +74,7 @@ export const renderSection = (
         ? chevron(expansions, title, isExpanded, updateExpansions)
         : nothing}
     </div>
-    ${displayEntities.map((entity) =>
-      row(hass, entity, element, expansions, updateExpansions),
-    )}
+    ${rowResults}
     ${needsExpansion && !isCompact
       ? showMore(
           expansions,

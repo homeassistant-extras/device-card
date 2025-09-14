@@ -9,7 +9,7 @@ import * as stateContentModule from '@html/state-content';
 import { fixture } from '@open-wc/testing-helpers';
 import type { EntityInformation } from '@type/config';
 import { expect } from 'chai';
-import { html, type TemplateResult } from 'lit';
+import { html } from 'lit';
 import { stub } from 'sinon';
 
 describe('row.ts', () => {
@@ -27,7 +27,7 @@ describe('row.ts', () => {
   beforeEach(() => {
     // Create stubs for imported components
     stateContentStub = stub(stateContentModule, 'stateContent');
-    stateContentStub.returns(html`<div class="mocked-state-content"></div>`);
+    stateContentStub.resolves(html`<div class="mocked-state-content"></div>`);
 
     percentBarStub = stub(percentBarModule, 'percentBar');
     percentBarStub.returns(html`<div class="mocked-percent-bar"></div>`);
@@ -86,14 +86,14 @@ describe('row.ts', () => {
 
   describe('row rendering', () => {
     it('should render a basic row with state content', async () => {
-      const result = row(
+      const result = await row(
         mockHass,
         mockEntity,
         mockElement,
         mockExpansions,
         mockUpdater,
       );
-      const el = await fixture(result as TemplateResult);
+      const el = await fixture(result);
 
       // Check basic structure
       expect(el.classList.contains('row')).to.be.true;
@@ -106,14 +106,14 @@ describe('row.ts', () => {
     });
 
     it('should render a percentage bar for entities with percentage measurements', async () => {
-      const result = row(
+      const result = await row(
         mockHass,
         mockEntity,
         mockElement,
         mockExpansions,
         mockUpdater,
       );
-      await fixture(result as TemplateResult);
+      await fixture(result);
 
       // Check that percentBar was called
       expect(percentBarStub.calledOnce).to.be.true;
@@ -131,14 +131,14 @@ describe('row.ts', () => {
         },
       };
 
-      const result = row(
+      const result = await row(
         mockHass,
         nonPercentEntity,
         mockElement,
         mockExpansions,
         mockUpdater,
       );
-      await fixture(result as TemplateResult);
+      await fixture(result);
 
       // Check that percentBar was not called
       expect(percentBarStub.called).to.be.false;
@@ -152,14 +152,14 @@ describe('row.ts', () => {
         isActive: true,
       };
 
-      const result = row(
+      const result = await row(
         mockHass,
         problemEntity,
         mockElement,
         mockExpansions,
         mockUpdater,
       );
-      const el = await fixture(result as TemplateResult);
+      const el = await fixture(result);
 
       // Check that status-error class is applied
       expect(el.classList.contains('status-error')).to.be.true;
@@ -173,14 +173,14 @@ describe('row.ts', () => {
         isActive: false,
       };
 
-      const result = row(
+      const result = await row(
         mockHass,
         problemEntity,
         mockElement,
         mockExpansions,
         mockUpdater,
       );
-      const el = await fixture(result as TemplateResult);
+      const el = await fixture(result);
 
       // Check that status-ok class is applied
       expect(el.classList.contains('status-ok')).to.be.true;
@@ -192,14 +192,14 @@ describe('row.ts', () => {
       // Set entity as not expanded
       mockExpansions.expandedEntities = { [mockEntity.entity_id]: false };
 
-      const result = row(
+      const result = await row(
         mockHass,
         mockEntity,
         mockElement,
         mockExpansions,
         mockUpdater,
       );
-      await fixture(result as TemplateResult);
+      await fixture(result);
 
       // Check that attributes was not called
       expect(attributesStub.called).to.be.false;
@@ -209,14 +209,14 @@ describe('row.ts', () => {
       // Set entity as expanded
       mockExpansions.expandedEntities = { [mockEntity.entity_id]: true };
 
-      const result = row(
+      const result = await row(
         mockHass,
         mockEntity,
         mockElement,
         mockExpansions,
         mockUpdater,
       );
-      await fixture(result as TemplateResult);
+      await fixture(result);
 
       // Check that attributes was called with entity attributes
       expect(attributesStub.calledOnce).to.be.true;
@@ -229,28 +229,28 @@ describe('row.ts', () => {
       // Set entity as expanded
       mockExpansions.expandedEntities = { [mockEntity.entity_id]: true };
 
-      const result = row(
+      const result = await row(
         mockHass,
         mockEntity,
         mockElement,
         mockExpansions,
         mockUpdater,
       );
-      const el = await fixture(result as TemplateResult);
+      const el = await fixture(result);
 
       // Check that expanded-row class is applied
       expect(el.classList.contains('expanded-row')).to.be.true;
     });
 
     it('should attach action handlers', async () => {
-      const result = row(
+      const result = await row(
         mockHass,
         mockEntity,
         mockElement,
         mockExpansions,
         mockUpdater,
       );
-      const el = await fixture(result as TemplateResult);
+      const el = await fixture(result);
 
       // Verify action handler was attached
       expect((el as any).actionHandler).to.exist;

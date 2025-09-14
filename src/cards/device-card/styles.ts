@@ -181,7 +181,7 @@ export const styles = css`
     --primary-text-color: var(--error-color);
   }
 
-  /* Style for the percentage bar that goes below the state-card-content */
+  /* Style for the percentage bar that goes below the hui-generic-entity-row */
   .percent-gauge {
     position: absolute;
     bottom: 1px;

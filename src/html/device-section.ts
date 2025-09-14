@@ -10,7 +10,7 @@ import type { Config, Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import { localize } from '@localize/localize';
 import type { Device, EntityInformation } from '@type/config';
-import { type TemplateResult } from 'lit';
+import { nothing, type TemplateResult } from 'lit';
 import { renderSection } from './section';
 
 /**
@@ -20,16 +20,16 @@ import { renderSection } from './section';
  * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {Config} config - The card configuration
  * @param {Device} device - The device information
- * @returns {TemplateResult[]} Array of section templates
+ * @returns {Promise<TemplateResult[]>} Array of section templates
  */
-export const renderSections = (
+export const renderSections = async (
   element: HTMLElement,
   expansions: Expansions,
   hass: HomeAssistant,
   config: Config,
   device: Device,
   updateExpansions: (expansion: Expansions) => void,
-): TemplateResult[] => {
+): Promise<TemplateResult[]> => {
   const sectionConfig = [
     {
       name: localize(hass, 'sections.controls'),
@@ -75,16 +75,20 @@ export const renderSections = (
     orderedSections = sectionConfig;
   }
 
-  return orderedSections.map(
-    (section) =>
-      renderSection(
-        element,
-        expansions,
-        hass,
-        config,
-        section.name,
-        section.entities,
-        updateExpansions,
-      ) as TemplateResult,
+  const sectionPromises = orderedSections.map((section) =>
+    renderSection(
+      element,
+      expansions,
+      hass,
+      config,
+      section.name,
+      section.entities,
+      updateExpansions,
+    ),
   );
+
+  const sectionResults = await Promise.all(sectionPromises);
+  return sectionResults.filter(
+    (result) => result !== nothing,
+  ) as TemplateResult[];
 };

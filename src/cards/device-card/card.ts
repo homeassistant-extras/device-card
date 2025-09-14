@@ -6,6 +6,7 @@ import type { HomeAssistant } from '@hass/types';
 import { renderSections } from '@html/device-section';
 import { picture } from '@html/picture';
 import { pinnedEntity } from '@html/pinned-entity';
+import { Task } from '@lit/task';
 import { localize } from '@localize/localize';
 import type { Device } from '@type/config';
 import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
@@ -46,6 +47,27 @@ export class DeviceCard extends LitElement {
    */
   @state()
   private collapse = false;
+
+  /**
+   * Task that renders sections asynchronously
+   */
+  _renderSectionsTask = new Task(this, {
+    task: async ([device, config, hass, expansions]) => {
+      if (!device || !config || !hass) {
+        return html``;
+      }
+      const sections = await renderSections(
+        this,
+        expansions,
+        hass,
+        config,
+        device,
+        (e) => (this._expansions = e),
+      );
+      return html`${sections}`;
+    },
+    args: () => [this._device, this._config, this._hass, this._expansions],
+  });
 
   /**
    * Returns the component's styles
@@ -149,14 +171,13 @@ export class DeviceCard extends LitElement {
       <ha-card class="${problem ? 'problem' : ''}">
         ${headerContent}
         ${!this.collapse
-          ? renderSections(
-              this,
-              this._expansions,
-              this._hass,
-              this._config,
-              this._device,
-              (e) => (this._expansions = e),
-            )
+          ? this._renderSectionsTask.render({
+              initial: () => nothing,
+              pending: () => nothing,
+              complete: (sections) => sections,
+              error: (error) =>
+                html`<div>Error rendering sections: ${error}</div>`,
+            })
           : nothing}
       </ha-card>
     `;

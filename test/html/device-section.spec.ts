@@ -47,7 +47,7 @@ describe('device-section.ts', () => {
 
     // Create stubs for the extracted components
     rowStub = stub(rowModule, 'row');
-    rowStub.returns(html`<div class="mocked-row"></div>`);
+    rowStub.resolves(html`<div class="mocked-row"></div>`);
 
     chevronStub = stub(showMoreModule, 'chevron');
     chevronStub.returns(html`<div class="mocked-chevron"></div>`);
@@ -86,9 +86,9 @@ describe('device-section.ts', () => {
       renderSectionStub.restore();
     });
 
-    it('should render sections in default order when no custom order is specified', () => {
+    it('should render sections in default order when no custom order is specified', async () => {
       // Call the function with default config (no section_order)
-      const result = renderSections(
+      const result = await renderSections(
         mockElement,
         mockExpansions,
         mockHass,
@@ -108,7 +108,7 @@ describe('device-section.ts', () => {
       expect(result).to.have.length(4);
     });
 
-    it('should render sections in custom order when section_order is specified', () => {
+    it('should render sections in custom order when section_order is specified', async () => {
       // Set custom section order
       mockConfig.section_order = [
         'sensors',
@@ -118,7 +118,7 @@ describe('device-section.ts', () => {
       ];
 
       // Call the function with custom order config
-      const result = renderSections(
+      const result = await renderSections(
         mockElement,
         mockExpansions,
         mockHass,
@@ -138,12 +138,12 @@ describe('device-section.ts', () => {
       expect(result).to.have.length(4);
     });
 
-    it('should handle partial section ordering and include remaining sections at the end', () => {
+    it('should handle partial section ordering and include remaining sections at the end', async () => {
       // Set custom section order with only some sections
       mockConfig.section_order = ['sensors'];
 
       // Call the function with partial custom order
-      const result = renderSections(
+      const result = await renderSections(
         mockElement,
         mockExpansions,
         mockHass,
@@ -171,12 +171,12 @@ describe('device-section.ts', () => {
       expect(result).to.have.length(4);
     });
 
-    it('should handle empty section_order array and use default order', () => {
+    it('should handle empty section_order array and use default order', async () => {
       // Set empty section_order array
       mockConfig.section_order = [];
 
       // Call the function
-      const result = renderSections(
+      const result = await renderSections(
         mockElement,
         mockExpansions,
         mockHass,
@@ -196,12 +196,12 @@ describe('device-section.ts', () => {
       expect(result).to.have.length(4);
     });
 
-    it('should ignore invalid section keys in section_order', () => {
+    it('should ignore invalid section keys in section_order', async () => {
       // Set custom section order with an invalid section key
       mockConfig.section_order = ['sensors', 'invalid_section', 'controls'];
 
       // Call the function
-      const result = renderSections(
+      const result = await renderSections(
         mockElement,
         mockExpansions,
         mockHass,

@@ -80,7 +80,7 @@ describe('section.ts', () => {
 
     // Create stubs for the extracted components
     rowStub = stub(rowModule, 'row');
-    rowStub.returns(html`<div class="mocked-row"></div>`);
+    rowStub.resolves(html`<div class="mocked-row"></div>`);
 
     chevronStub = stub(showMoreModule, 'chevron');
     chevronStub.returns(html`<div class="mocked-chevron"></div>`);
@@ -105,8 +105,8 @@ describe('section.ts', () => {
   });
 
   describe('renderSection', () => {
-    it('should return nothing when entities array is empty', () => {
-      const result = renderSection(
+    it('should return nothing when entities array is empty', async () => {
+      const result = await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -118,8 +118,8 @@ describe('section.ts', () => {
       expect(result).to.equal(nothing);
     });
 
-    it('should return nothing when entities is undefined', () => {
-      const result = renderSection(
+    it('should return nothing when entities is undefined', async () => {
+      const result = await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -133,7 +133,7 @@ describe('section.ts', () => {
 
     it('should render section with correct title', async () => {
       const sectionTitle = 'Test Section';
-      const result = renderSection(
+      const result = await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -151,7 +151,7 @@ describe('section.ts', () => {
     it('should apply appropriate section classes based on expansion state and number of items', async () => {
       // Test with few items (no expansion needed)
       mockConfig.preview_count = 5; // More than our 3 mock entities
-      let result = renderSection(
+      let result = await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -167,7 +167,7 @@ describe('section.ts', () => {
       // Test with many items, expanded
       mockConfig.preview_count = 1; // Less than our 3 mock entities
       mockExpansions.expandedSections['Test Section'] = true;
-      result = renderSection(
+      result = await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -182,7 +182,7 @@ describe('section.ts', () => {
 
       // Test with many items, collapsed
       mockExpansions.expandedSections['Test Section'] = false;
-      result = renderSection(
+      result = await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -199,7 +199,7 @@ describe('section.ts', () => {
     it('should call row component for each entity to display', async () => {
       // Test with 3 entities, all displayed
       mockConfig.preview_count = 3;
-      renderSection(
+      await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -225,7 +225,7 @@ describe('section.ts', () => {
       mockConfig.preview_count = 2;
       mockExpansions.expandedSections['Test Section'] = false;
 
-      renderSection(
+      await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -248,7 +248,7 @@ describe('section.ts', () => {
       mockConfig.preview_count = 1;
       mockExpansions.expandedSections['Test Section'] = true;
 
-      renderSection(
+      await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -267,7 +267,7 @@ describe('section.ts', () => {
       mockConfig.preview_count = 1;
       mockExpansions.expandedSections['Test Section'] = false;
 
-      renderSection(
+      await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -288,7 +288,7 @@ describe('section.ts', () => {
       // Set preview count to 5 (more than our 3 entities)
       mockConfig.preview_count = 5;
 
-      renderSection(
+      await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -307,7 +307,7 @@ describe('section.ts', () => {
       mockConfig.preview_count = 1;
       mockExpansions.expandedSections['Test Section'] = false;
 
-      renderSection(
+      await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -330,7 +330,7 @@ describe('section.ts', () => {
       // Set preview count to 5 (more than our 3 entities)
       mockConfig.preview_count = 5;
 
-      renderSection(
+      await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -348,7 +348,7 @@ describe('section.ts', () => {
       // Set hasFeature to return true for 'compact'
       hasFeatureStub.withArgs(mockConfig, 'compact').returns(true);
 
-      const result = renderSection(
+      const result = await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -367,7 +367,7 @@ describe('section.ts', () => {
       // Set hasFeature to return false for 'compact'
       hasFeatureStub.withArgs(mockConfig, 'compact').returns(false);
 
-      const result = renderSection(
+      const result = await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -390,7 +390,7 @@ describe('section.ts', () => {
       // Set hasFeature to return true for 'compact'
       hasFeatureStub.withArgs(mockConfig, 'compact').returns(true);
 
-      renderSection(
+      await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -415,7 +415,7 @@ describe('section.ts', () => {
       // Set hasFeature to return false for 'compact'
       hasFeatureStub.withArgs(mockConfig, 'compact').returns(false);
 
-      renderSection(
+      await renderSection(
         mockElement,
         mockExpansions,
         mockHass,
@@ -433,7 +433,7 @@ describe('section.ts', () => {
       const sortConfig: SortConfig = { type: 'name', direction: 'asc' };
       mockConfig.sort = sortConfig;
 
-      renderSection(
+      await renderSection(
         mockElement,
         mockExpansions,
         mockHass,

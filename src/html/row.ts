@@ -24,15 +24,15 @@ import { stateContent } from './state-content';
  * @param {EntityInformation} entity - The entity to render
  * @param {HTMLElement} element - The device card component instance
  * @param {Expansions} expansions - The expansion state of the card
- * @returns {TemplateResult} A lit-html template for the entity row
+ * @returns {Promise<TemplateResult>} A lit-html template for the entity row
  */
-export const row = (
+export const row = async (
   hass: HomeAssistant,
   entity: EntityInformation,
   element: HTMLElement,
   expansions: Expansions,
   updateExpansions: (expansion: Expansions) => void,
-): TemplateResult => {
+): Promise<TemplateResult> => {
   let statusClassName: string | undefined;
 
   // Determine status class based on problem state
@@ -50,6 +50,8 @@ export const row = (
   const isEntityExpanded =
     expansions.expandedEntities[entity.entity_id] || false;
 
+  const stateContentResult = await stateContent(hass, entity, statusClassName);
+
   return html` <div
     class="${[
       'row',
@@ -60,8 +62,7 @@ export const row = (
     .actionHandler=${actionHandler(entity)}
   >
     <div class="row-content">
-      ${stateContent(hass, entity, statusClassName)}
-      ${showBar ? percentBar(entity) : nothing}
+      ${stateContentResult} ${showBar ? percentBar(entity) : nothing}
     </div>
     ${isEntityExpanded ? attributes(entity.attributes) : nothing}
   </div>`;
