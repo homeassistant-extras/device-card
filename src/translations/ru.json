@@ -1,0 +1,19 @@
+{
+  "card": {
+    "device_name": "Название устройства",
+    "expand": "Развернуть",
+    "collapse": "Свернуть",
+    "loading": "Загрузка...",
+    "no_devices_found": "Не найдено устройств из интеграции:",
+    "device_card_name": "Карточка устройства",
+    "device_card_description": "Карточка для обобщения состояния устройства.",
+    "integration_card_name": "Карточка интеграции",
+    "integration_card_description": "Карточка для отображения всех устройств из определенной интеграции."
+  },
+  "sections": {
+    "controls": "Управление",
+    "configuration": "Настройки",
+    "sensors": "Сенсоры",
+    "diagnostic": "Диагностика"
+  }
+}

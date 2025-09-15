@@ -168,6 +168,7 @@ This card supports multiple languages:
 - **English** (en) - Default
 - **French** (fr) - Français
 - **Portuguese** (pt) - Português
+- **Russian** (ru) - Русский
 
 The card will automatically detect your Home Assistant language setting and display the appropriate translations. If your language is not supported, it will fall back to English.
 
