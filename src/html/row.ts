@@ -42,9 +42,10 @@ export const row = async (
   }
 
   // Determine if we should show a percentage bar
+  // Show bar for any entity with % unit (including variations like "% available") and numeric state value
   const showBar =
-    entity.attributes.state_class === 'measurement' &&
-    entity.attributes.unit_of_measurement === '%';
+    entity.attributes.unit_of_measurement?.includes('%') &&
+    !Number.isNaN(Number(entity.state));
 
   // Check if this entity's details are expanded
   const isEntityExpanded =

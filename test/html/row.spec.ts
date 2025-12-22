@@ -120,6 +120,55 @@ describe('row.ts', () => {
       expect(percentBarStub.firstCall.args[0]).to.equal(mockEntity);
     });
 
+    it('should render a percentage bar for entities with % unit even without state_class', async () => {
+      // Entity with % unit but no state_class (e.g., battery sensors)
+      const entityWithoutStateClass = {
+        ...mockEntity,
+        attributes: {
+          ...mockEntity.attributes,
+          state_class: undefined,
+          unit_of_measurement: '%',
+        },
+      };
+
+      const result = await row(
+        mockHass,
+        entityWithoutStateClass,
+        mockElement,
+        mockExpansions,
+        mockUpdater,
+      );
+      await fixture(result);
+
+      // Check that percentBar was called even without state_class
+      expect(percentBarStub.calledOnce).to.be.true;
+      expect(percentBarStub.firstCall.args[0]).to.equal(entityWithoutStateClass);
+    });
+
+    it('should render a percentage bar for entities with % unit variations like "% available"', async () => {
+      // Entity with % unit variation (e.g., "% available", "% used")
+      const entityWithPercentVariation = {
+        ...mockEntity,
+        attributes: {
+          ...mockEntity.attributes,
+          unit_of_measurement: '% available',
+        },
+      };
+
+      const result = await row(
+        mockHass,
+        entityWithPercentVariation,
+        mockElement,
+        mockExpansions,
+        mockUpdater,
+      );
+      await fixture(result);
+
+      // Check that percentBar was called for % unit variation
+      expect(percentBarStub.calledOnce).to.be.true;
+      expect(percentBarStub.firstCall.args[0]).to.equal(entityWithPercentVariation);
+    });
+
     it('should not render a percentage bar for non-percentage entities', async () => {
       // Modify mock entity to not be a percentage
       const nonPercentEntity = {
@@ -141,6 +190,30 @@ describe('row.ts', () => {
       await fixture(result);
 
       // Check that percentBar was not called
+      expect(percentBarStub.called).to.be.false;
+    });
+
+    it('should not render a percentage bar for entities with % unit but non-numeric state', async () => {
+      // Entity with % unit but non-numeric state (e.g., "unknown", "unavailable")
+      const entityWithNonNumericState = {
+        ...mockEntity,
+        state: 'unknown',
+        attributes: {
+          ...mockEntity.attributes,
+          unit_of_measurement: '%',
+        },
+      };
+
+      const result = await row(
+        mockHass,
+        entityWithNonNumericState,
+        mockElement,
+        mockExpansions,
+        mockUpdater,
+      );
+      await fixture(result);
+
+      // Check that percentBar was not called for non-numeric state
       expect(percentBarStub.called).to.be.false;
     });
 
