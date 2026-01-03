@@ -14,38 +14,39 @@ customElements.define('integration-card-editor', IntegrationCardEditor);
 window.customCards = window.customCards || [];
 
 // Register the cards with Home Assistant's custom card registry
-window.customCards.push({
-  // Unique identifier for the card type
-  type: 'device-card',
+window.customCards.push(
+  {
+    // Unique identifier for the card type
+    type: 'device-card',
 
-  // Display name in the UI
-  name: 'Device Card',
+    // Display name in the UI
+    name: 'Device Card',
 
-  // Card description for the UI
-  description: 'A card to summarize the status of a Device.',
+    // Card description for the UI
+    description: 'A card to summarize the status of a Device.',
 
-  // Show a preview of the card in the UI
-  preview: true,
+    // Show a preview of the card in the UI
+    preview: true,
 
-  // URL for the card's documentation
-  documentationURL: 'https://github.com/homeassistant-extras/device-card',
-});
+    // URL for the card's documentation
+    documentationURL: 'https://github.com/homeassistant-extras/device-card',
+  },
+  {
+    // Unique identifier for the card type
+    type: 'integration-card',
 
-window.customCards.push({
-  // Unique identifier for the card type
-  type: 'integration-card',
+    // Display name in the UI
+    name: 'Integration Card',
 
-  // Display name in the UI
-  name: 'Integration Card',
+    // Card description for the UI
+    description: 'A card to display all devices from a specific integration.',
 
-  // Card description for the UI
-  description: 'A card to display all devices from a specific integration.',
+    // Show a preview of the card in the UI
+    preview: true,
 
-  // Show a preview of the card in the UI
-  preview: true,
-
-  // URL for the card's documentation
-  documentationURL: 'https://github.com/homeassistant-extras/device-card',
-});
+    // URL for the card's documentation
+    documentationURL: 'https://github.com/homeassistant-extras/device-card',
+  },
+);
 
 console.info(`%c🐱 Poat's Tools: device-card - ${version}`, 'color: #CFC493;');

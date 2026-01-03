@@ -338,6 +338,21 @@ describe('editor-schema.ts', () => {
                 },
               },
             },
+            {
+              name: 'inverse_percent',
+              label:
+                'Entities with inverted percent colors (green for low, red for high)',
+              required: false,
+              selector: {
+                entity: {
+                  multiple: true,
+                  filter: {
+                    integration: 'test_integration',
+                  },
+                  include_entities: undefined,
+                },
+              },
+            },
           ],
         },
         {
@@ -597,6 +612,25 @@ describe('editor-schema.ts', () => {
             {
               name: 'exclude_entities',
               label: 'Entities to exclude',
+              required: false,
+              selector: {
+                entity: {
+                  multiple: true,
+                  filter: {
+                    integration: undefined,
+                  },
+                  include_entities: [
+                    'light.test_light',
+                    'sensor.test_sensor',
+                    'switch.test_switch',
+                  ],
+                },
+              },
+            },
+            {
+              name: 'inverse_percent',
+              label:
+                'Entities with inverted percent colors (green for low, red for high)',
               required: false,
               selector: {
                 entity: {

@@ -170,15 +170,15 @@ export class DeviceCard extends LitElement {
     return html`
       <ha-card class="${problem ? 'problem' : ''}">
         ${headerContent}
-        ${!this.collapse
-          ? this._renderSectionsTask.render({
+        ${this.collapse
+          ? nothing
+          : this._renderSectionsTask.render({
               initial: () => nothing,
               pending: () => nothing,
               complete: (sections) => sections,
               error: (error) =>
                 html`<div>Error rendering sections: ${error}</div>`,
-            })
-          : nothing}
+            })}
       </ha-card>
     `;
   }

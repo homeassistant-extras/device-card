@@ -92,6 +92,7 @@ describe('row.ts', () => {
         mockElement,
         mockExpansions,
         mockUpdater,
+        config,
       );
       const el = await fixture(result);
 
@@ -112,12 +113,14 @@ describe('row.ts', () => {
         mockElement,
         mockExpansions,
         mockUpdater,
+        config,
       );
       await fixture(result);
 
-      // Check that percentBar was called
+      // Check that percentBar was called with entity and inverse entities array
       expect(percentBarStub.calledOnce).to.be.true;
       expect(percentBarStub.firstCall.args[0]).to.equal(mockEntity);
+      expect(percentBarStub.firstCall.args[1]).to.deep.equal([]);
     });
 
     it('should render a percentage bar for entities with % unit even without state_class', async () => {
@@ -137,12 +140,16 @@ describe('row.ts', () => {
         mockElement,
         mockExpansions,
         mockUpdater,
+        config,
       );
       await fixture(result);
 
       // Check that percentBar was called even without state_class
       expect(percentBarStub.calledOnce).to.be.true;
-      expect(percentBarStub.firstCall.args[0]).to.equal(entityWithoutStateClass);
+      expect(percentBarStub.firstCall.args[0]).to.equal(
+        entityWithoutStateClass,
+      );
+      expect(percentBarStub.firstCall.args[1]).to.deep.equal([]);
     });
 
     it('should render a percentage bar for entities with % unit variations like "% available"', async () => {
@@ -161,12 +168,16 @@ describe('row.ts', () => {
         mockElement,
         mockExpansions,
         mockUpdater,
+        config,
       );
       await fixture(result);
 
       // Check that percentBar was called for % unit variation
       expect(percentBarStub.calledOnce).to.be.true;
-      expect(percentBarStub.firstCall.args[0]).to.equal(entityWithPercentVariation);
+      expect(percentBarStub.firstCall.args[0]).to.equal(
+        entityWithPercentVariation,
+      );
+      expect(percentBarStub.firstCall.args[1]).to.deep.equal([]);
     });
 
     it('should not render a percentage bar for non-percentage entities', async () => {
@@ -186,6 +197,7 @@ describe('row.ts', () => {
         mockElement,
         mockExpansions,
         mockUpdater,
+        config,
       );
       await fixture(result);
 
@@ -210,6 +222,7 @@ describe('row.ts', () => {
         mockElement,
         mockExpansions,
         mockUpdater,
+        config,
       );
       await fixture(result);
 
@@ -231,6 +244,7 @@ describe('row.ts', () => {
         mockElement,
         mockExpansions,
         mockUpdater,
+        config,
       );
       const el = await fixture(result);
 
@@ -252,11 +266,69 @@ describe('row.ts', () => {
         mockElement,
         mockExpansions,
         mockUpdater,
+        config,
       );
       const el = await fixture(result);
 
       // Check that status-ok class is applied
       expect(el.classList.contains('status-ok')).to.be.true;
+    });
+
+    it('should pass inverse_percent entities to percentBar when configured', async () => {
+      const configWithInverse = {
+        ...config,
+        inverse_percent: ['sensor.test_sensor', 'sensor.other_sensor'],
+      };
+
+      const result = await row(
+        mockHass,
+        mockEntity,
+        mockElement,
+        mockExpansions,
+        mockUpdater,
+        configWithInverse,
+      );
+      await fixture(result);
+
+      // Check that percentBar was called with entity and inverse entities array
+      expect(percentBarStub.calledOnce).to.be.true;
+      expect(percentBarStub.firstCall.args[0]).to.equal(mockEntity);
+      expect(percentBarStub.firstCall.args[1]).to.deep.equal([
+        'sensor.test_sensor',
+        'sensor.other_sensor',
+      ]);
+    });
+
+    it('should pass empty array to percentBar when inverse_percent is not configured', async () => {
+      const result = await row(
+        mockHass,
+        mockEntity,
+        mockElement,
+        mockExpansions,
+        mockUpdater,
+        config,
+      );
+      await fixture(result);
+
+      // Check that percentBar was called with empty array when no inverse_percent
+      expect(percentBarStub.calledOnce).to.be.true;
+      expect(percentBarStub.firstCall.args[1]).to.deep.equal([]);
+    });
+
+    it('should pass empty array to percentBar when config is undefined', async () => {
+      const result = await row(
+        mockHass,
+        mockEntity,
+        mockElement,
+        mockExpansions,
+        mockUpdater,
+        undefined,
+      );
+      await fixture(result);
+
+      // Check that percentBar was called with empty array when config is undefined
+      expect(percentBarStub.calledOnce).to.be.true;
+      expect(percentBarStub.firstCall.args[1]).to.deep.equal([]);
     });
   });
 
@@ -271,6 +343,7 @@ describe('row.ts', () => {
         mockElement,
         mockExpansions,
         mockUpdater,
+        config,
       );
       await fixture(result);
 
@@ -288,6 +361,7 @@ describe('row.ts', () => {
         mockElement,
         mockExpansions,
         mockUpdater,
+        config,
       );
       await fixture(result);
 
@@ -308,6 +382,7 @@ describe('row.ts', () => {
         mockElement,
         mockExpansions,
         mockUpdater,
+        config,
       );
       const el = await fixture(result);
 
@@ -322,6 +397,7 @@ describe('row.ts', () => {
         mockElement,
         mockExpansions,
         mockUpdater,
+        config,
       );
       const el = await fixture(result);
 

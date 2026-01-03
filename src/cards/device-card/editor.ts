@@ -65,6 +65,10 @@ export class DeviceCardEditor extends LitElement {
       delete config.section_order;
     }
 
+    if (!config.inverse_percent?.length) {
+      delete config.inverse_percent;
+    }
+
     // @ts-ignore
     fireEvent(this, 'config-changed', {
       config,

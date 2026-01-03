@@ -25,6 +25,9 @@ export interface BaseConfig {
   /** The order in which sections should be displayed */
   section_order?: string[];
 
+  /** Entity IDs that should use inverted percent bar colors (green for low, red for high) */
+  inverse_percent?: string[];
+
   /** The order in which entities should be displayed */
   sort?: SortConfig;
 

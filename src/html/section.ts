@@ -59,11 +59,11 @@ export const renderSection = async (
 
   // Determine section class based on expanded state, number of items, and compact feature
   const isCompact = hasFeature(config, 'compact');
-  const sectionClass = `section ${isExpanded ? 'expanded' : ''} ${!needsExpansion ? 'few-items' : ''} ${isCompact ? 'compact' : ''}`;
+  const sectionClass = `section ${isExpanded ? 'expanded' : ''} ${needsExpansion ? '' : 'few-items'} ${isCompact ? 'compact' : ''}`;
 
   // Render all rows asynchronously
   const rowPromises = displayEntities.map((entity) =>
-    row(hass, entity, element, expansions, updateExpansions),
+    row(hass, entity, element, expansions, updateExpansions, config),
   );
   const rowResults = await Promise.all(rowPromises);
 

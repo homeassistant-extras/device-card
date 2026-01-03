@@ -9,7 +9,7 @@ import {
   actionHandler,
   handleClickAction,
 } from '@delegates/action-handler-delegate';
-import type { Expansions } from '@device/types';
+import type { Config, Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';
@@ -24,6 +24,8 @@ import { stateContent } from './state-content';
  * @param {EntityInformation} entity - The entity to render
  * @param {HTMLElement} element - The device card component instance
  * @param {Expansions} expansions - The expansion state of the card
+ * @param {function} updateExpansions - Function to update the expansion state
+ * @param {Config} config - The card configuration
  * @returns {Promise<TemplateResult>} A lit-html template for the entity row
  */
 export const row = async (
@@ -32,6 +34,7 @@ export const row = async (
   element: HTMLElement,
   expansions: Expansions,
   updateExpansions: (expansion: Expansions) => void,
+  config?: Config,
 ): Promise<TemplateResult> => {
   let statusClassName: string | undefined;
 
@@ -53,6 +56,9 @@ export const row = async (
 
   const stateContentResult = await stateContent(hass, entity, statusClassName);
 
+  // Get inverse_percent entities from config, default to empty array
+  const inverseEntities = config?.inverse_percent || [];
+
   return html` <div
     class="${[
       'row',
@@ -63,7 +69,8 @@ export const row = async (
     .actionHandler=${actionHandler(entity)}
   >
     <div class="row-content">
-      ${stateContentResult} ${showBar ? percentBar(entity) : nothing}
+      ${stateContentResult}
+      ${showBar ? percentBar(entity, inverseEntities) : nothing}
     </div>
     ${isEntityExpanded ? attributes(entity.attributes) : nothing}
   </div>`;

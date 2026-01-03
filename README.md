@@ -252,20 +252,21 @@ The card will automatically:
 
 ### Device Card
 
-| Name              | Type   | Default     | Description                                                  |
-| ----------------- | ------ | ----------- | ------------------------------------------------------------ |
-| device_id         | string | Optional\*  | The Home Assistant device ID for your device                 |
-| entity_id         | string | Optional\*  | Entity ID - card will automatically determine the device     |
-| title             | string | Device name | Optional custom title for the card                           |
-| preview_count     | number | All items   | Number of items to preview before showing "Show More" button |
-| exclude_sections  | list   | _none_      | Sections of entities to exclude. See below.                  |
-| exclude_entities  | list   | _none_      | Entities to remove from the card.                            |
-| section_order     | list   | _none_      | Custom order for displaying sections. See below.             |
-| sort              | object | See below   | Sort options for entities                                    |
-| features          | list   | See below   | Optional flags to toggle different features                  |
-| tap_action        | object | _none_      | Action to perform when tapping the card                      |
-| hold_action       | object | _none_      | Action to perform when holding the card                      |
-| double_tap_action | object | _none_      | Action when double-tapping the card                          |
+| Name              | Type   | Default     | Description                                                                                                                  |
+| ----------------- | ------ | ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| device_id         | string | Optional\*  | The Home Assistant device ID for your device                                                                                 |
+| entity_id         | string | Optional\*  | Entity ID - card will automatically determine the device                                                                     |
+| title             | string | Device name | Optional custom title for the card                                                                                           |
+| preview_count     | number | All items   | Number of items to preview before showing "Show More" button                                                                 |
+| exclude_sections  | list   | _none_      | Sections of entities to exclude. See below.                                                                                  |
+| exclude_entities  | list   | _none_      | Entities to remove from the card.                                                                                            |
+| inverse_percent   | list   | _none_      | Entity IDs with inverted percent colors (green for low, red for high). Useful for metrics like disk usage where low is good. |
+| section_order     | list   | _none_      | Custom order for displaying sections. See below.                                                                             |
+| sort              | object | See below   | Sort options for entities                                                                                                    |
+| features          | list   | See below   | Optional flags to toggle different features                                                                                  |
+| tap_action        | object | _none_      | Action to perform when tapping the card                                                                                      |
+| hold_action       | object | _none_      | Action to perform when holding the card                                                                                      |
+| double_tap_action | object | _none_      | Action when double-tapping the card                                                                                          |
 
 \*Either `device_id` or `entity_id` is required. If `entity_id` is provided, the card will automatically determine the device.
 
@@ -304,21 +305,23 @@ For `section_order`, the default order is: Controls, Configuration, Sensors, Dia
 
 Most configuration options from the Device Card are supported:
 
-| Name                   | Type    | Default      | Description                                                  |
-| ---------------------- | ------- | ------------ | ------------------------------------------------------------ |
-| integration            | string  | **Required** | The Home Assistant integration domain (e.g., zwave_js, hue)  |
-| title                  | string  | Device name  | Optional custom title for the card                           |
-| hide_integration_title | boolean | False        | Optional flag to hide the integration card title.            |
-| preview_count          | number  | All items    | Number of items to preview before showing "Show More" button |
-| columns                | number  | _responsive_ | Fix the number of columns for device cards (1-6)             |
-| include_devices        | list    | _none_       | Include only specific devices for the integration            |
-| exclude_devices        | list    | _none_       | Specific devices to exclude from the integration display     |
-| exclude_sections       | list    | _none_       | Sections of entities to exclude. See below.                  |
-| section_order          | list    | _none_       | Custom order for displaying sections. See below.             |
-| features               | list    | See above    | Optional flags to toggle different features                  |
-| tap_action             | object  | none         | Action to perform when tapping the card                      |
-| hold_action            | object  | none         | Action to perform when holding the card                      |
-| double_tap_action      | object  | none         | Action when double-tapping the card                          |
+| Name                   | Type    | Default      | Description                                                                                                                  |
+| ---------------------- | ------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| integration            | string  | **Required** | The Home Assistant integration domain (e.g., zwave_js, hue)                                                                  |
+| title                  | string  | Device name  | Optional custom title for the card                                                                                           |
+| hide_integration_title | boolean | False        | Optional flag to hide the integration card title.                                                                            |
+| preview_count          | number  | All items    | Number of items to preview before showing "Show More" button                                                                 |
+| columns                | number  | _responsive_ | Fix the number of columns for device cards (1-6)                                                                             |
+| include_devices        | list    | _none_       | Include only specific devices for the integration                                                                            |
+| exclude_devices        | list    | _none_       | Specific devices to exclude from the integration display                                                                     |
+| exclude_sections       | list    | _none_       | Sections of entities to exclude. See below.                                                                                  |
+| exclude_entities       | list    | _none_       | Entities to remove from the card.                                                                                            |
+| inverse_percent        | list    | _none_       | Entity IDs with inverted percent colors (green for low, red for high). Useful for metrics like disk usage where low is good. |
+| section_order          | list    | _none_       | Custom order for displaying sections. See below.                                                                             |
+| features               | list    | See above    | Optional flags to toggle different features                                                                                  |
+| tap_action             | object  | none         | Action to perform when tapping the card                                                                                      |
+| hold_action            | object  | none         | Action to perform when holding the card                                                                                      |
+| double_tap_action      | object  | none         | Action when double-tapping the card                                                                                          |
 
 **Note** - `include_devices`, `exclude_devices` and `exclude_entities` accepts wildcards (\*) and Regex
 
@@ -398,6 +401,19 @@ exclude_entities:
   - '*_uptime' # Exclude all uptime sensors
   - sensor.esp_* # Exclude all ESP sensors
   - /.*_(wired|wireless)/ # Regex match ending in wired or wireless
+```
+
+#### With inverted percent colors
+
+Useful for metrics like disk usage where low values are good and high values are bad:
+
+```yaml
+type: custom:device-card
+device_id: 1a2b3c4d5e6f7g8h9i0j
+inverse_percent:
+  - sensor.disk_usage_core
+  - sensor.disk_usage_supervisor
+  - sensor.memory_usage_percent
 ```
 
 #### Custom section order
@@ -566,6 +582,7 @@ include_devices:
 - [x] **`Entity ID support`**: Alternative to device_id - card automatically determines device - thanks @potat0man
 - [x] **`Random bugs`**: pointing out issues to improve card - thanks @PedroKTFC!
 - [x] **`Translations / Localization`**: support for multiple languages and localized text - thanks @Bsector
+- [x] **`Inverse percent colors`**: Invert percent bar colors for entities like disk usage - thanks @misc-brabs
 
 ## Contributing
 

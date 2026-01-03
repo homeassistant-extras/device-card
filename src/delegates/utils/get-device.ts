@@ -47,7 +47,7 @@ export const getDevice = (
     hassDevice.model,
     hassDevice.model_id,
   ]
-    .filter((s) => s)
+    .filter(Boolean)
     .join(' ');
 
   const entities = getDeviceEntities(

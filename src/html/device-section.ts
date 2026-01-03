@@ -88,7 +88,5 @@ export const renderSections = async (
   );
 
   const sectionResults = await Promise.all(sectionPromises);
-  return sectionResults.filter(
-    (result) => result !== nothing,
-  ) as TemplateResult[];
+  return sectionResults.filter((result) => result !== nothing);
 };

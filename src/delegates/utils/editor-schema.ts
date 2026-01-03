@@ -313,6 +313,21 @@ const featuresSchema = (
           },
         },
       },
+      {
+        name: 'inverse_percent',
+        label:
+          'Entities with inverted percent colors (green for low, red for high)',
+        required: false,
+        selector: {
+          entity: {
+            multiple: true,
+            include_entities: entities,
+            filter: {
+              integration: integration,
+            },
+          },
+        },
+      },
     ],
   };
 };
