@@ -62,6 +62,7 @@ describe('row.ts', () => {
         state_class: 'measurement',
         unit_of_measurement: '%',
       },
+      name: 'Test Sensor',
       isActive: false,
       isProblemEntity: false,
     } as EntityInformation;

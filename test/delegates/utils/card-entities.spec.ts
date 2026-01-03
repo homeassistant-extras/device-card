@@ -183,12 +183,11 @@ describe('card-entities.ts', () => {
       expect(entity).to.have.property('attributes');
       expect(entity).to.have.property('isProblemEntity');
       expect(entity).to.have.property('isActive');
-      expect(entity.attributes).to.have.property('friendly_name');
     });
 
     // Check device name was correctly removed from friendly_name
-    expect(entities[0]!.attributes.friendly_name).to.equal(' Light');
-    expect(entities[1]!.attributes.friendly_name).to.equal(' Temperature');
+    expect(entities[0]!.name).to.equal('Light');
+    expect(entities[1]!.name).to.equal('Temperature');
   });
 
   it('should correctly determine isProblemEntity based on device_class', () => {

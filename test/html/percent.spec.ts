@@ -18,6 +18,7 @@ describe('percent.ts', () => {
         state_class: 'measurement',
         unit_of_measurement: '%',
       },
+      name: 'Test Percentage',
       isActive: false,
       isProblemEntity: false,
     } as EntityInformation;

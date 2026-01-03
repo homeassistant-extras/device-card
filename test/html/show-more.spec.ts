@@ -27,6 +27,7 @@ describe('show-more.ts', () => {
         attributes: {
           friendly_name: 'Test 1',
         },
+        name: 'Test 1',
         isActive: false,
         isProblemEntity: false,
       } as EntityInformation,
@@ -37,6 +38,7 @@ describe('show-more.ts', () => {
         attributes: {
           friendly_name: 'Test 2',
         },
+        name: 'Test 2',
         isActive: false,
         isProblemEntity: false,
       } as EntityInformation,
@@ -47,6 +49,7 @@ describe('show-more.ts', () => {
         attributes: {
           friendly_name: 'Test 3',
         },
+        name: 'Test 3',
         isActive: false,
         isProblemEntity: false,
       } as EntityInformation,

@@ -41,6 +41,9 @@ export const stateContent = async (
   // Create the row configuration, we will handle actions ourselves
   const config: LovelaceRowConfig = {
     entity: entity.entity_id,
+    // our name removes the device name from the friendly name
+    name: entity.name,
+
     tap_action: {
       action: 'none',
     },

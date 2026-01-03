@@ -68,6 +68,7 @@ describe('card.ts', () => {
       model: 'Feeder Plus Pro',
       sensors: [
         {
+          name: 'Battery',
           entity_id: 'sensor.petkit_battery',
           category: undefined,
           translation_key: undefined,
@@ -79,6 +80,7 @@ describe('card.ts', () => {
       ],
       controls: [
         {
+          name: 'Power',
           entity_id: 'switch.petkit_power',
           category: undefined,
           translation_key: undefined,
@@ -90,6 +92,7 @@ describe('card.ts', () => {
       ],
       diagnostics: [
         {
+          name: 'Diagnostic',
           entity_id: 'sensor.petkit_diagnostic',
           category: 'diagnostic',
           translation_key: undefined,
@@ -101,6 +104,7 @@ describe('card.ts', () => {
       ],
       configurations: [
         {
+          name: 'Config',
           entity_id: 'text.petkit_config',
           category: 'config',
           translation_key: undefined,

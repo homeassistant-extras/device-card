@@ -21,12 +21,12 @@ export const getDeviceEntities = (
       const name =
         state.attributes.friendly_name === deviceName
           ? deviceName
-          : state.attributes.friendly_name.replace(deviceName, '');
+          : state.attributes.friendly_name.replace(deviceName, '').trim();
       const active = stateActive(state);
       return {
-        entity_id: entity.entity_id,
+        name,
+        ...state,
         category: entity.entity_category,
-        state: state.state,
         translation_key: entity.translation_key,
         isProblemEntity: state.attributes.device_class === 'problem',
         isActive: active,
@@ -36,10 +36,6 @@ export const getDeviceEntities = (
             action: 'more-info',
           },
           double_tap_action: config.double_tap_action,
-        },
-        attributes: {
-          ...state.attributes,
-          friendly_name: name,
         },
       };
     })

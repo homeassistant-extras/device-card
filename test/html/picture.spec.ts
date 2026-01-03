@@ -19,6 +19,7 @@ describe('pet.ts', () => {
         friendly_name: 'Pet Last Use',
         entity_picture: 'https://example.com/pet.jpg',
       },
+      name: 'Pet Last Use',
       isActive: false,
       isProblemEntity: false,
     } as EntityInformation;
@@ -31,6 +32,7 @@ describe('pet.ts', () => {
       attributes: {
         friendly_name: 'Status',
       },
+      name: 'Status',
       isActive: false,
       isProblemEntity: false,
     } as EntityInformation;

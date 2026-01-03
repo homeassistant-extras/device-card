@@ -85,6 +85,9 @@ export interface Device {
 }
 
 export interface EntityInformation extends EntityState {
+  /** The name of the entity */
+  name: string;
+
   /** Optional category of the entity */
   category?: EntityCategory;
 

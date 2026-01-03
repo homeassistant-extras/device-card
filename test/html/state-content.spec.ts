@@ -56,6 +56,7 @@ describe('stateContent.ts', () => {
         friendly_name: 'Test Light',
         icon: 'mdi:lightbulb',
       },
+      name: 'Test Light',
       isActive: false,
       isProblemEntity: false,
     } as EntityInformation;

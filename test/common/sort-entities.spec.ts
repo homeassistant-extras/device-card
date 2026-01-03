@@ -12,6 +12,7 @@ describe('sort-entities.ts', () => {
         entity_id: 'light.kitchen',
         state: '50',
         attributes: { friendly_name: 'Kitchen Light' },
+        name: 'Kitchen Light',
         isActive: false,
         isProblemEntity: false,
         translation_key: undefined,
@@ -20,6 +21,7 @@ describe('sort-entities.ts', () => {
         entity_id: 'switch.living_room',
         state: 'on',
         attributes: { friendly_name: 'Living Room Switch' },
+        name: 'Living Room Switch',
         isActive: true,
         isProblemEntity: false,
         translation_key: undefined,
@@ -28,6 +30,7 @@ describe('sort-entities.ts', () => {
         entity_id: 'sensor.temperature',
         state: '22.5',
         attributes: { friendly_name: 'Temperature' },
+        name: 'Temperature',
         isActive: false,
         isProblemEntity: false,
         translation_key: undefined,
@@ -37,7 +40,7 @@ describe('sort-entities.ts', () => {
 
   describe('sortEntities', () => {
     it('should return the original array if no sort config is provided', () => {
-      const result = sortEntities(mockEntities, undefined);
+      const result = sortEntities(mockEntities);
       expect(result).to.deep.equal(mockEntities);
     });
 
