@@ -41,7 +41,7 @@ export const getDevice = (
     return undefined;
   }
 
-  device.name = hassDevice.name ?? 'Device';
+  device.name = hassDevice.name_by_user ?? hassDevice.name ?? 'Device';
   device.model = [
     hassDevice.manufacturer,
     hassDevice.model,
@@ -54,7 +54,7 @@ export const getDevice = (
     hass,
     config,
     hassDevice.id,
-    hassDevice.name,
+    device.name,
   );
 
   entities.forEach((entity) => {
