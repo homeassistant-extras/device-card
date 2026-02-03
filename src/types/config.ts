@@ -3,7 +3,7 @@
  * @description Core type definitions for card configuration.
  */
 
-import type { EntityCategory } from '@hass/data/entity_registry';
+import type { EntityCategory } from '@hass/data/entity/entity_registry';
 import type { ActionConfig } from '@hass/data/lovelace/config/action';
 
 /**

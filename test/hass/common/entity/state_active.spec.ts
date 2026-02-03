@@ -1,5 +1,5 @@
 import { stateActive } from '@hass/common/entity/state_active';
-import { OFF, UNAVAILABLE } from '@hass/data/entity';
+import { OFF, UNAVAILABLE } from '@hass/data/entity/entity';
 import { expect } from 'chai';
 
 describe('state_active.ts', () => {

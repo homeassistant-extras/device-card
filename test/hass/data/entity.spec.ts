@@ -7,7 +7,7 @@ import {
   UNKNOWN,
   isOffState,
   isUnavailableState,
-} from '@hass/data/entity';
+} from '@hass/data/entity/entity';
 import { expect } from 'chai';
 
 describe('entity.ts', () => {

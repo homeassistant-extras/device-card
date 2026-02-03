@@ -1,3 +1,7 @@
+/**
+ * https://github.com/home-assistant/frontend/blob/dev/src/data/lovelace/config/action.ts
+ */
+
 import type { HassServiceTarget } from '@hass/ws/types';
 
 export interface ToggleActionConfig extends BaseActionConfig {

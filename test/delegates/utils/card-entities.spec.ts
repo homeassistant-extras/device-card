@@ -58,6 +58,13 @@ describe('card-entities.ts', () => {
           entity_category: undefined,
           translation_key: 'light',
         },
+        'sensor.petkit_hidden': {
+          entity_id: 'sensor.petkit_hidden',
+          device_id: 'petkit_device_1',
+          entity_category: undefined,
+          translation_key: 'hidden',
+          hidden: true,
+        },
       },
     } as any as HomeAssistant;
 
@@ -136,6 +143,15 @@ describe('card-entities.ts', () => {
       },
     });
 
+    // Hidden entity state stub (though it should be filtered out before this is called)
+    getStateStub.withArgs(mockHass, 'sensor.petkit_hidden').returns({
+      entity_id: 'sensor.petkit_hidden',
+      state: '100',
+      attributes: {
+        friendly_name: 'Hidden Sensor',
+      },
+    });
+
     // Setup default stateActive behavior
     stateActiveStub.returns(false); // Default most entities to inactive
     stateActiveStub
@@ -172,7 +188,7 @@ describe('card-entities.ts', () => {
 
     const entities = getDeviceEntities(mockHass, config, deviceId, deviceName);
 
-    // Check we got the right number of entities
+    // Check we got the right number of entities (6 visible entities, hidden entity excluded)
     expect(entities.length).to.equal(6);
 
     // Check entities have the correct structure
@@ -188,6 +204,12 @@ describe('card-entities.ts', () => {
     // Check device name was correctly removed from friendly_name
     expect(entities[0]!.name).to.equal('Light');
     expect(entities[1]!.name).to.equal('Temperature');
+
+    // Verify hidden entities are excluded
+    const hiddenEntity = entities.find(
+      (e) => e.entity_id === 'sensor.petkit_hidden',
+    );
+    expect(hiddenEntity).to.be.undefined;
   });
 
   it('should correctly determine isProblemEntity based on device_class', () => {

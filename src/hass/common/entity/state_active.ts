@@ -2,12 +2,13 @@
  * https://github.com/home-assistant/frontend/blob/dev/src/common/entity/state_active.ts
  */
 
-import { isUnavailableState, OFF, UNAVAILABLE } from '@hass/data/entity';
+import { isUnavailableState, OFF, UNAVAILABLE } from '@hass/data/entity/entity';
 import type { HassEntity } from '@hass/ws/types';
 import { computeDomain } from './compute_domain';
 
 export function stateActive(stateObj: HassEntity, state?: string): boolean {
   const domain = computeDomain(stateObj.entity_id);
+  // Intentional: SonarQube cleanup - using ?? instead of explicit check
   const compareState = state ?? stateObj?.state;
 
   if (['button', 'event', 'input_button', 'scene'].includes(domain)) {

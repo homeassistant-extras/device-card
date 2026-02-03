@@ -1,8 +1,8 @@
 /**
- * https://github.com/home-assistant/frontend/blob/dev/src/data/entity.ts
+ * https://github.com/home-assistant/frontend/blob/dev/src/data/entity/entity.ts
  */
 
-import { arrayLiteralIncludes } from '../common/array/literal-includes';
+import { arrayLiteralIncludes } from '../../common/array/literal-includes';
 
 export const UNAVAILABLE = 'unavailable';
 export const UNKNOWN = 'unknown';

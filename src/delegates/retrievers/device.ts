@@ -1,4 +1,4 @@
-import type { DeviceRegistryEntry } from '@hass/data/device_registry';
+import type { DeviceRegistryEntry } from '@hass/data/device/device_registry';
 import type { HomeAssistant } from '@hass/types';
 
 /**

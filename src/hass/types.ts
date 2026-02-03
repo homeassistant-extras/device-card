@@ -2,8 +2,8 @@
  * https://github.com/home-assistant/frontend/blob/dev/src/types.ts
  */
 
-import type { DeviceRegistryEntry } from './data/device_registry';
-import type { EntityRegistryDisplayEntry } from './data/entity_registry';
+import type { DeviceRegistryEntry } from './data/device/device_registry';
+import type { EntityRegistryDisplayEntry } from './data/entity/entity_registry';
 import type { HassEntities, MessageBase } from './ws/types';
 
 export interface HomeAssistant {

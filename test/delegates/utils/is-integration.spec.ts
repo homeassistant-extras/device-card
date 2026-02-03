@@ -1,5 +1,5 @@
 import { isInIntegration } from '@delegates/utils/is-integration';
-import type { DeviceRegistryEntry } from '@hass/data/device_registry';
+import type { DeviceRegistryEntry } from '@hass/data/device/device_registry';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 

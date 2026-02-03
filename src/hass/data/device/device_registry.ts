@@ -1,8 +1,8 @@
 /**
- * https://github.com/home-assistant/frontend/blob/dev/src/data/device_registry.ts
+ * https://github.com/home-assistant/frontend/blob/dev/src/data/device/device_registry.ts
  */
 
-import type { RegistryEntry } from './registry';
+import type { RegistryEntry } from '../registry';
 
 export interface DeviceRegistryEntry extends RegistryEntry {
   id: string;
@@ -13,4 +13,5 @@ export interface DeviceRegistryEntry extends RegistryEntry {
   model_id: string | null;
   name: string | null;
   area_id: string;
+  name_by_user: string | null;
 }

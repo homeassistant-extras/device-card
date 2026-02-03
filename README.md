@@ -580,7 +580,7 @@ include_devices:
 - [x] **`Hide title feature`**: Device card can remove title
 - [x] **`Section exclusion`**: Add ability to exclude sections - thanks @ctallc
 - [x] **`Entity ID support`**: Alternative to device_id - card automatically determines device - thanks @potat0man
-- [x] **`Random bugs`**: pointing out issues to improve card - thanks @PedroKTFC!
+- [x] **`Random bugs & improvements`**: pointing out issues to improve card - thanks @PedroKTFC, @misc-brabs!
 - [x] **`Translations / Localization`**: support for multiple languages and localized text - thanks @Bsector
 - [x] **`Inverse percent colors`**: Invert percent bar colors for entities like disk usage - thanks @misc-brabs
 

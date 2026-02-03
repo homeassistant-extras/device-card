@@ -1,4 +1,4 @@
-import type { EntityRegistryDisplayEntry } from '@hass/data/entity_registry';
+import type { EntityRegistryDisplayEntry } from '@hass/data/entity/entity_registry';
 import type { HomeAssistant } from '@hass/types';
 
 /**

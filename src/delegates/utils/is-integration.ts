@@ -1,4 +1,4 @@
-import type { DeviceRegistryEntry } from '@hass/data/device_registry';
+import type { DeviceRegistryEntry } from '@hass/data/device/device_registry';
 
 /**
  * Checks if a device is in a specific integration

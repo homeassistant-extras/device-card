@@ -69,6 +69,7 @@ export const fireEvent = <HassEvent extends ValidHassDomEvent>(
 ) => {
   options = options || {};
   // @ts-ignore
+  // Intentional: SonarQube cleanup - using ?? instead of explicit check
   detail = detail ?? {};
   const event = new Event(type, {
     bubbles: options.bubbles ?? true,

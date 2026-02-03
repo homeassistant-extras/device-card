@@ -22,7 +22,7 @@ describe('entity.ts', () => {
           icon: 'mdi:ceiling-light',
           disabled_by: null,
           entity_category: null,
-          hidden_by: null,
+          hidden: false,
         },
         'sensor.kitchen_temperature': {
           entity_id: 'sensor.kitchen_temperature',
@@ -32,7 +32,7 @@ describe('entity.ts', () => {
           icon: 'mdi:thermometer',
           disabled_by: null,
           entity_category: null,
-          hidden_by: null,
+          hidden: false,
         },
       },
     } as unknown as HomeAssistant;
@@ -56,7 +56,7 @@ describe('entity.ts', () => {
         icon: 'mdi:ceiling-light',
         disabled_by: null,
         entity_category: null,
-        hidden_by: null,
+        hidden: false,
       });
     });
 
