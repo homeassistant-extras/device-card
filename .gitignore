@@ -7,10 +7,11 @@
 
 # You can whitelist files/folders with !, these will not be ignored.
 !*.json
+!*.yml
 !*.ts
 !.prettierrc
 !.nycrc
-!assets/**
+!docs/assets/**
 !dist/**
 !.github/**
 !.gitignore
@@ -23,6 +24,7 @@
 node_modules
 dist
 coverage
+site
 .vscode
 .DS_Store
 .nyc_output

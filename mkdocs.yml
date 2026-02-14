@@ -1,0 +1,74 @@
+site_name: Device Card
+site_description: A comprehensive card to display and organize your Home Assistant device entities
+site_url: https://homeassistant-extras.github.io/device-card/
+repo_name: homeassistant-extras/device-card
+repo_url: https://github.com/homeassistant-extras/device-card
+edit_uri: edit/main/docs/
+
+nav:
+  - Home: index.md
+  - Device Card:
+    - Overview: device-card/index.md
+    - Configuration: device-card/configuration.md
+    - Examples: device-card/examples.md
+  - Integration Card:
+    - Overview: integration-card/index.md
+    - Configuration: integration-card/configuration.md
+    - Examples: integration-card/examples.md
+  - Installation: installation.md
+  - Build & Code Quality: BUILD.md
+  - Troubleshooting: TROUBLESHOOTING.md
+
+theme:
+  name: material
+  palette:
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: blue
+      accent: light-blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: blue
+      accent: light-blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
+  logo: assets/cards.png
+  favicon: assets/cards.png
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/homeassistant-extras/device-card
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/NpH4Pt8Jmr
