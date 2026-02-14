@@ -59,12 +59,18 @@ export async function computeIntegrationDevices(
 
     const hasIncludeList = !!includeDevices && includeDevices.length > 0;
     const isIncluded = hasIncludeList
-      ? matchesDevicePatterns(device.id, device.name, includeDevices)
+      ? matchesDevicePatterns(
+          device.id,
+          device.name,
+          device.name_by_user,
+          includeDevices,
+        )
       : includeDevices === undefined; // undefined = include all, [] = include none
 
     const isExcluded = matchesDevicePatterns(
       device.id,
       device.name,
+      device.name_by_user,
       excludeDevices,
     );
 

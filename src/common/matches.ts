@@ -47,20 +47,25 @@ export const matchesPattern = (
 
 /**
  * Checks if a device matches any pattern in a list.
- * Matches against both device ID and device name.
+ * Matches against device ID, device name, and optionally name_by_user.
  *
  * @param deviceId - The device ID to check
  * @param deviceName - The device name to check (can be null)
+ * @param nameByUser - Optional user-defined name (can be null)
  * @param patterns - Array of patterns (exact, wildcard, or regex)
- * @returns True if any pattern matches deviceId or deviceName; false if patterns is empty/undefined
+ * @returns True if any pattern matches deviceId, deviceName, or nameByUser; false if patterns is empty/undefined
  */
 export const matchesDevicePatterns = (
   deviceId: string,
   deviceName: string | null,
+  nameByUser: string | null | undefined,
   patterns: string[] | undefined,
 ): boolean => {
   if (!patterns?.length) return false;
   return patterns.some(
-    (p) => matchesPattern(deviceId, p) || matchesPattern(deviceName, p),
+    (p) =>
+      matchesPattern(deviceId, p) ||
+      matchesPattern(deviceName, p) ||
+      matchesPattern(nameByUser ?? null, p),
   );
 };
