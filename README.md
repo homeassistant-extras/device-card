@@ -123,3 +123,4 @@ This project is protected under the MIT License. For more details, refer to the 
 - [x] **`Translations / Localization`**: support for multiple languages and localized text - thanks @Bsector
 - [x] **`Inverse percent colors`**: Invert percent bar colors for entities like disk usage - thanks @misc-brabs
 - [x] **`Jinja template support`**: Certain config properties support Jinja - thanks @LenirSantiago
+- [x] **`Auto-entities support`**: `entity` config property for auto-entities integration - thanks @misc-brabs

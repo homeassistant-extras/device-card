@@ -6,6 +6,7 @@
 | ----------------- | ------ | ----------- | --------------------------------------------------------------------------- |
 | device_id         | string | Optional\*  | The Home Assistant device ID for your device                                |
 | entity_id         | string | Optional\*  | Entity ID – card will automatically determine the device                     |
+| entity            | string | Optional\*  | Alias for entity_id – convenience for [auto-entities](https://github.com/thomasloven/lovelace-auto-entities) integration |
 | title             | string | Device name | Optional custom title for the card                                          |
 | preview_count     | number | All items   | Number of items to preview before showing "Show More" button                 |
 | exclude_sections  | list   | _none_      | Sections of entities to exclude. See below.                                 |
@@ -18,7 +19,7 @@
 | hold_action       | object | _none_      | Action to perform when holding the card                                     |
 | double_tap_action | object | _none_      | Action when double-tapping the card                                         |
 
-\*Either `device_id` or `entity_id` is required. If `entity_id` is provided, the card will automatically determine the device.
+\*Either `device_id`, `entity_id`, or `entity` is required. If `entity_id` or `entity` is provided, the card will automatically determine the device.
 
 ## Feature Options
 

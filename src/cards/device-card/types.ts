@@ -9,6 +9,9 @@ export interface Config extends BaseConfig {
 
   /** Entity ID to derive device from (alternative to device_id) or display state in header */
   entity_id?: string;
+
+  /** Alias for entity_id - convenience for auto-entities integration */
+  entity?: string;
 }
 
 /**

@@ -20,9 +20,10 @@ export const pinnedEntity = (
     return nothing;
   }
 
-  if (!config.entity_id) return nothing;
+  const entityId = config.entity ?? config.entity_id;
+  if (!entityId) return nothing;
 
-  const state = getState(hass, config.entity_id);
+  const state = getState(hass, entityId);
   if (!state) return nothing;
 
   return stateDisplay(hass, state);

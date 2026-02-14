@@ -53,6 +53,19 @@ describe('get-device.ts', () => {
     computeDomainStub.restore();
   });
 
+  it('should resolve device from entity property (auto-entities compatibility)', () => {
+    mockHass.entities = {
+      'sensor.th_outdoor': {
+        entity_id: 'sensor.th_outdoor',
+        device_id: 'device_1',
+      },
+    } as any;
+    const configWithEntity = { entity: 'sensor.th_outdoor' } as Config;
+    const result = getDevice(mockHass, configWithEntity);
+    expect(result).to.not.be.undefined;
+    expect(result?.name).to.equal('Device');
+  });
+
   it('should return undefined if device not found', () => {
     getDeviceStub.returns(undefined);
     const result = getDevice(mockHass, mockConfig);

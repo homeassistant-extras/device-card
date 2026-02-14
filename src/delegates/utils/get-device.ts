@@ -25,12 +25,11 @@ export const getDevice = (
     configurations: [],
   };
 
-  // Determine device_id from config.device_id or by resolving config.entity_id
+  // Determine device_id from config.device_id or by resolving config.entity/config.entity_id
+  const entityId = config.entity ?? config.entity_id;
   const deviceId =
     config.device_id ??
-    (config.entity_id
-      ? getEntity(hass, config.entity_id)?.device_id
-      : undefined);
+    (entityId ? getEntity(hass, entityId)?.device_id : undefined);
 
   if (!deviceId) {
     return undefined;

@@ -145,3 +145,21 @@ sort:
   type: name
   direction: asc
 ```
+
+## With Auto-Entities
+
+Combine [auto-entities](https://github.com/thomasloven/lovelace-auto-entities) filtering with device-card for filtered device dashboards. Auto-entities passes `entity` when generating cards:
+
+```yaml
+type: custom:auto-entities
+card:
+  type: grid
+card_param: cards
+filter:
+  include:
+    - domain: sensor
+      attributes:
+        device_class: temperature
+  options:
+    type: custom:device-card
+```

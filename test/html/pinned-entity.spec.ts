@@ -53,6 +53,18 @@ describe('pinned-entity.ts', () => {
       expect(stateDisplayStub.called).to.be.false;
     });
 
+    it('should use entity property when entity_id is not provided (auto-entities)', () => {
+      const config: Config = { entity: 'sensor.auto_entities_entity' };
+      getStateStub.returns({
+        entity_id: 'sensor.auto_entities_entity',
+        state: '22',
+        attributes: { unit_of_measurement: '°C' },
+      });
+      pinnedEntity(mockHass, config);
+      expect(getStateStub.calledWith(mockHass, 'sensor.auto_entities_entity')).to
+        .be.true;
+    });
+
     it('should call getState with the provided entityId', () => {
       // Arrange
       const config: Config = {
