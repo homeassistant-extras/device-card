@@ -4,6 +4,17 @@ import { IntegrationCard } from '@integration/card';
 import { IntegrationCardEditor } from '@integration/editor';
 import { version } from '../package.json';
 
+declare global {
+  // eslint-disable-next-line no-var
+  var customCards: Array<{
+    type: string;
+    name: string;
+    description: string;
+    preview: boolean;
+    documentationURL: string;
+  }>;
+}
+
 // Register the custom elements with the browser
 customElements.define('device-card', DeviceCard);
 customElements.define('device-card-editor', DeviceCardEditor);
@@ -11,10 +22,10 @@ customElements.define('integration-card', IntegrationCard);
 customElements.define('integration-card-editor', IntegrationCardEditor);
 
 // Ensure the customCards array exists on the window object
-window.customCards = window.customCards || [];
+globalThis.customCards = globalThis.customCards || [];
 
 // Register the cards with Home Assistant's custom card registry
-window.customCards.push(
+globalThis.customCards.push(
   {
     // Unique identifier for the card type
     type: 'device-card',

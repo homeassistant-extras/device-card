@@ -316,17 +316,17 @@ describe('matches.ts', () => {
 
   describe('matchesDevicePatterns', () => {
     it('returns false for empty or undefined patterns', () => {
-      expect(matchesDevicePatterns('dev1', 'Device 1', undefined, undefined)).to.be.false;
-      expect(matchesDevicePatterns('dev1', 'Device 1', undefined, [])).to.be.false;
+      expect(matchesDevicePatterns('dev1', 'Device 1', undefined, undefined)).to
+        .be.false;
+      expect(matchesDevicePatterns('dev1', 'Device 1', undefined, [])).to.be
+        .false;
     });
 
     it('matches device ID', () => {
-      expect(
-        matchesDevicePatterns('dev1', 'Device 1', undefined, ['dev1']),
-      ).to.be.true;
-      expect(
-        matchesDevicePatterns('dev2', 'Device 2', undefined, ['dev1']),
-      ).to.be.false;
+      expect(matchesDevicePatterns('dev1', 'Device 1', undefined, ['dev1'])).to
+        .be.true;
+      expect(matchesDevicePatterns('dev2', 'Device 2', undefined, ['dev1'])).to
+        .be.false;
     });
 
     it('matches device name', () => {
@@ -339,37 +339,48 @@ describe('matches.ts', () => {
     });
 
     it('matches either ID or name', () => {
-      expect(
-        matchesDevicePatterns('dev1', 'Other Name', undefined, ['dev1']),
-      ).to.be.true;
+      expect(matchesDevicePatterns('dev1', 'Other Name', undefined, ['dev1']))
+        .to.be.true;
       expect(
         matchesDevicePatterns('other_id', 'Device 1', undefined, ['Device 1']),
       ).to.be.true;
     });
 
     it('handles null device name', () => {
-      expect(matchesDevicePatterns('dev1', null, undefined, ['dev1'])).to.be.true;
-      expect(matchesDevicePatterns('dev1', null, undefined, ['Device 1'])).to.be.false;
+      expect(matchesDevicePatterns('dev1', null, undefined, ['dev1'])).to.be
+        .true;
+      expect(matchesDevicePatterns('dev1', null, undefined, ['Device 1'])).to.be
+        .false;
     });
 
     it('supports wildcard patterns', () => {
       expect(
-        matchesDevicePatterns('esp_living_airfresh', null, undefined, ['esp_*_airfresh']),
+        matchesDevicePatterns('esp_living_airfresh', null, undefined, [
+          'esp_*_airfresh',
+        ]),
       ).to.be.true;
       expect(
-        matchesDevicePatterns('esp_kitchen_fan', null, undefined, ['esp_*_airfresh']),
+        matchesDevicePatterns('esp_kitchen_fan', null, undefined, [
+          'esp_*_airfresh',
+        ]),
       ).to.be.false;
     });
 
     it('matches name_by_user', () => {
       expect(
-        matchesDevicePatterns('other_id', 'Device 1', 'My Custom Name', ['My Custom Name']),
+        matchesDevicePatterns('other_id', 'Device 1', 'My Custom Name', [
+          'My Custom Name',
+        ]),
       ).to.be.true;
       expect(
-        matchesDevicePatterns('other_id', 'Device 1', 'My Custom Name', ['Device 1']),
+        matchesDevicePatterns('other_id', 'Device 1', 'My Custom Name', [
+          'Device 1',
+        ]),
       ).to.be.true;
       expect(
-        matchesDevicePatterns('other_id', 'Device 1', 'My Custom Name', ['Other Name']),
+        matchesDevicePatterns('other_id', 'Device 1', 'My Custom Name', [
+          'Other Name',
+        ]),
       ).to.be.false;
     });
   });

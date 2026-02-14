@@ -49,12 +49,7 @@ export const getDevice = (
     .filter(Boolean)
     .join(' ');
 
-  const entities = getDeviceEntities(
-    hass,
-    config,
-    hassDevice.id,
-    device.name,
-  );
+  const entities = getDeviceEntities(hass, config, hassDevice.id, device.name);
 
   entities.forEach((entity) => {
     if (shouldSkipEntity(entity, config)) {

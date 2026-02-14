@@ -60,7 +60,7 @@ describe('card.ts', () => {
           },
         },
       },
-    } as any as HomeAssistant;
+    } as any;
 
     // Create mock device
     mockUnit = {
@@ -125,7 +125,7 @@ describe('card.ts', () => {
     );
 
     card.setConfig({ device_id: 'device_1' });
-    card.hass = mockHass as HomeAssistant;
+    card.hass = mockHass;
   });
 
   afterEach(() => {
@@ -164,35 +164,35 @@ describe('card.ts', () => {
 
   describe('hass property setter', () => {
     it('should call getDevice with hass and config', () => {
-      card.hass = mockHass as HomeAssistant;
+      card.hass = mockHass;
       expect(getDeviceStub.calledWith(mockHass, card['_config'])).to.be.true;
     });
 
     it('should update unit when getDevice returns a new value', () => {
       const newUnit = { ...mockUnit, name: 'Updated Device' };
       getDeviceStub.returns(newUnit);
-      card.hass = mockHass as HomeAssistant;
+      card.hass = mockHass;
       expect(card['_device']).to.equal(newUnit);
     });
 
     it('should not update unit if getDevice returns identical data', () => {
       // First call to set initial unit
-      card.hass = mockHass as HomeAssistant;
+      card.hass = mockHass;
       const originalUnit = card['_device'];
 
       // Second call should not update unit since it's identical
-      card.hass = mockHass as HomeAssistant;
+      card.hass = mockHass;
       expect(card['_device']).to.equal(originalUnit);
     });
 
     it('should not update unit if getDevice returns undefined', () => {
       // First set a valid unit
-      card.hass = mockHass as HomeAssistant;
+      card.hass = mockHass;
       const originalUnit = card['_device'];
 
       // Then test with undefined return value
       getDeviceStub.returns(undefined);
-      card.hass = mockHass as HomeAssistant;
+      card.hass = mockHass;
       expect(card['_device']).to.equal(originalUnit);
     });
   });
@@ -308,7 +308,7 @@ describe('card.ts', () => {
     it('should call renderSections', async () => {
       // Render the card to trigger the Task
       const result = card.render();
-      const el = await fixture(result as TemplateResult);
+      await fixture(result as TemplateResult);
 
       // The Task render should be called
       expect(taskRenderStub.calledOnce).to.be.true;
@@ -342,7 +342,7 @@ describe('card.ts', () => {
     it('should update expansions when renderSection is called', async () => {
       // Render card to trigger the Task
       const result = card.render();
-      const el = await fixture(result as TemplateResult);
+      await fixture(result as TemplateResult);
 
       // The Task render should be called
       expect(taskRenderStub.calledOnce).to.be.true;

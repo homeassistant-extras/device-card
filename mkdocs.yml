@@ -8,13 +8,13 @@ edit_uri: edit/main/docs/
 nav:
   - Home: index.md
   - Device Card:
-    - Overview: device-card/index.md
-    - Configuration: device-card/configuration.md
-    - Examples: device-card/examples.md
+      - Overview: device-card/index.md
+      - Configuration: device-card/configuration.md
+      - Examples: device-card/examples.md
   - Integration Card:
-    - Overview: integration-card/index.md
-    - Configuration: integration-card/configuration.md
-    - Examples: integration-card/examples.md
+      - Overview: integration-card/index.md
+      - Configuration: integration-card/configuration.md
+      - Examples: integration-card/examples.md
   - Installation: installation.md
   - Build & Code Quality: BUILD.md
   - Troubleshooting: TROUBLESHOOTING.md

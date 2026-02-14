@@ -61,8 +61,8 @@ describe('pinned-entity.ts', () => {
         attributes: { unit_of_measurement: '°C' },
       });
       pinnedEntity(mockHass, config);
-      expect(getStateStub.calledWith(mockHass, 'sensor.auto_entities_entity')).to
-        .be.true;
+      expect(getStateStub.calledWith(mockHass, 'sensor.auto_entities_entity'))
+        .to.be.true;
     });
 
     it('should call getState with the provided entityId', () => {

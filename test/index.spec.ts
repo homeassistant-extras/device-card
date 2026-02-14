@@ -12,9 +12,9 @@ describe('index.ts', () => {
     customElementsStub = stub(customElements, 'define');
     consoleInfoStub = stub(console, 'info');
 
-    // Create a stub for window.customCards
+    // Create a stub for globalThis.customCards
     customCardsStub = [];
-    Object.defineProperty(window, 'customCards', {
+    Object.defineProperty(globalThis, 'customCards', {
       get: () => customCardsStub,
       set: (value) => {
         customCardsStub = value;
@@ -44,20 +44,20 @@ describe('index.ts', () => {
     );
   });
 
-  it('should initialize window.customCards if undefined', () => {
+  it('should initialize globalThis.customCards if undefined', () => {
     customCardsStub = undefined;
     require('@/index.ts');
 
-    expect(window.customCards).to.be.an('array');
+    expect(globalThis.customCards).to.be.an('array');
   });
 
-  it('should add card configurations with all fields to window.customCards', () => {
+  it('should add card configurations with all fields to globalThis.customCards', () => {
     require('@/index.ts');
 
-    expect(window.customCards).to.have.lengthOf(2);
+    expect(globalThis.customCards).to.have.lengthOf(2);
 
     // Check device-card configuration
-    expect(window.customCards[0]).to.deep.equal({
+    expect(globalThis.customCards[0]).to.deep.equal({
       type: 'device-card',
       name: 'Device Card',
       description: 'A card to summarize the status of a Device.',
@@ -66,7 +66,7 @@ describe('index.ts', () => {
     });
 
     // Check integration-card configuration
-    expect(window.customCards[1]).to.deep.equal({
+    expect(globalThis.customCards[1]).to.deep.equal({
       type: 'integration-card',
       name: 'Integration Card',
       description: 'A card to display all devices from a specific integration.',
@@ -77,19 +77,25 @@ describe('index.ts', () => {
 
   it('should preserve existing cards when adding new card', () => {
     // Add an existing card
-    window.customCards = [
+    globalThis.customCards = [
       {
         type: 'existing-card',
         name: 'Existing Card',
+        description: 'A card to display existing cards.',
+        preview: true,
+        documentationURL: 'https://github.com/homeassistant-extras/device-card',
       },
     ];
 
     require('@/index.ts');
 
-    expect(window.customCards).to.have.lengthOf(3);
-    expect(window.customCards[0]).to.deep.equal({
+    expect(globalThis.customCards).to.have.lengthOf(3);
+    expect(globalThis.customCards[0]).to.deep.equal({
       type: 'existing-card',
       name: 'Existing Card',
+      description: 'A card to display existing cards.',
+      preview: true,
+      documentationURL: 'https://github.com/homeassistant-extras/device-card',
     });
   });
 
@@ -97,7 +103,7 @@ describe('index.ts', () => {
     require('@/index.ts');
     require('@/index.ts');
 
-    expect(window.customCards).to.have.lengthOf(2);
+    expect(globalThis.customCards).to.have.lengthOf(2);
     expect(customElementsStub.callCount).to.equal(4); // Called once for each component
   });
 

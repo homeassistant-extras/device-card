@@ -22,7 +22,7 @@ describe('stateContent.ts', () => {
   beforeEach(() => {
     // Create a mock element that will be returned by createRowElement
     mockElement = document.createElement('div') as MockRowElement;
-    mockElement.setAttribute('data-entity', 'light.test_light');
+    mockElement.dataset.entity = 'light.test_light';
     // Add the hass property that will be set by the function
     mockElement.hass = undefined;
 
@@ -35,7 +35,7 @@ describe('stateContent.ts', () => {
     });
 
     // Set up the global window.loadCardHelpers
-    (window as any).loadCardHelpers = mockLoadCardHelpers;
+    globalThis.loadCardHelpers = mockLoadCardHelpers;
 
     // Mock state object
     mockState = {
@@ -84,7 +84,7 @@ describe('stateContent.ts', () => {
 
   afterEach(() => {
     // Clean up the global mock
-    delete (window as any).loadCardHelpers;
+    delete globalThis.loadCardHelpers;
   });
 
   it('should call loadCardHelpers and createRowElement with correct configuration', async () => {
@@ -113,7 +113,7 @@ describe('stateContent.ts', () => {
   it('should apply className when provided', async () => {
     const className = 'test-class';
     const result = await stateContent(mockHass, mockEntity, className);
-    const el = await fixture(result);
+    await fixture(result);
 
     // Check that className was applied to the mock element
     expect(mockElement.className).to.equal(className);
@@ -121,7 +121,7 @@ describe('stateContent.ts', () => {
 
   it('should not apply a class when className is undefined', async () => {
     const result = await stateContent(mockHass, mockEntity, undefined);
-    const el = await fixture(result);
+    await fixture(result);
 
     // The class attribute should be empty string or not present
     expect(mockElement.className).to.equal('');
@@ -130,7 +130,7 @@ describe('stateContent.ts', () => {
   it('should handle multiple class names when separated by spaces', async () => {
     const className = 'class1 class2 class3';
     const result = await stateContent(mockHass, mockEntity, className);
-    const el = await fixture(result);
+    await fixture(result);
 
     // Check that all class names were applied to the mock element
     expect(mockElement.classList.contains('class1')).to.be.true;
@@ -140,7 +140,7 @@ describe('stateContent.ts', () => {
 
   it('should set entity name from hass states when available', async () => {
     const result = await stateContent(mockHass, mockEntity, undefined);
-    const el = await fixture(result);
+    await fixture(result);
 
     // The name is set on the config after createRowElement is called
     // We need to check that the function completed successfully
@@ -154,7 +154,7 @@ describe('stateContent.ts', () => {
     delete mockHass.states['light.test_light'];
 
     const result = await stateContent(mockHass, mockEntity, undefined);
-    const el = await fixture(result);
+    await fixture(result);
 
     // Should still work without the entity state
     expect(mockLoadCardHelpers.calledOnce).to.be.true;

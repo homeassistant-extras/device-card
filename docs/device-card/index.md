@@ -88,7 +88,7 @@ Use wildcards and regular expressions in your entity exclusion patterns for flex
 The card is fully configurable in the UI editor. Simply select "Custom: Device Card" when adding a new card to your dashboard, then select your device from the dropdown.
 
 !!! caution
-    The editor may delete advanced settings, such as regex or wildcards. Make a copy of the card config prior to using the UI editor.
+The editor may delete advanced settings, such as regex or wildcards. Make a copy of the card config prior to using the UI editor.
 
 ![Editor](../assets/editor.png)
 

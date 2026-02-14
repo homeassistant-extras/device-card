@@ -1,6 +1,23 @@
-# Device Card
+<p align="center">
+    <img src="assets/cards.png" align="center" width="50%">
+</p>
+<p align="center"><h1 align="center">Device Card</h1></p>
+<p align="center">
+	<em>A comprehensive card to display and organize your Home Assistant device entities</em>
+</p>
 
-A comprehensive card to display and organize your Home Assistant device entities.
+![Home Assistant](https://img.shields.io/badge/home%20assistant-%2341BDF5.svg?style=for-the-badge&logo=home-assistant&logoColor=white)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
+
+![GitHub Release](https://img.shields.io/github/v/release/homeassistant-extras/device-card?style=for-the-badge&logo=github)
+![GitHub Pre-Release](https://img.shields.io/github/v/release/homeassistant-extras/device-card?include_prereleases&style=for-the-badge&logo=github&label=PRERELEASE)
+![GitHub Tag](https://img.shields.io/github/v/tag/homeassistant-extras/device-card?style=for-the-badge&color=yellow)
+![GitHub branch status](https://img.shields.io/github/checks-status/homeassistant-extras/device-card/main?style=for-the-badge)
+
+![stars](https://img.shields.io/github/stars/homeassistant-extras/device-card.svg?style=for-the-badge)
+![home](https://img.shields.io/github/last-commit/homeassistant-extras/device-card.svg?style=for-the-badge)
+![commits](https://img.shields.io/github/commit-activity/y/homeassistant-extras/device-card?style=for-the-badge)
+![license](https://img.shields.io/github/license/homeassistant-extras/device-card?style=for-the-badge&logo=opensourceinitiative&logoColor=white&color=0080ff)
 
 ## Overview
 

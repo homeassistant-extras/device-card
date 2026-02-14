@@ -2,13 +2,12 @@ import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/config';
 import { html } from 'lit';
 
-// Extend the window object to include loadCardHelpers
+// Extend the global object to include loadCardHelpers (Home Assistant provides this)
 declare global {
-  interface Window {
-    loadCardHelpers: () => Promise<{
-      createRowElement: (config: LovelaceRowConfig) => LovelaceRowElement;
-    }>;
-  }
+  // eslint-disable-next-line no-var
+  var loadCardHelpers: () => Promise<{
+    createRowElement: (config: LovelaceRowConfig) => LovelaceRowElement;
+  }>;
 }
 
 // Lovelace row configuration interface
@@ -36,7 +35,7 @@ export const stateContent = async (
   className: string | undefined,
 ) => {
   // Load the card helpers
-  const helpers = await window.loadCardHelpers();
+  const helpers = await globalThis.loadCardHelpers();
 
   // Create the row configuration, we will handle actions ourselves
   const config: LovelaceRowConfig = {
