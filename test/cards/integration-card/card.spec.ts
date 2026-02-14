@@ -1,4 +1,5 @@
-import * as isIntegrationModule from '@delegates/utils/is-integration';
+import * as integrationDevicesModule from '@delegates/integration-devices';
+import * as wsTemplatesModule from '@hass/data/ws-templates';
 import type { HomeAssistant } from '@hass/types';
 import { IntegrationCard } from '@integration/card';
 import type { Config } from '@integration/types';
@@ -10,18 +11,17 @@ import { stub } from 'sinon';
 describe('integration-card.ts', () => {
   let card: IntegrationCard;
   let mockHass: HomeAssistant;
-  let isInIntegrationStub: sinon.SinonStub;
-  let callWSStub: sinon.SinonStub;
+  let computeIntegrationDevicesStub: sinon.SinonStub;
+  let subscribeRenderTemplateStub: sinon.SinonStub;
 
   beforeEach(() => {
-    // Create the card instance
     card = new IntegrationCard();
 
-    // Stub the isInIntegration function
-    isInIntegrationStub = stub(isIntegrationModule, 'isInIntegration');
-    isInIntegrationStub.returns(false); // Default to false
+    computeIntegrationDevicesStub = stub(
+      integrationDevicesModule,
+      'computeIntegrationDevices',
+    );
 
-    // Mock Home Assistant instance
     mockHass = {
       devices: {
         device_1: {
@@ -49,17 +49,22 @@ describe('integration-card.ts', () => {
       states: {},
       entities: {},
       language: 'en',
+      connection: {} as any,
       callWS: async () => [],
     } as any as HomeAssistant;
 
-    // Stub the callWS method
-    callWSStub = stub(mockHass, 'callWS');
-    callWSStub.resolves([]);
+    subscribeRenderTemplateStub = stub(
+      wsTemplatesModule,
+      'subscribeRenderTemplate',
+    );
   });
 
   afterEach(() => {
-    isInIntegrationStub.restore();
-    callWSStub.restore();
+    computeIntegrationDevicesStub.restore();
+    subscribeRenderTemplateStub.restore();
+    if (card.parentNode) {
+      card.parentNode.removeChild(card);
+    }
   });
 
   describe('initialization', () => {
@@ -86,208 +91,149 @@ describe('integration-card.ts', () => {
     });
   });
 
+  /** Simulate connection so _tryConnect runs and triggers _computeIntegration */
+  function connectCard() {
+    card.connectedCallback();
+  }
+
   describe('hass property setter', () => {
-    beforeEach(() => {
-      // Configure the stub to return config entries
-      const configEntries = [
-        { entry_id: 'entry_1', domain: 'zwave_js' },
-        { entry_id: 'entry_2', domain: 'zwave_js' },
-      ];
-      callWSStub.resolves(configEntries);
+    it('should call computeIntegrationDevices with integration domain when connected', async () => {
+      computeIntegrationDevicesStub.resolves({
+        name: 'Zwave Js',
+        devices: ['device_1', 'device_2'],
+      });
 
-      // Configure isInIntegration to return true for specific devices with the right config entries
-      isInIntegrationStub
-        .withArgs(mockHass.devices.device_1, ['entry_1', 'entry_2'])
-        .returns(true);
-      isInIntegrationStub
-        .withArgs(mockHass.devices.device_2, ['entry_1', 'entry_2'])
-        .returns(true);
-    });
-
-    it('should call the config_entries/get WebSocket API', async () => {
-      // Set config for the card
       card.setConfig({ integration: 'zwave_js' });
-
-      // Set hass property
       card.hass = mockHass;
+      connectCard();
 
-      // Wait for the promise to resolve
       await new Promise((resolve) => setTimeout(resolve, 0));
 
-      // Verify callWS was called with the correct parameters
-      expect(callWSStub.calledOnce).to.be.true;
-      expect(callWSStub.firstCall.args[0]).to.deep.equal({
-        type: 'config_entries/get',
-        domain: 'zwave_js',
+      expect(computeIntegrationDevicesStub.calledOnce).to.be.true;
+      expect(computeIntegrationDevicesStub.firstCall.args[1]).to.deep.include({
+        integration: 'zwave_js',
       });
     });
 
-    it('should update integration data with devices from config entries', async () => {
-      // Set config to filter for zwave_js devices
+    it('should update integration data when computeIntegrationDevices resolves', async () => {
+      computeIntegrationDevicesStub.resolves({
+        name: 'Zwave Js',
+        devices: ['device_1', 'device_2'],
+      });
+
       card.setConfig({ integration: 'zwave_js' });
-
-      // Set hass property
       card.hass = mockHass;
+      connectCard();
 
-      // Wait for the promise to resolve
       await new Promise((resolve) => setTimeout(resolve, 0));
 
-      // Check integration data
       const integrationData = card['_integration'];
       expect(integrationData.name).to.equal('Zwave Js');
-      expect(integrationData.devices).to.have.length(2);
-      expect(integrationData.devices).to.include('device_1');
-      expect(integrationData.devices).to.include('device_2');
-      expect(integrationData.devices).to.not.include('device_3');
+      expect(integrationData.devices).to.deep.equal(['device_1', 'device_2']);
     });
 
-    it('should include devices specified in include_devices', async () => {
-      // Set config with included devices
-      card.setConfig({
-        integration: 'zwave_js',
-        include_devices: ['device_1'],
+    [
+      {
+        name: 'include_devices',
+        config: { integration: 'zwave_js', include_devices: ['device_1'] },
+        expected: { includeDevices: ['device_1'] },
+      },
+      {
+        name: 'exclude_devices',
+        config: { integration: 'zwave_js', exclude_devices: ['device_1'] },
+        expected: { excludeDevices: ['device_1'] },
+      },
+      {
+        name: 'both include_devices and exclude_devices',
+        config: {
+          integration: 'zwave_js',
+          include_devices: ['device_1', 'device_2'],
+          exclude_devices: ['device_2'],
+        },
+        expected: {
+          includeDevices: ['device_1', 'device_2'],
+          excludeDevices: ['device_2'],
+        },
+      },
+    ].forEach(({ name, config, expected }) => {
+      it(`should pass ${name} to computeIntegrationDevices`, async () => {
+        computeIntegrationDevicesStub.resolves({
+          name: 'Zwave Js',
+          devices: ['device_1'],
+        });
+
+        card.setConfig(config);
+        card.hass = mockHass;
+        connectCard();
+
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        const params = computeIntegrationDevicesStub.firstCall.args[1];
+        expect(params).to.deep.include(expected);
+      });
+    });
+
+    it('should pass resolved exclude_devices from template to computeIntegrationDevices', async () => {
+      let excludeCallback: (msg: { result: string[] }) => void;
+      subscribeRenderTemplateStub.callsFake((_conn, cb) => {
+        excludeCallback = cb;
+        return Promise.resolve(() => {});
       });
 
-      // Configure isInIntegration to return true for both devices
-      isInIntegrationStub
-        .withArgs(mockHass.devices.device_1, ['entry_1', 'entry_2'])
-        .returns(true);
-      isInIntegrationStub
-        .withArgs(mockHass.devices.device_2, ['entry_1', 'entry_2'])
-        .returns(true);
-
-      // Configure the config entries
-      callWSStub.resolves([
-        { entry_id: 'entry_1', domain: 'zwave_js' },
-        { entry_id: 'entry_2', domain: 'zwave_js' },
-      ]);
-
-      // Set hass property
-      card.hass = mockHass;
-
-      // Wait for the promise to resolve
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      // Check that device_1 is excluded
-      const integrationData = card['_integration'];
-      expect(integrationData.devices).to.have.length(1);
-      expect(integrationData.devices).to.include('device_1');
-      expect(integrationData.devices).to.not.include('device_2');
-    });
-
-    it('should exclude devices specified in exclude_devices', async () => {
-      // Set config with excluded devices
-      card.setConfig({
-        integration: 'zwave_js',
-        exclude_devices: ['device_1'],
+      computeIntegrationDevicesStub.resolves({
+        name: 'Zwave Js',
+        devices: ['device_2'],
       });
 
-      // Configure isInIntegration to return true for both devices
-      isInIntegrationStub
-        .withArgs(mockHass.devices.device_1, ['entry_1', 'entry_2'])
-        .returns(true);
-      isInIntegrationStub
-        .withArgs(mockHass.devices.device_2, ['entry_1', 'entry_2'])
-        .returns(true);
-
-      // Configure the config entries
-      callWSStub.resolves([
-        { entry_id: 'entry_1', domain: 'zwave_js' },
-        { entry_id: 'entry_2', domain: 'zwave_js' },
-      ]);
-
-      // Set hass property
-      card.hass = mockHass;
-
-      // Wait for the promise to resolve
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      // Check that device_1 is excluded
-      const integrationData = card['_integration'];
-      expect(integrationData.devices).to.have.length(1);
-      expect(integrationData.devices).to.include('device_2');
-      expect(integrationData.devices).to.not.include('device_1');
-    });
-
-    // Add a test for include and exclude together
-    it('should handle both include_devices and exclude_devices together', async () => {
-      // Set config with included and excluded devices
       card.setConfig({
         integration: 'zwave_js',
-        include_devices: ['device_1', 'device_2'],
-        exclude_devices: ['device_2'],
+        exclude_devices: '{{ ["device_1"] }}',
       });
-
-      // Configure isInIntegration to return true for both devices
-      isInIntegrationStub
-        .withArgs(mockHass.devices.device_1, ['entry_1', 'entry_2'])
-        .returns(true);
-      isInIntegrationStub
-        .withArgs(mockHass.devices.device_2, ['entry_1', 'entry_2'])
-        .returns(true);
-
-      // Configure the config entries
-      callWSStub.resolves([
-        { entry_id: 'entry_1', domain: 'zwave_js' },
-        { entry_id: 'entry_2', domain: 'zwave_js' },
-      ]);
-
-      // Set hass property
       card.hass = mockHass;
+      connectCard();
 
-      // Wait for the promise to resolve
+      await Promise.resolve();
+      excludeCallback!({ result: ['device_1'] });
       await new Promise((resolve) => setTimeout(resolve, 0));
 
-      // Check that include patterns worked but exclude patterns were also applied
-      const integrationData = card['_integration'];
-      expect(integrationData.devices).to.have.length(1);
-      expect(integrationData.devices).to.include('device_1');
-      expect(integrationData.devices).to.not.include('device_2');
+      const params = computeIntegrationDevicesStub.firstCall.args[1];
+      expect(params.excludeDevices).to.deep.equal(['device_1']);
     });
 
-    it('should not update integration data if nothing changed', async () => {
-      // Initial setup
+    it('should only call computeIntegrationDevices once when connected', async () => {
+      computeIntegrationDevicesStub.resolves({
+        name: 'Zwave Js',
+        devices: ['device_1', 'device_2'],
+      });
+
       card.setConfig({ integration: 'zwave_js' });
       card.hass = mockHass;
+      connectCard();
 
-      // Wait for the promise to resolve
       await new Promise((resolve) => setTimeout(resolve, 0));
-
-      const originalIntegration = card['_integration'];
-
-      // Set same hass object again
-      callWSStub.resetHistory();
       card.hass = mockHass;
-
-      // Wait for the promise to resolve
       await new Promise((resolve) => setTimeout(resolve, 0));
 
-      // Should be the same object reference (not recreated)
-      expect(card['_integration']).to.equal(originalIntegration);
+      expect(computeIntegrationDevicesStub.callCount).to.equal(1);
     });
 
-    it('should handle case when integration is not set', async () => {
-      // Set config without integration
+    it('should not call computeIntegrationDevices when integration is not set', () => {
       card.setConfig({} as Config);
-
-      // Set hass property
       card.hass = mockHass;
+      connectCard();
 
-      // Verify callWS was not called
-      expect(callWSStub.called).to.be.false;
+      expect(computeIntegrationDevicesStub.called).to.be.false;
     });
   });
 
   describe('rendering', () => {
     beforeEach(async () => {
-      // Set up integration data for rendering tests
       card['_integration'] = {
         name: 'Zwave Js',
         devices: ['device_1', 'device_2'],
       };
-
-      // Configure the card
       card.setConfig({ integration: 'zwave_js' });
+      card.hass = mockHass;
     });
 
     // Test for hide_integration_title flag

@@ -1,13 +1,12 @@
-import { pascalCase } from '@/common/pascal-case';
-import { isInIntegration } from '@delegates/utils/is-integration';
+import { computeIntegrationDevices } from '@delegates/integration-devices';
+import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import { localize } from '@localize/localize';
 import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { shouldExcludeDevice } from './exclude-devices';
-import { shouldIncludeDevice } from './include-devices';
 import { integrationStyles } from './styles';
+import { TemplateSubscription } from './template-subscription';
 import type { Config, IntegrationData } from './types';
 const equal = require('fast-deep-equal');
 
@@ -35,6 +34,16 @@ export class IntegrationCard extends LitElement {
    */
   private _hass!: HomeAssistant;
 
+  /** Manages the Jinja template websocket subscription for include_devices */
+  private readonly _includeTemplateSub = new TemplateSubscription(() => {
+    this._computeIntegration();
+  });
+
+  /** Manages the Jinja template websocket subscription for exclude_devices */
+  private readonly _excludeTemplateSub = new TemplateSubscription(() => {
+    this._computeIntegration();
+  });
+
   /**
    * Returns the component's styles
    */
@@ -57,6 +66,18 @@ export class IntegrationCard extends LitElement {
   setConfig(config: Config) {
     if (!equal(config, this._config)) {
       this._config = config;
+      if (
+        typeof config.include_devices !== 'string' ||
+        config.include_devices !== this._includeTemplateSub.subscribedTemplate
+      ) {
+        this._includeTemplateSub.disconnect();
+      }
+      if (
+        typeof config.exclude_devices !== 'string' ||
+        config.exclude_devices !== this._excludeTemplateSub.subscribedTemplate
+      ) {
+        this._excludeTemplateSub.disconnect();
+      }
     }
   }
 
@@ -67,56 +88,93 @@ export class IntegrationCard extends LitElement {
   set hass(hass: HomeAssistant) {
     this._hass = hass;
 
-    const data: IntegrationData = {
-      name: '',
-      devices: [],
-    };
+    // update children who are subscribed
+    fireEvent(this, 'hass-update', {
+      hass,
+    });
+  }
 
-    if (!this._config.integration) {
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this._tryConnect();
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this._includeTemplateSub.disconnect();
+    this._excludeTemplateSub.disconnect();
+  }
+
+  /**
+   * Subscribe to Jinja templates when include_devices or exclude_devices is a template string.
+   */
+  private _tryConnect(): void {
+    if (!this._hass) {
       return;
     }
-    // Get all devices from the specified integration
-    data.name = pascalCase(this._config.integration);
 
-    // Get config entries for the integration domain
-    hass
-      .callWS<{ entry_id: string }[]>({
-        type: 'config_entries/get',
-        domain: this._config.integration,
-      })
-      .then((results) => {
-        const configEntries = results.map((e) => e.entry_id);
+    const includeTemplate = this._config?.include_devices;
+    const excludeTemplate = this._config?.exclude_devices;
 
-        // Simplified device inclusion/exclusion logic
-        Object.values(hass.devices).forEach((device) => {
-          // Check if device belongs to the integration first
-          if (isInIntegration(device, configEntries)) {
-            const hasIncludeList =
-              !!this._config.include_devices &&
-              this._config.include_devices.length > 0;
-            const isIncluded = hasIncludeList
-              ? shouldIncludeDevice(this._config, device.id, device.name)
-              : true; // If no include list, all devices are considered "included"
+    if (typeof includeTemplate === 'string') {
+      this._includeTemplateSub.connect(this._hass.connection, includeTemplate);
+    } else {
+      this._includeTemplateSub.disconnect();
+    }
 
-            const isExcluded = shouldExcludeDevice(
-              this._config,
-              device.id,
-              device.name,
-            );
+    if (typeof excludeTemplate === 'string') {
+      this._excludeTemplateSub.connect(this._hass.connection, excludeTemplate);
+    } else {
+      this._excludeTemplateSub.disconnect();
+    }
 
-            // Add device if:
-            // 1. It passes the inclusion check (either matches a pattern or no patterns specified)
-            // 2. It doesn't match any exclusion pattern
-            if (isIncluded && !isExcluded) {
-              data.devices.push(device.id);
-            }
-          }
-        });
+    this._computeIntegration();
+  }
 
-        if (!equal(data, this._integration)) {
-          this._integration = data;
-        }
-      });
+  /**
+   * Compute the integration data (device list) from current state.
+   * Called from the hass setter and when template results arrive.
+   */
+  private _computeIntegration(): void {
+    const hass = this._hass;
+    if (!hass || !this._config?.integration) return;
+
+    // If using include_devices template but it hasn't resolved yet, wait
+    if (
+      typeof this._config.include_devices === 'string' &&
+      !this._includeTemplateSub.deviceIds
+    ) {
+      return;
+    }
+
+    // If using exclude_devices template but it hasn't resolved yet, wait
+    if (
+      typeof this._config.exclude_devices === 'string' &&
+      !this._excludeTemplateSub.deviceIds
+    ) {
+      return;
+    }
+
+    // pass config and template results to function for it to handle.
+    const effectiveIncludeDevices =
+      typeof this._config.include_devices === 'string'
+        ? this._includeTemplateSub.deviceIds
+        : this._config.include_devices;
+
+    const effectiveExcludeDevices =
+      typeof this._config.exclude_devices === 'string'
+        ? this._excludeTemplateSub.deviceIds
+        : this._config.exclude_devices;
+
+    computeIntegrationDevices(hass, {
+      integration: this._config.integration,
+      includeDevices: effectiveIncludeDevices,
+      excludeDevices: effectiveExcludeDevices,
+    }).then((data) => {
+      if (!equal(data, this._integration)) {
+        this._integration = data;
+      }
+    });
   }
 
   // card configuration
@@ -145,6 +203,10 @@ export class IntegrationCard extends LitElement {
    * @returns {TemplateResult} The rendered HTML template
    */
   override render(): TemplateResult | typeof nothing {
+    if (!this._hass) {
+      return nothing;
+    }
+
     if (!this._integration?.devices?.length) {
       const message = this._integration
         ? `${localize(this._hass, 'card.no_devices_found')} ${this._config.integration}`

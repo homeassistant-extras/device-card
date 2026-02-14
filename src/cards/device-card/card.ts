@@ -1,3 +1,4 @@
+import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { hasFeature } from '@config/feature';
 import { getDevice } from '@delegates/utils/get-device';
 import { hasProblem } from '@delegates/utils/has-problem';
@@ -14,7 +15,7 @@ import { state } from 'lit/decorators.js';
 import type { Config, Expansions } from './types';
 const equal = require('fast-deep-equal');
 
-export class DeviceCard extends LitElement {
+export class DeviceCard extends HassUpdateMixin(LitElement) {
   /**
    * Card configuration object
    */
@@ -93,10 +94,17 @@ export class DeviceCard extends LitElement {
   }
 
   /**
+   * Home Assistant instance (readable for HassUpdateElement interface)
+   */
+  override get hass(): HomeAssistant {
+    return this._hass;
+  }
+
+  /**
    * Updates the card's state when Home Assistant state changes
    * @param {HomeAssistant} hass - The Home Assistant instance
    */
-  set hass(hass: HomeAssistant) {
+  override set hass(hass: HomeAssistant) {
     this._hass = hass;
 
     const device = getDevice(hass, this._config);

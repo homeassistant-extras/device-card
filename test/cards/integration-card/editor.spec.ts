@@ -242,5 +242,96 @@ describe('editor.ts', () => {
         columns: 3,
       });
     });
+
+    describe('include_devices / exclude_devices (string template vs array)', () => {
+      it('should keep non-empty template string', () => {
+        const detail = {
+          value: {
+            integration: 'mqtt',
+            include_devices: '{{ state_attr("device.id", "device_id") }}',
+            exclude_devices: '{{ expand(integration_entities("zwave_js")) }}',
+          },
+        };
+
+        const event = new CustomEvent('value-changed', { detail });
+        card['_valueChanged'](event);
+
+        const config = dispatchStub.firstCall.args[0].detail.config;
+        expect(config.include_devices).to.equal(
+          '{{ state_attr("device.id", "device_id") }}',
+        );
+        expect(config.exclude_devices).to.equal(
+          '{{ expand(integration_entities("zwave_js")) }}',
+        );
+      });
+
+      it('should delete empty template string', () => {
+        const detail = {
+          value: {
+            integration: 'mqtt',
+            include_devices: '',
+            exclude_devices: '',
+          },
+        };
+
+        const event = new CustomEvent('value-changed', { detail });
+        card['_valueChanged'](event);
+
+        const config = dispatchStub.firstCall.args[0].detail.config;
+        expect(config).to.not.have.property('include_devices');
+        expect(config).to.not.have.property('exclude_devices');
+      });
+
+      it('should delete whitespace-only template string', () => {
+        const detail = {
+          value: {
+            integration: 'mqtt',
+            include_devices: '   \n\t  ',
+            exclude_devices: '   \n\t  ',
+          },
+        };
+
+        const event = new CustomEvent('value-changed', { detail });
+        card['_valueChanged'](event);
+
+        const config = dispatchStub.firstCall.args[0].detail.config;
+        expect(config).to.not.have.property('include_devices');
+        expect(config).to.not.have.property('exclude_devices');
+      });
+
+      it('should delete empty array', () => {
+        const detail = {
+          value: {
+            integration: 'mqtt',
+            include_devices: [],
+            exclude_devices: [],
+          },
+        };
+
+        const event = new CustomEvent('value-changed', { detail });
+        card['_valueChanged'](event);
+
+        const config = dispatchStub.firstCall.args[0].detail.config;
+        expect(config).to.not.have.property('include_devices');
+        expect(config).to.not.have.property('exclude_devices');
+      });
+
+      it('should keep non-empty array', () => {
+        const detail = {
+          value: {
+            integration: 'mqtt',
+            include_devices: ['device_1', 'device_2'],
+            exclude_devices: ['device_3', 'device_4'],
+          },
+        };
+
+        const event = new CustomEvent('value-changed', { detail });
+        card['_valueChanged'](event);
+
+        const config = dispatchStub.firstCall.args[0].detail.config;
+        expect(config.include_devices).to.deep.equal(['device_1', 'device_2']);
+        expect(config.exclude_devices).to.deep.equal(['device_3', 'device_4']);
+      });
+    });
   });
 });

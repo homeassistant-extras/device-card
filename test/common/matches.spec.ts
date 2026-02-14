@@ -1,4 +1,4 @@
-import { matchesPattern } from '@common/matches';
+import { matchesDevicePatterns, matchesPattern } from '@common/matches';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 
@@ -311,6 +311,54 @@ describe('matches.ts', () => {
           ),
         ).to.be.false;
       });
+    });
+  });
+
+  describe('matchesDevicePatterns', () => {
+    it('returns false for empty or undefined patterns', () => {
+      expect(matchesDevicePatterns('dev1', 'Device 1', undefined)).to.be.false;
+      expect(matchesDevicePatterns('dev1', 'Device 1', [])).to.be.false;
+    });
+
+    it('matches device ID', () => {
+      expect(
+        matchesDevicePatterns('dev1', 'Device 1', ['dev1']),
+      ).to.be.true;
+      expect(
+        matchesDevicePatterns('dev2', 'Device 2', ['dev1']),
+      ).to.be.false;
+    });
+
+    it('matches device name', () => {
+      expect(
+        matchesDevicePatterns('other_id', 'Device 1', ['Device 1']),
+      ).to.be.true;
+      expect(
+        matchesDevicePatterns('other_id', 'Device 2', ['Device 1']),
+      ).to.be.false;
+    });
+
+    it('matches either ID or name', () => {
+      expect(
+        matchesDevicePatterns('dev1', 'Other Name', ['dev1']),
+      ).to.be.true;
+      expect(
+        matchesDevicePatterns('other_id', 'Device 1', ['Device 1']),
+      ).to.be.true;
+    });
+
+    it('handles null device name', () => {
+      expect(matchesDevicePatterns('dev1', null, ['dev1'])).to.be.true;
+      expect(matchesDevicePatterns('dev1', null, ['Device 1'])).to.be.false;
+    });
+
+    it('supports wildcard patterns', () => {
+      expect(
+        matchesDevicePatterns('esp_living_airfresh', null, ['esp_*_airfresh']),
+      ).to.be.true;
+      expect(
+        matchesDevicePatterns('esp_kitchen_fan', null, ['esp_*_airfresh']),
+      ).to.be.false;
     });
   });
 });

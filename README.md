@@ -305,25 +305,25 @@ For `section_order`, the default order is: Controls, Configuration, Sensors, Dia
 
 Most configuration options from the Device Card are supported:
 
-| Name                   | Type    | Default      | Description                                                                                                                  |
-| ---------------------- | ------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| integration            | string  | **Required** | The Home Assistant integration domain (e.g., zwave_js, hue)                                                                  |
-| title                  | string  | Device name  | Optional custom title for the card                                                                                           |
-| hide_integration_title | boolean | False        | Optional flag to hide the integration card title.                                                                            |
-| preview_count          | number  | All items    | Number of items to preview before showing "Show More" button                                                                 |
-| columns                | number  | _responsive_ | Fix the number of columns for device cards (1-6)                                                                             |
-| include_devices        | list    | _none_       | Include only specific devices for the integration                                                                            |
-| exclude_devices        | list    | _none_       | Specific devices to exclude from the integration display                                                                     |
-| exclude_sections       | list    | _none_       | Sections of entities to exclude. See below.                                                                                  |
-| exclude_entities       | list    | _none_       | Entities to remove from the card.                                                                                            |
-| inverse_percent        | list    | _none_       | Entity IDs with inverted percent colors (green for low, red for high). Useful for metrics like disk usage where low is good. |
-| section_order          | list    | _none_       | Custom order for displaying sections. See below.                                                                             |
-| features               | list    | See above    | Optional flags to toggle different features                                                                                  |
-| tap_action             | object  | none         | Action to perform when tapping the card                                                                                      |
-| hold_action            | object  | none         | Action to perform when holding the card                                                                                      |
-| double_tap_action      | object  | none         | Action when double-tapping the card                                                                                          |
+| Name                   | Type        | Default      | Description                                                                                                                  |
+| ---------------------- | ----------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| integration            | string      | **Required** | The Home Assistant integration domain (e.g., zwave_js, hue)                                                                  |
+| title                  | string      | Device name  | Optional custom title for the card                                                                                           |
+| hide_integration_title | boolean     | False        | Optional flag to hide the integration card title.                                                                            |
+| preview_count          | number      | All items    | Number of items to preview before showing "Show More" button                                                                 |
+| columns                | number      | _responsive_ | Fix the number of columns for device cards (1-6)                                                                             |
+| include_devices        | list/string | _none_       | Include only specific devices.                                                                                               |
+| exclude_devices        | list/string | _none_       | Devices to exclude from the display.                                                                                         |
+| exclude_sections       | list        | _none_       | Sections of entities to exclude. See below.                                                                                  |
+| exclude_entities       | list        | _none_       | Entities to remove from the card.                                                                                            |
+| inverse_percent        | list        | _none_       | Entity IDs with inverted percent colors (green for low, red for high). Useful for metrics like disk usage where low is good. |
+| section_order          | list        | _none_       | Custom order for displaying sections. See below.                                                                             |
+| features               | list        | See above    | Optional flags to toggle different features                                                                                  |
+| tap_action             | object      | none         | Action to perform when tapping the card                                                                                      |
+| hold_action            | object      | none         | Action to perform when holding the card                                                                                      |
+| double_tap_action      | object      | none         | Action when double-tapping the card                                                                                          |
 
-**Note** - `include_devices`, `exclude_devices` and `exclude_entities` accepts wildcards (\*) and Regex
+**Note** - `include_devices` and `exclude_devices` can each be a list or a jinja template. Both accept device IDs or names, with or without wildcards (\*) and regex.
 
 ## Example Configurations
 
@@ -558,6 +558,43 @@ include_devices:
   - device_2
 ```
 
+#### Dynamic Device Filtering with Jinja Templates
+
+Both `include_devices` and `exclude_devices` can be a list or a jinja template. Values can be device IDs or names, with or without wildcards and regex. The template should return a list/array. The card automatically updates when entities referenced in the template change.
+
+**include_devices** – show only matching devices:
+
+```yaml
+type: custom:integration-card
+integration: zwave_js
+include_devices: |
+  {{ expand(integration_entities('zwave_js'))
+    | selectattr('state', 'in', ['dead'])
+    | map(attribute='entity_id')
+    | map('device_attr', 'id')
+    | reject('match', 'None')
+    | unique
+    | list
+    | sort
+  }}
+```
+
+**exclude_devices** – hide matching devices:
+
+```yaml
+type: custom:integration-card
+integration: zwave_js
+exclude_devices: |
+  {{ expand(integration_entities('zwave_js'))
+    | selectattr('state', 'in', ['dead', 'unknown'])
+    | map(attribute='entity_id')
+    | map('device_attr', 'id')
+    | reject('match', 'None')
+    | unique
+    | list
+  }}
+```
+
 ## Project Roadmap
 
 - [x] **`Initial design`**: Create initial card design
@@ -583,6 +620,7 @@ include_devices:
 - [x] **`Random bugs & improvements`**: pointing out issues to improve card - thanks @PedroKTFC, @misc-brabs!
 - [x] **`Translations / Localization`**: support for multiple languages and localized text - thanks @Bsector
 - [x] **`Inverse percent colors`**: Invert percent bar colors for entities like disk usage - thanks @misc-brabs
+- [x] **`Jinja template support`**: Certain config properties support Jinja - thanks @LenirSantiago
 
 ## Contributing
 

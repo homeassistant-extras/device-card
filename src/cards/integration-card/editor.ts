@@ -82,19 +82,34 @@ export class IntegrationCardEditor extends LitElement {
     if (!config.section_order?.length) {
       delete config.section_order;
     }
-    if (!config.exclude_devices?.length) {
-      delete config.exclude_devices;
-    }
-    if (!config.include_devices?.length) {
-      delete config.include_devices;
-    }
     if (!config.columns || config.columns <= 0) {
       delete config.columns;
     }
+
+    this._cleanupDevicesField(config, 'include_devices');
+    this._cleanupDevicesField(config, 'exclude_devices');
 
     // @ts-ignore
     fireEvent(this, 'config-changed', {
       config,
     });
+  }
+
+  /**
+   * Clean up include_devices or exclude_devices: remove if empty string or empty array.
+   * Both support string (template) or string[] (device list).
+   */
+  private _cleanupDevicesField(
+    config: Config,
+    key: 'include_devices' | 'exclude_devices',
+  ): void {
+    const value = config[key];
+    if (typeof value === 'string') {
+      if (value.trim().length === 0) {
+        delete config[key];
+      }
+    } else if (Array.isArray(value) && !value.length) {
+      delete config[key];
+    }
   }
 }

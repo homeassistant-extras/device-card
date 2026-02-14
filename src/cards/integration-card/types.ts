@@ -12,11 +12,17 @@ export interface Config extends BaseConfig {
   /** Integration domain to display devices for */
   integration: string;
 
-  /** List of device IDs to include in the display (takes precedence over exclusions) */
-  include_devices?: string[];
+  /**
+   * List of device IDs to include in the display (takes precedence over exclusions).
+   * Can be a static array of device IDs or a jinja template string that returns a list/array of device IDs.
+   */
+  include_devices?: string[] | string;
 
-  /** List of device IDs to exclude from the display */
-  exclude_devices?: string[];
+  /**
+   * List of device IDs to exclude from the display.
+   * Can be a static array of device IDs or a jinja template string that returns a list/array of device IDs.
+   */
+  exclude_devices?: string[] | string;
 
   /** Fixed number of columns for device display (overrides responsive behavior) */
   columns?: number;

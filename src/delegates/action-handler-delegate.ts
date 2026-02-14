@@ -1,9 +1,16 @@
+import type { HassUpdateEvent } from '@cards/mixins/hass-update-mixin';
 import type { Expansions } from '@device/types';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { ActionHandlerEvent } from '@hass/data/lovelace/action_handler';
 import { actionHandler as hassActionHandler } from '@hass/panels/lovelace/common/directives/action-handler-directive';
 import type { ActionConfigParams } from '@hass/panels/lovelace/common/handle-action';
 import type { EntityInformation } from '@type/config';
+
+declare global {
+  interface HASSDomEvents {
+    'hass-update': HassUpdateEvent;
+  }
+}
 
 /**
  * Toggles the expanded state of an entity row to show/hide attributes
