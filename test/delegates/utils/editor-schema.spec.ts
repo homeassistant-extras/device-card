@@ -320,6 +320,10 @@ describe('editor-schema.ts', () => {
                       label: 'Start Collapsed',
                       value: 'collapse',
                     },
+                    {
+                      label: 'Show Hidden Entities',
+                      value: 'show_hidden_entities',
+                    },
                   ],
                 },
               },
@@ -604,6 +608,10 @@ describe('editor-schema.ts', () => {
                     {
                       label: 'Start Collapsed',
                       value: 'collapse',
+                    },
+                    {
+                      label: 'Show Hidden Entities',
+                      value: 'show_hidden_entities',
                     },
                   ],
                 },

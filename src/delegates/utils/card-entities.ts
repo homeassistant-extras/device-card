@@ -5,14 +5,14 @@ import type { BaseConfig, EntityInformation } from '@type/config';
 
 /**
  * Retrieves all entities for a specific device, filtering out hidden entities
- * Hidden entities (where hidden is true) are excluded to match Home Assistant's
- * more-info popup behavior
+ * Hidden entities (where hidden is true) are excluded by default to match Home Assistant's
+ * more-info popup behavior. Enable the show_hidden_entities feature to include them.
  *
  * @param hass - The Home Assistant instance
  * @param config - The configuration object
  * @param deviceId - The ID of the device
  * @param deviceName - Optional device name for friendly name processing
- * @returns Array of entity information for the device, excluding hidden entities
+ * @returns Array of entity information for the device
  */
 export const getDeviceEntities = (
   hass: HomeAssistant,
@@ -20,8 +20,12 @@ export const getDeviceEntities = (
   deviceId: string,
   deviceName?: string | null,
 ): EntityInformation[] => {
+  const includeHidden = config.features?.includes('show_hidden_entities');
   const deviceEntities = Object.values(hass.entities)
-    .filter((entity) => entity.device_id === deviceId && !entity.hidden)
+    .filter(
+      (entity) =>
+        entity.device_id === deviceId && (includeHidden || !entity.hidden),
+    )
     .map((entity) => {
       const state = getState(hass, entity.entity_id);
       if (state === undefined) {

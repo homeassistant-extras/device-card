@@ -104,7 +104,7 @@ This project is protected under the MIT License. For more details, refer to the 
 - [x] **`Custom section order and exclusions`**: Set the order in which sections are displayed & exclude things - thanks @andrewjswan
 - [x] **`Entity interactions`**: Configure tap, hold, and double-tap actions - thanks @andrewjswan
 - [x] **`Status badges`**: Quick status badges for device state
-- [x] **`Entity filtering`**: Filter specific entities from display - thanks @andrewjswan
+- [x] **`Entity filtering`**: Filter specific entities from display - thanks @andrewjswan, @TTLucian
 - [x] **`Integration Card`**: Rollup to see all devices - thanks @andrewjswan
 - [x] **`Hide device model`**: Option to hide device model information - thanks @andrewjswan
 - [x] **`Compact layout`**: Space-efficient layout option - thanks @andrewjswan

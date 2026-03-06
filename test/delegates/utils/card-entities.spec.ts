@@ -212,6 +212,31 @@ describe('card-entities.ts', () => {
     expect(hiddenEntity).to.be.undefined;
   });
 
+  it('should include hidden entities when show_hidden_entities feature is enabled', () => {
+    const deviceId = 'petkit_device_1';
+    const deviceName = 'Device';
+    const configWithFeature: Config = {
+      ...config,
+      features: ['show_hidden_entities'],
+    };
+
+    const entities = getDeviceEntities(
+      mockHass,
+      configWithFeature,
+      deviceId,
+      deviceName,
+    );
+
+    // Should have 7 entities (6 visible + 1 hidden)
+    expect(entities.length).to.equal(7);
+
+    const hiddenEntity = entities.find(
+      (e) => e.entity_id === 'sensor.petkit_hidden',
+    );
+    expect(hiddenEntity).to.exist;
+    expect(hiddenEntity!.state).to.equal('100');
+  });
+
   it('should correctly determine isProblemEntity based on device_class', () => {
     const deviceId = 'petkit_device_1';
     const deviceName = 'Device';

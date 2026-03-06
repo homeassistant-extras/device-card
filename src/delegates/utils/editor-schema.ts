@@ -295,6 +295,10 @@ const featuresSchema = (
                 label: 'Start Collapsed',
                 value: 'collapse',
               },
+              {
+                label: 'Show Hidden Entities',
+                value: 'show_hidden_entities',
+              },
             ],
           },
         },

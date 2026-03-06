@@ -23,14 +23,15 @@
 
 ## Feature Options
 
-| Name              | Type | Description                              |
-| ----------------- | ---- | ---------------------------------------- |
-| entity_picture    | flag | Show entity picture when available       |
-| hide_device_model | flag | Hides the device model information       |
-| hide_title        | flag | Hides the device card title              |
-| hide_entity_state | flag | Hides the entity state display in header |
-| compact           | flag | Uses compact layout with reduced spacing |
-| collapse          | flag | Initially displays the card collapsed    |
+| Name                 | Type | Description                                           |
+| -------------------- | ---- | ----------------------------------------------------- |
+| entity_picture       | flag | Show entity picture when available                    |
+| hide_device_model    | flag | Hides the device model information                    |
+| hide_title           | flag | Hides the device card title                           |
+| hide_entity_state    | flag | Hides the entity state display in header              |
+| compact              | flag | Uses compact layout with reduced spacing              |
+| collapse             | flag | Initially displays the card collapsed                 |
+| show_hidden_entities | flag | Show entities marked as hidden in the entity registry |
 
 ## Sorting Options
 
