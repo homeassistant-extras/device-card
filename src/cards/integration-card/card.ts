@@ -1,3 +1,4 @@
+import type { HassUpdateEvent } from '@cards/mixins/hass-update-mixin';
 import { computeIntegrationDevices } from '@delegates/integration-devices';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
@@ -9,6 +10,12 @@ import { integrationStyles } from './styles';
 import { TemplateSubscription } from './template-subscription';
 import type { Config, IntegrationData } from './types';
 const equal = require('fast-deep-equal');
+
+declare global {
+  interface HASSDomEvents {
+    'hass-update': HassUpdateEvent;
+  }
+}
 
 /**
  * Integration Card

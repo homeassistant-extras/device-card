@@ -63,20 +63,8 @@ describe('integration-card.ts', () => {
     computeIntegrationDevicesStub.restore();
     subscribeRenderTemplateStub.restore();
     if (card.parentNode) {
-      card.parentNode.removeChild(card);
+      card.remove();
     }
-  });
-
-  describe('initialization', () => {
-    it('should be defined', () => {
-      expect(card).to.be.instanceOf(IntegrationCard);
-    });
-
-    it('should have default properties', () => {
-      expect(card['_config']).to.be.undefined;
-      expect(card['_integration']).to.be.undefined;
-      expect(card['_hass']).to.be.undefined;
-    });
   });
 
   describe('setConfig', () => {

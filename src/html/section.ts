@@ -18,7 +18,6 @@ import { chevron, showMore } from './show-more';
 /**
  * Renders a section of entities with collapsible functionality
  *
- * @param {HTMLElement} element - The card component instance
  * @param {Expansions} expansions - The expansion state of the card
  * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {Config} config - The card configuration
@@ -28,7 +27,6 @@ import { chevron, showMore } from './show-more';
  * @returns {Promise<TemplateResult|typeof nothing>} A lit-html template for the section or nothing if empty
  */
 export const renderSection = async (
-  element: HTMLElement,
   expansions: Expansions,
   hass: HomeAssistant,
   config: Config,
@@ -47,7 +45,7 @@ export const renderSection = async (
   // Check if this section needs collapsible functionality
   const needsExpansion = entities.length > size;
 
-  // Get the current expanded state from the element
+  // Get the current expanded state
   const isExpanded = expansions.expandedSections[title] || false;
 
   // Sort and filter entities based on expanded state
@@ -63,7 +61,7 @@ export const renderSection = async (
 
   // Render all rows asynchronously
   const rowPromises = displayEntities.map((entity) =>
-    row(hass, entity, element, expansions, updateExpansions, config),
+    row(hass, entity, expansions, config),
   );
   const rowResults = await Promise.all(rowPromises);
 

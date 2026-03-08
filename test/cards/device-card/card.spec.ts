@@ -451,6 +451,52 @@ describe('card.ts', () => {
       expect(stateElement?.textContent).to.equal('75.5%');
     });
 
+    it('should toggle entity expansion on ll-custom expand event', async () => {
+      const result = card.render();
+      const el = await fixture(result as TemplateResult);
+
+      const entityId = 'sensor.test_entity';
+      card['_expansions'] = {
+        expandedSections: {},
+        expandedEntities: { [entityId]: false },
+      };
+
+      const ev = document.createEvent('CustomEvent');
+      ev.initCustomEvent(
+        'll-custom',
+        true,
+        false,
+        { device_card: { expand: true, entity_id: entityId } },
+      );
+
+      el.dispatchEvent(ev);
+
+      expect(card['_expansions'].expandedEntities[entityId]).to.be.true;
+    });
+
+    it('should not update when device_card.expand is missing', async () => {
+      const result = card.render();
+      const el = await fixture(result as TemplateResult);
+
+      const entityId = 'sensor.test_entity';
+      card['_expansions'] = {
+        expandedSections: {},
+        expandedEntities: { [entityId]: false },
+      };
+
+      const ev = document.createEvent('CustomEvent');
+      ev.initCustomEvent(
+        'll-custom',
+        true,
+        false,
+        { device_card: { entity_id: entityId } },
+      );
+
+      el.dispatchEvent(ev);
+
+      expect(card['_expansions'].expandedEntities[entityId]).to.be.false;
+    });
+
     it('should hide entity state when hide_entity_state feature is enabled', async () => {
       // Set up the card with an entity_id and hide_entity_state feature
       const config = {

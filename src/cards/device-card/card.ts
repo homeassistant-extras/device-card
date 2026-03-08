@@ -1,5 +1,6 @@
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { hasFeature } from '@config/feature';
+import { handleExpandEvent } from '@delegates/handle-expand-event';
 import { getDevice } from '@delegates/utils/get-device';
 import { hasProblem } from '@delegates/utils/has-problem';
 import { styles } from '@device/styles';
@@ -58,7 +59,6 @@ export class DeviceCard extends HassUpdateMixin(LitElement) {
         return html``;
       }
       const sections = await renderSections(
-        this,
         expansions,
         hass,
         config,
@@ -176,7 +176,11 @@ export class DeviceCard extends HassUpdateMixin(LitElement) {
     }
 
     return html`
-      <ha-card class="${problem ? 'problem' : ''}">
+      <ha-card
+        class="${problem ? 'problem' : ''}"
+        @ll-custom=${(ev: CustomEvent) =>
+        handleExpandEvent(ev, this._expansions, (e) => (this._expansions = e))}
+      >
         ${headerContent}
         ${this.collapse
           ? nothing

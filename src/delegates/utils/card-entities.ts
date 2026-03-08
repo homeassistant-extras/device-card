@@ -46,7 +46,13 @@ export const getDeviceEntities = (
         isProblemEntity: state.attributes.device_class === 'problem',
         isActive: active,
         config: {
-          tap_action: config.tap_action,
+          tap_action: config.tap_action || {
+            action: 'fire-dom-event',
+            device_card: {
+              expand: true,
+              entity_id: entity.entity_id,
+            },
+          },
           hold_action: config.hold_action || {
             action: 'more-info',
           },

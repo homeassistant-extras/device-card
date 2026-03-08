@@ -59,6 +59,17 @@ describe('stateContent.ts', () => {
       name: 'Test Light',
       isActive: false,
       isProblemEntity: false,
+      config: {
+        tap_action: {
+          action: 'none',
+        },
+        hold_action: {
+          action: 'none',
+        },
+        double_tap_action: {
+          action: 'none',
+        },
+      },
     } as EntityInformation;
 
     // Mock Home Assistant
@@ -84,7 +95,7 @@ describe('stateContent.ts', () => {
 
   afterEach(() => {
     // Clean up the global mock
-    delete globalThis.loadCardHelpers;
+    Reflect.deleteProperty(globalThis, 'loadCardHelpers');
   });
 
   it('should call loadCardHelpers and createRowElement with correct configuration', async () => {

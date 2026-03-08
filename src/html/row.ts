@@ -5,10 +5,6 @@
  * including their state content, percentage bars, and expandable attribute details.
  */
 
-import {
-  actionHandler,
-  handleClickAction,
-} from '@delegates/action-handler-delegate';
 import type { Config, Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/config';
@@ -18,22 +14,19 @@ import { percentBar } from './percent';
 import { stateContent } from './state-content';
 
 /**
- * Renders a single entity row with appropriate styling and components
+ * Renders a single entity row with appropriate styling and components.
+ * Expand events bubble to the device card.
  *
  * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {EntityInformation} entity - The entity to render
- * @param {HTMLElement} element - The device card component instance
  * @param {Expansions} expansions - The expansion state of the card
- * @param {function} updateExpansions - Function to update the expansion state
  * @param {Config} config - The card configuration
  * @returns {Promise<TemplateResult>} A lit-html template for the entity row
  */
 export const row = async (
   hass: HomeAssistant,
   entity: EntityInformation,
-  element: HTMLElement,
   expansions: Expansions,
-  updateExpansions: (expansion: Expansions) => void,
   config?: Config,
 ): Promise<TemplateResult> => {
   let statusClassName: string | undefined;
@@ -65,8 +58,6 @@ export const row = async (
       statusClassName,
       isEntityExpanded ? 'expanded-row' : '',
     ].join(' ')}"
-    @action=${handleClickAction(element, expansions, entity, updateExpansions)}
-    .actionHandler=${actionHandler(entity)}
   >
     <div class="row-content">
       ${stateContentResult}

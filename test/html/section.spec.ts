@@ -15,7 +15,6 @@ describe('section.ts', () => {
   // Common test variables
   let mockHass: HomeAssistant;
   let mockConfig: Config;
-  let mockElement: any;
   let mockExpansions: Expansions;
   let mockEntities: EntityInformation[];
   let mockUpdater: (expansion: Expansions) => void;
@@ -67,11 +66,6 @@ describe('section.ts', () => {
       preview_count: 3, // Default preview count
     } as Config;
 
-    // Mock element with expandedSections property
-    mockElement = {
-      expandedEntities: {},
-    };
-
     mockExpansions = {
       expandedSections: {},
       expandedEntities: {},
@@ -110,7 +104,6 @@ describe('section.ts', () => {
   describe('renderSection', () => {
     it('should return nothing when entities array is empty', async () => {
       const result = await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -123,7 +116,6 @@ describe('section.ts', () => {
 
     it('should return nothing when entities is undefined', async () => {
       const result = await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -137,7 +129,6 @@ describe('section.ts', () => {
     it('should render section with correct title', async () => {
       const sectionTitle = 'Test Section';
       const result = await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -155,7 +146,6 @@ describe('section.ts', () => {
       // Test with few items (no expansion needed)
       mockConfig.preview_count = 5; // More than our 3 mock entities
       let result = await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -171,7 +161,6 @@ describe('section.ts', () => {
       mockConfig.preview_count = 1; // Less than our 3 mock entities
       mockExpansions.expandedSections['Test Section'] = true;
       result = await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -186,7 +175,6 @@ describe('section.ts', () => {
       // Test with many items, collapsed
       mockExpansions.expandedSections['Test Section'] = false;
       result = await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -203,7 +191,6 @@ describe('section.ts', () => {
       // Test with 3 entities, all displayed
       mockConfig.preview_count = 3;
       await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -219,7 +206,8 @@ describe('section.ts', () => {
       mockEntities.forEach((entity, index) => {
         expect(rowStub.getCall(index).args[0]).to.equal(mockHass);
         expect(rowStub.getCall(index).args[1]).to.equal(entity);
-        expect(rowStub.getCall(index).args[2]).to.equal(mockElement);
+        expect(rowStub.getCall(index).args[2]).to.equal(mockExpansions);
+        expect(rowStub.getCall(index).args[3]).to.equal(mockConfig);
       });
     });
 
@@ -229,7 +217,6 @@ describe('section.ts', () => {
       mockExpansions.expandedSections['Test Section'] = false;
 
       await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -252,7 +239,6 @@ describe('section.ts', () => {
       mockExpansions.expandedSections['Test Section'] = true;
 
       await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -271,7 +257,6 @@ describe('section.ts', () => {
       mockExpansions.expandedSections['Test Section'] = false;
 
       await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -292,7 +277,6 @@ describe('section.ts', () => {
       mockConfig.preview_count = 5;
 
       await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -311,7 +295,6 @@ describe('section.ts', () => {
       mockExpansions.expandedSections['Test Section'] = false;
 
       await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -334,7 +317,6 @@ describe('section.ts', () => {
       mockConfig.preview_count = 5;
 
       await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -352,7 +334,6 @@ describe('section.ts', () => {
       hasFeatureStub.withArgs(mockConfig, 'compact').returns(true);
 
       const result = await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -371,7 +352,6 @@ describe('section.ts', () => {
       hasFeatureStub.withArgs(mockConfig, 'compact').returns(false);
 
       const result = await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -394,7 +374,6 @@ describe('section.ts', () => {
       hasFeatureStub.withArgs(mockConfig, 'compact').returns(true);
 
       await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -419,7 +398,6 @@ describe('section.ts', () => {
       hasFeatureStub.withArgs(mockConfig, 'compact').returns(false);
 
       await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,
@@ -437,7 +415,6 @@ describe('section.ts', () => {
       mockConfig.sort = sortConfig;
 
       await renderSection(
-        mockElement,
         mockExpansions,
         mockHass,
         mockConfig,

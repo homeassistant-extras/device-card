@@ -15,7 +15,6 @@ import { renderSection } from './section';
 
 /**
  * Renders sections in the order specified by config or in default order
- * @param {HTMLElement} element - The card component instance
  * @param {Expansions} expansions - The expansions object for managing section states
  * @param {HomeAssistant} hass - The Home Assistant instance
  * @param {Config} config - The card configuration
@@ -23,7 +22,6 @@ import { renderSection } from './section';
  * @returns {Promise<TemplateResult[]>} Array of section templates
  */
 export const renderSections = async (
-  element: HTMLElement,
   expansions: Expansions,
   hass: HomeAssistant,
   config: Config,
@@ -77,7 +75,6 @@ export const renderSections = async (
 
   const sectionPromises = orderedSections.map((section) =>
     renderSection(
-      element,
       expansions,
       hass,
       config,

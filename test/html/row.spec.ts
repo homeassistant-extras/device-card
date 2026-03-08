@@ -1,5 +1,3 @@
-import * as actionHandlerModule from '@/delegates/action-handler-delegate';
-import { DeviceCard } from '@device/card';
 import type { Config, Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
 import * as attributesModule from '@html/attributes';
@@ -15,14 +13,11 @@ import { stub } from 'sinon';
 describe('row.ts', () => {
   let config: Config;
   let mockHass: HomeAssistant;
-  let mockElement: DeviceCard;
   let mockEntity: EntityInformation;
   let stateContentStub: sinon.SinonStub;
   let percentBarStub: sinon.SinonStub;
   let attributesStub: sinon.SinonStub;
-  let actionHandlerStub: sinon.SinonStub;
   let mockExpansions: Expansions;
-  let mockUpdater: (expansion: Expansions) => void;
 
   beforeEach(() => {
     // Create stubs for imported components
@@ -35,22 +30,12 @@ describe('row.ts', () => {
     attributesStub = stub(attributesModule, 'attributes');
     attributesStub.returns(html`<div class="mocked-attributes"></div>`);
 
-    actionHandlerStub = stub(actionHandlerModule, 'actionHandler').returns({
-      bind: () => {}, // Mock the bind method
-      handleAction: () => {}, // Add any other methods that might be called
-    });
-
     // Mock Home Assistant instance
     mockHass = {} as HomeAssistant;
 
     config = {
       device_id: 'device_1',
     };
-
-    // Mock DeviceCard element with expandedEntities property
-    mockElement = {
-      expandedEntities: {},
-    } as any as DeviceCard;
 
     // Create a mock entity for testing
     mockEntity = {
@@ -71,10 +56,6 @@ describe('row.ts', () => {
       expandedSections: {},
       expandedEntities: {},
     };
-
-    mockUpdater = (expansion: Expansions) => {
-      mockExpansions = expansion;
-    };
   });
 
   afterEach(() => {
@@ -82,19 +63,11 @@ describe('row.ts', () => {
     stateContentStub.restore();
     percentBarStub.restore();
     attributesStub.restore();
-    actionHandlerStub.restore();
   });
 
   describe('row rendering', () => {
     it('should render a basic row with state content', async () => {
-      const result = await row(
-        mockHass,
-        mockEntity,
-        mockElement,
-        mockExpansions,
-        mockUpdater,
-        config,
-      );
+      const result = await row(mockHass, mockEntity, mockExpansions, config);
       const el = await fixture(result);
 
       // Check basic structure
@@ -108,14 +81,7 @@ describe('row.ts', () => {
     });
 
     it('should render a percentage bar for entities with percentage measurements', async () => {
-      const result = await row(
-        mockHass,
-        mockEntity,
-        mockElement,
-        mockExpansions,
-        mockUpdater,
-        config,
-      );
+      const result = await row(mockHass, mockEntity, mockExpansions, config);
       await fixture(result);
 
       // Check that percentBar was called with entity and inverse entities array
@@ -138,9 +104,7 @@ describe('row.ts', () => {
       const result = await row(
         mockHass,
         entityWithoutStateClass,
-        mockElement,
         mockExpansions,
-        mockUpdater,
         config,
       );
       await fixture(result);
@@ -166,9 +130,7 @@ describe('row.ts', () => {
       const result = await row(
         mockHass,
         entityWithPercentVariation,
-        mockElement,
         mockExpansions,
-        mockUpdater,
         config,
       );
       await fixture(result);
@@ -195,9 +157,7 @@ describe('row.ts', () => {
       const result = await row(
         mockHass,
         nonPercentEntity,
-        mockElement,
         mockExpansions,
-        mockUpdater,
         config,
       );
       await fixture(result);
@@ -220,9 +180,7 @@ describe('row.ts', () => {
       const result = await row(
         mockHass,
         entityWithNonNumericState,
-        mockElement,
         mockExpansions,
-        mockUpdater,
         config,
       );
       await fixture(result);
@@ -242,9 +200,7 @@ describe('row.ts', () => {
       const result = await row(
         mockHass,
         problemEntity,
-        mockElement,
         mockExpansions,
-        mockUpdater,
         config,
       );
       const el = await fixture(result);
@@ -264,9 +220,7 @@ describe('row.ts', () => {
       const result = await row(
         mockHass,
         problemEntity,
-        mockElement,
         mockExpansions,
-        mockUpdater,
         config,
       );
       const el = await fixture(result);
@@ -284,9 +238,7 @@ describe('row.ts', () => {
       const result = await row(
         mockHass,
         mockEntity,
-        mockElement,
         mockExpansions,
-        mockUpdater,
         configWithInverse,
       );
       await fixture(result);
@@ -301,14 +253,7 @@ describe('row.ts', () => {
     });
 
     it('should pass empty array to percentBar when inverse_percent is not configured', async () => {
-      const result = await row(
-        mockHass,
-        mockEntity,
-        mockElement,
-        mockExpansions,
-        mockUpdater,
-        config,
-      );
+      const result = await row(mockHass, mockEntity, mockExpansions, config);
       await fixture(result);
 
       // Check that percentBar was called with empty array when no inverse_percent
@@ -320,10 +265,7 @@ describe('row.ts', () => {
       const result = await row(
         mockHass,
         mockEntity,
-        mockElement,
         mockExpansions,
-        mockUpdater,
-        undefined,
       );
       await fixture(result);
 
@@ -338,14 +280,7 @@ describe('row.ts', () => {
       // Set entity as not expanded
       mockExpansions.expandedEntities = { [mockEntity.entity_id]: false };
 
-      const result = await row(
-        mockHass,
-        mockEntity,
-        mockElement,
-        mockExpansions,
-        mockUpdater,
-        config,
-      );
+      const result = await row(mockHass, mockEntity, mockExpansions, config);
       await fixture(result);
 
       // Check that attributes was not called
@@ -356,14 +291,7 @@ describe('row.ts', () => {
       // Set entity as expanded
       mockExpansions.expandedEntities = { [mockEntity.entity_id]: true };
 
-      const result = await row(
-        mockHass,
-        mockEntity,
-        mockElement,
-        mockExpansions,
-        mockUpdater,
-        config,
-      );
+      const result = await row(mockHass, mockEntity, mockExpansions, config);
       await fixture(result);
 
       // Check that attributes was called with entity attributes
@@ -377,33 +305,11 @@ describe('row.ts', () => {
       // Set entity as expanded
       mockExpansions.expandedEntities = { [mockEntity.entity_id]: true };
 
-      const result = await row(
-        mockHass,
-        mockEntity,
-        mockElement,
-        mockExpansions,
-        mockUpdater,
-        config,
-      );
+      const result = await row(mockHass, mockEntity, mockExpansions, config);
       const el = await fixture(result);
 
       // Check that expanded-row class is applied
       expect(el.classList.contains('expanded-row')).to.be.true;
-    });
-
-    it('should attach action handlers', async () => {
-      const result = await row(
-        mockHass,
-        mockEntity,
-        mockElement,
-        mockExpansions,
-        mockUpdater,
-        config,
-      );
-      const el = await fixture(result);
-
-      // Verify action handler was attached
-      expect((el as any).actionHandler).to.exist;
     });
   });
 });

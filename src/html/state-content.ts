@@ -37,21 +37,13 @@ export const stateContent = async (
   // Load the card helpers
   const helpers = await globalThis.loadCardHelpers();
 
-  // Create the row configuration, we will handle actions ourselves
+  // Create the row configuration - HA's row handles actions using our config.
   const config: LovelaceRowConfig = {
     entity: entity.entity_id,
     // our name removes the device name from the friendly name
     name: entity.name,
-
-    tap_action: {
-      action: 'none',
-    },
-    hold_action: {
-      action: 'none',
-    },
-    double_tap_action: {
-      action: 'none',
-    },
+    // add our actions
+    ...entity.config,
   };
 
   // Create the row element
