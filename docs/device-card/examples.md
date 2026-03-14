@@ -25,12 +25,23 @@ features:
   - entity_picture
 ```
 
-## With Pinned Entity State
+## With Pinned Entity State and Heading Icon
+
+When you set `entity_id`, the card shows the entity's state in the header and displays the entity's icon next to the heading. You can override the icon with a custom one:
 
 ```yaml
 type: custom:device-card
 device_id: 1a2b3c4d5e6f7g8h9i0j
 entity_id: sensor.octoprint_print_progress
+icon: mdi:printer-3d # Optional: override entity icon
+```
+
+Or use a custom icon without an entity:
+
+```yaml
+type: custom:device-card
+device_id: 1a2b3c4d5e6f7g8h9i0j
+icon: mdi:thermometer
 ```
 
 ## With Collapsed as Default
@@ -56,6 +67,18 @@ type: custom:device-card
 entity_id: sensor.octoprint_print_progress
 features:
   - hide_entity_state
+```
+
+## With Hidden Icon
+
+Hide the icon next to the heading for a cleaner look:
+
+```yaml
+type: custom:device-card
+device_id: 1a2b3c4d5e6f7g8h9i0j
+entity_id: sensor.octoprint_print_progress
+features:
+  - hide_icon
 ```
 
 ## Excluding Entities and Sections

@@ -43,6 +43,13 @@ export const styles = css`
     font-size: 1.5rem;
     font-weight: 500;
     display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .title-stack {
+    display: flex;
     flex-direction: column;
   }
 

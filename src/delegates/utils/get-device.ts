@@ -1,6 +1,7 @@
 import { matchesPattern } from '@/common/matches';
 import { getDevice as getHassDevice } from '@delegates/retrievers/device';
 import { getEntity } from '@delegates/retrievers/entity';
+import { getState } from '@delegates/retrievers/state';
 import type { Config } from '@device/types';
 import { computeDomain } from '@hass/common/entity/compute_domain';
 import type { HomeAssistant } from '@hass/types';
@@ -18,15 +19,16 @@ export const getDevice = (
   hass: HomeAssistant,
   config: Config,
 ): Device | undefined => {
+  const entityId = config.entity ?? config.entity_id;
   const device: Device = {
     sensors: [],
     controls: [],
     diagnostics: [],
     configurations: [],
+    entity: getState(hass, entityId),
   };
 
   // Determine device_id from config.device_id or by resolving config.entity/config.entity_id
-  const entityId = config.entity ?? config.entity_id;
   const deviceId =
     config.device_id ??
     (entityId ? getEntity(hass, entityId)?.device_id : undefined);

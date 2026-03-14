@@ -13,6 +13,9 @@ export interface BaseConfig {
   /** Optional display title for the device */
   title?: string;
 
+  /** Optional icon to display next to the heading (e.g. mdi:thermometer) */
+  icon?: string;
+
   /** How many sensors to preview */
   preview_count?: number;
 
@@ -50,6 +53,7 @@ export type Features =
   | 'compact'
   | 'entity_picture'
   | 'hide_device_model'
+  | 'hide_icon'
   | 'hide_title'
   | 'hide_entity_state'
   | 'show_hidden_entities';
@@ -83,6 +87,9 @@ export interface Device {
 
   /** The configurations of the device */
   configurations: EntityInformation[];
+
+  /** State object for the header entity (entity_id), used for ha-state-icon */
+  entity?: EntityState;
 }
 
 export interface EntityInformation extends EntityState {

@@ -5,11 +5,11 @@ import { getDevice } from '@delegates/utils/get-device';
 import { hasProblem } from '@delegates/utils/has-problem';
 import { styles } from '@device/styles';
 import type { HomeAssistant } from '@hass/types';
+import { deviceCardHeader } from '@html/device-card-header';
 import { renderSections } from '@html/device-section';
 import { picture } from '@html/picture';
 import { pinnedEntity } from '@html/pinned-entity';
 import { Task } from '@lit/task';
-import { localize } from '@localize/localize';
 import type { Device } from '@type/config';
 import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
@@ -141,45 +141,25 @@ export class DeviceCard extends HassUpdateMixin(LitElement) {
     }
 
     const problem = hasProblem(this._device);
-    const hideTitle = hasFeature(this._config, 'hide_title');
-    const hideDeviceModel = hasFeature(this._config, 'hide_device_model');
-    const hideHeader = hideTitle && hideDeviceModel;
     const entity = pinnedEntity(this._hass, this._config);
-
-    // Prepare header content
-    let headerContent: TemplateResult | typeof nothing = nothing;
-
-    if (!hideHeader) {
-      const titleContent = hideTitle
-        ? nothing
-        : html`<span>${this._config.title ?? this._device.name}</span>`;
-
-      const modelContent = hideDeviceModel
-        ? nothing
-        : html`<span class="model">${this._device.model}</span>`;
-
-      headerContent = html`
-        <div
-          class="card-header ${this.collapse ? 'collapsed' : ''}"
-          @click="${() => (this.collapse = !this.collapse)}"
-          title="${this.collapse
-            ? localize(this._hass, 'card.expand')
-            : localize(this._hass, 'card.collapse')}"
-        >
-          <div class="title">${titleContent} ${modelContent}</div>
-          ${entity}
-        </div>
-      `;
-    } else if (entity) {
-      // If header is hidden but we have an entity state to show
-      headerContent = html`<div class="entity-state-only">${entity}</div>`;
-    }
+    const headerContent = deviceCardHeader({
+      config: this._config,
+      device: this._device,
+      hass: this._hass,
+      collapse: this.collapse,
+      onCollapseToggle: () => (this.collapse = !this.collapse),
+      entity,
+    });
 
     return html`
       <ha-card
         class="${problem ? 'problem' : ''}"
         @ll-custom=${(ev: CustomEvent) =>
-        handleExpandEvent(ev, this._expansions, (e) => (this._expansions = e))}
+          handleExpandEvent(
+            ev,
+            this._expansions,
+            (e) => (this._expansions = e),
+          )}
       >
         ${headerContent}
         ${this.collapse

@@ -8,6 +8,7 @@ export type Selector =
   | BooleanSelector
   | EntitySelector
   | DeviceSelector
+  | IconSelector
   | NumberSelector
   | SelectSelector
   | StringSelector
@@ -49,6 +50,13 @@ interface EntitySelectorFilter {
   domain?: string | readonly string[];
   device_class?: string | readonly string[];
   supported_features?: number | [number];
+}
+
+export interface IconSelector {
+  icon: {
+    placeholder?: string;
+    fallbackPath?: string;
+  } | null;
 }
 
 export interface NumberSelector {

@@ -66,6 +66,29 @@ describe('get-device.ts', () => {
     expect(result?.name).to.equal('Device');
   });
 
+  it('should set headerState when entity_id is configured and state exists', () => {
+    mockHass.states = {
+      'sensor.th_outdoor': {
+        entity_id: 'sensor.th_outdoor',
+        state: '23.5',
+        attributes: { unit_of_measurement: '°C' },
+      },
+    } as any;
+    mockHass.entities = {
+      'sensor.th_outdoor': {
+        entity_id: 'sensor.th_outdoor',
+        device_id: 'device_1',
+      },
+    } as any;
+    const configWithEntity = {
+      entity_id: 'sensor.th_outdoor',
+    } as Config;
+    const result = getDevice(mockHass, configWithEntity);
+    expect(result?.entity).to.not.be.undefined;
+    expect(result?.entity?.entity_id).to.equal('sensor.th_outdoor');
+    expect(result?.entity?.state).to.equal('23.5');
+  });
+
   it('should return undefined if device not found', () => {
     getDeviceStub.returns(undefined);
     const result = getDevice(mockHass, mockConfig);

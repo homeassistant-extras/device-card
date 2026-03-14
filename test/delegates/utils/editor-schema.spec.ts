@@ -152,6 +152,14 @@ describe('editor-schema.ts', () => {
               },
             },
             {
+              name: 'icon',
+              required: false,
+              label: 'Heading Icon',
+              selector: {
+                icon: {},
+              },
+            },
+            {
               name: 'preview_count',
               required: false,
               label: 'Preview Count',
@@ -311,6 +319,10 @@ describe('editor-schema.ts', () => {
                     {
                       label: 'Hide Entity State',
                       value: 'hide_entity_state',
+                    },
+                    {
+                      label: 'Hide Icon',
+                      value: 'hide_icon',
                     },
                     {
                       label: 'Compact Layout',
@@ -500,6 +512,14 @@ describe('editor-schema.ts', () => {
               },
             },
             {
+              name: 'icon',
+              required: false,
+              label: 'Heading Icon',
+              selector: {
+                icon: {},
+              },
+            },
+            {
               name: 'preview_count',
               required: false,
               label: 'Preview Count',
@@ -600,6 +620,10 @@ describe('editor-schema.ts', () => {
                     {
                       label: 'Hide Entity State',
                       value: 'hide_entity_state',
+                    },
+                    {
+                      label: 'Hide Icon',
+                      value: 'hide_icon',
                     },
                     {
                       label: 'Compact Layout',

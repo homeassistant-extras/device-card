@@ -61,6 +61,14 @@ const CONTENT_SCHEMA: HaFormSchema = {
       },
     },
     {
+      name: 'icon',
+      required: false,
+      label: 'Heading Icon',
+      selector: {
+        icon: {},
+      },
+    },
+    {
       name: 'preview_count',
       required: false,
       label: 'Preview Count',
@@ -286,6 +294,10 @@ const featuresSchema = (
               {
                 label: 'Hide Entity State',
                 value: 'hide_entity_state',
+              },
+              {
+                label: 'Hide Icon',
+                value: 'hide_icon',
               },
               {
                 label: 'Compact Layout',

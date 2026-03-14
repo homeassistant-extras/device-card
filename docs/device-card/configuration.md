@@ -8,6 +8,7 @@
 | entity_id         | string | Optional\*  | Entity ID – card will automatically determine the device                                                                 |
 | entity            | string | Optional\*  | Alias for entity_id – convenience for [auto-entities](https://github.com/thomasloven/lovelace-auto-entities) integration |
 | title             | string | Device name | Optional custom title for the card                                                                                       |
+| icon              | string | _none_      | Optional icon next to the heading (e.g. `mdi:thermometer`). Overrides entity-derived icon when `entity_id` is also set. |
 | preview_count     | number | All items   | Number of items to preview before showing "Show More" button                                                             |
 | exclude_sections  | list   | _none_      | Sections of entities to exclude. See below.                                                                              |
 | exclude_entities  | list   | _none_      | Entities to remove from the card                                                                                         |
@@ -29,6 +30,7 @@
 | hide_device_model    | flag | Hides the device model information                    |
 | hide_title           | flag | Hides the device card title                           |
 | hide_entity_state    | flag | Hides the entity state display in header              |
+| hide_icon            | flag | Hides the icon next to the heading                    |
 | compact              | flag | Uses compact layout with reduced spacing              |
 | collapse             | flag | Initially displays the card collapsed                 |
 | show_hidden_entities | flag | Show entities marked as hidden in the entity registry |

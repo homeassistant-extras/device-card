@@ -124,3 +124,4 @@ This project is protected under the MIT License. For more details, refer to the 
 - [x] **`Inverse percent colors`**: Invert percent bar colors for entities like disk usage - thanks @misc-brabs
 - [x] **`Jinja template support`**: Certain config properties support Jinja - thanks @LenirSantiago
 - [x] **`Auto-entities support`**: `entity` config property for auto-entities integration - thanks @misc-brabs
+- [x] **`Heading icon`**: Entity icon next to card heading when entity_id/entity is configured - thanks @LennartPl

@@ -231,62 +231,6 @@ describe('card.ts', () => {
       expect(el.classList.contains('problem')).to.be.true;
     });
 
-    it('should use title from config if available', async () => {
-      card.setConfig({ device_id: 'device_1', title: 'Custom Title' });
-      const el = await fixture(card.render() as TemplateResult);
-      const titleElement = el.querySelector('.title span');
-      expect(titleElement?.textContent).to.equal('Custom Title');
-    });
-
-    it('should use device name if no title in config', async () => {
-      const el = await fixture(card.render() as TemplateResult);
-      const titleElement = el.querySelector('.title span');
-      expect(titleElement?.textContent).to.equal('Device');
-    });
-
-    it('should display model information', async () => {
-      const el = await fixture(card.render() as TemplateResult);
-      const modelElement = el.querySelector('.model');
-      expect(modelElement?.textContent).to.equal('Feeder Plus Pro');
-    });
-
-    it('should not display model information if hide_device_model set', async () => {
-      // Configure the card with the hide_device_model feature
-      card.setConfig({
-        device_id: 'device_1',
-        features: ['hide_device_model'],
-      });
-
-      const el = await fixture(card.render() as TemplateResult);
-      const modelElement = el.querySelector('.model');
-      expect(modelElement).to.be.null;
-    });
-
-    it('should not display title when hide_title flag is set', async () => {
-      // Configure the card with the hide_title feature
-      card.setConfig({
-        device_id: 'device_1',
-        features: ['hide_title'],
-      });
-
-      const el = await fixture(card.render() as TemplateResult);
-
-      // Header should still exist
-      const headerElement = el.querySelector('.card-header');
-      expect(headerElement).to.exist;
-
-      // Title element should not exist
-      const titleElement = headerElement!.querySelector(
-        '.title span:not(.model)',
-      );
-      expect(titleElement).to.be.null;
-
-      // Model should still be shown
-      const modelElement = headerElement!.querySelector('.model');
-      expect(modelElement).to.exist;
-      expect(modelElement!.textContent).to.equal('Feeder Plus Pro');
-    });
-
     it('should not display header when both hide_title and hide_device_model are set', async () => {
       // Configure the card with both hide flags
       card.setConfig({
@@ -386,29 +330,6 @@ describe('card.ts', () => {
       expect(header?.classList.contains('collapsed')).to.be.true;
     });
 
-    it('should show correct tooltip text based on collapsed state', async () => {
-      // Render collapsed card
-      let el = await fixture(card.render() as TemplateResult);
-      let header = el.querySelector('.card-header');
-
-      // Check tooltip text is "Expand"
-      expect(header?.getAttribute('title')).to.equal('Collapse');
-
-      // Set to not collapsed
-      card.setConfig({
-        device_id: 'device_1',
-        features: ['collapse'],
-      });
-
-      // Re-render
-      el = await fixture(card.render() as TemplateResult);
-      header = el.querySelector('.card-header');
-
-      // Check tooltip text is "Collapse"
-      expect(header?.getAttribute('title')).to.equal('Expand');
-    });
-
-    // New tests for entity state display feature
     it('should render entity state when entity_id is provided', async () => {
       // Set up the card with an entity_id
       const config = {

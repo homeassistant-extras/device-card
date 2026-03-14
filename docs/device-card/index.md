@@ -50,6 +50,12 @@ Display a specific entity's state prominently in the card header, providing inst
 
 ![Pinned entity state](../assets/pinned-entity-state.png)
 
+### Heading Icon
+
+An icon appears next to the card heading. When `entity_id` or `entity` is configured, the entity's icon is shown (reflecting its current state). You can also set a custom `icon` in the config (e.g. `mdi:thermometer`) to override the entity icon or display an icon when no entity is configured. Use the `hide_icon` feature flag to hide the icon if you prefer a cleaner look.
+
+![Icon](../assets/icon.png)
+
 ### Percent Gauges
 
 Visual percentage indicators for entities with percentage values. Gauges automatically change color based on the value (red for low, yellow for medium, green for high).
