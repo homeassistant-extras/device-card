@@ -1,7 +1,9 @@
 import { matchesDevicePatterns } from '@/common/matches';
 import { pascalCase } from '@/common/pascal-case';
+import { sortDevices } from '@/common/sort-devices';
 import { isInIntegration } from '@delegates/utils/is-integration';
 import type { HomeAssistant } from '@hass/types';
+import type { DeviceSortConfig } from '@type/config';
 
 /**
  * Params for computing integration devices.
@@ -22,6 +24,9 @@ export interface ComputeIntegrationDevicesParams {
    * When exclude_devices is a template string, pass the template result here.
    */
   excludeDevices?: string[];
+
+  /** Optional sort config for device order (by name) */
+  sortDevices?: DeviceSortConfig;
 }
 
 /**
@@ -45,7 +50,12 @@ export async function computeIntegrationDevices(
   hass: HomeAssistant,
   params: ComputeIntegrationDevicesParams,
 ): Promise<IntegrationDevicesResult> {
-  const { integration, includeDevices, excludeDevices = [] } = params;
+  const {
+    integration,
+    includeDevices,
+    excludeDevices = [],
+    sortDevices: sortConfig,
+  } = params;
 
   const results = await hass.callWS<{ entry_id: string }[]>({
     type: 'config_entries/get',
@@ -81,6 +91,6 @@ export async function computeIntegrationDevices(
 
   return {
     name: pascalCase(integration),
-    devices,
+    devices: sortDevices(devices, hass, sortConfig),
   };
 }

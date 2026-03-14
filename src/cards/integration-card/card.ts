@@ -177,6 +177,7 @@ export class IntegrationCard extends LitElement {
       integration: this._config.integration,
       includeDevices: effectiveIncludeDevices,
       excludeDevices: effectiveExcludeDevices,
+      sortDevices: this._config.sort_devices,
     }).then((data) => {
       if (!equal(data, this._integration)) {
         this._integration = data;
@@ -227,8 +228,8 @@ export class IntegrationCard extends LitElement {
 
     // For preview, only show one device
     const devicesToShow = this.isPreview
-      ? this._integration?.devices?.slice(0, 1)
-      : this._integration?.devices;
+      ? this._integration.devices.slice(0, 1)
+      : this._integration.devices;
 
     const title = this._config.title ?? this._integration.name;
 

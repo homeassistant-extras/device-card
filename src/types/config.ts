@@ -67,6 +67,14 @@ export interface SortConfig {
 }
 
 /**
+ * Configuration settings for sorting devices within the integration card.
+ */
+export interface DeviceSortConfig {
+  type: 'name';
+  direction?: 'asc' | 'desc';
+}
+
+/**
  * Represents the states of various sensors in a Z-Wave device
  */
 export interface Device {

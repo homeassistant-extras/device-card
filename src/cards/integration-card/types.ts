@@ -3,7 +3,7 @@
  * @description Type definitions for integration card configuration.
  */
 
-import type { BaseConfig } from '@type/config';
+import type { BaseConfig, DeviceSortConfig } from '@type/config';
 
 /**
  * Configuration settings for the integration card
@@ -29,6 +29,9 @@ export interface Config extends BaseConfig {
 
   /** Hide the integration title */
   hide_integration_title?: boolean;
+
+  /** Sort order for devices (name or device_id) */
+  sort_devices?: DeviceSortConfig;
 }
 
 /**

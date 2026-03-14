@@ -255,6 +255,46 @@ const layoutSchema = (integration?: string): HaFormSchema => {
           },
         },
       },
+      {
+        name: 'sort_devices',
+        label: 'Device Sort',
+        type: 'expandable',
+        flatten: false,
+        icon: 'mdi:sort',
+        schema: [
+          {
+            type: 'grid',
+            name: '',
+            label: '',
+            schema: [
+              {
+                name: 'type',
+                label: 'Sort By',
+                required: true,
+                selector: {
+                  select: {
+                    options: [{ value: 'name', label: 'Name' }],
+                    mode: 'dropdown' as const,
+                  },
+                },
+              },
+              {
+                name: 'direction',
+                label: 'Sort Direction',
+                selector: {
+                  select: {
+                    options: [
+                      { value: 'asc', label: 'Ascending' },
+                      { value: 'desc', label: 'Descending' },
+                    ],
+                    mode: 'dropdown' as const,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
     ],
   };
 };

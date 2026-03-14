@@ -243,6 +243,36 @@ describe('editor.ts', () => {
       });
     });
 
+    it('should delete sort_devices when type is not set', () => {
+      const detail = {
+        value: {
+          integration: 'mqtt',
+          sort_devices: { direction: 'asc' },
+        },
+      };
+
+      const event = new CustomEvent('value-changed', { detail });
+      card['_valueChanged'](event);
+
+      const config = dispatchStub.firstCall.args[0].detail.config;
+      expect(config).to.not.have.property('sort_devices');
+    });
+
+    it('should keep sort_devices when type is set', () => {
+      const detail = {
+        value: {
+          integration: 'mqtt',
+          sort_devices: { type: 'name', direction: 'asc' },
+        },
+      };
+
+      const event = new CustomEvent('value-changed', { detail });
+      card['_valueChanged'](event);
+
+      expect(dispatchStub.firstCall.args[0].detail.config.sort_devices).to.deep
+        .equal({ type: 'name', direction: 'asc' });
+    });
+
     describe('include_devices / exclude_devices (string template vs array)', () => {
       it('should keep non-empty template string', () => {
         const detail = {

@@ -130,7 +130,7 @@ describe('editor-schema.ts', () => {
                   label: 'Device One',
                 },
               ],
-              mode: 'dropdown' as 'dropdown',
+              mode: 'dropdown' as const,
             },
           },
           required: true,
@@ -165,7 +165,7 @@ describe('editor-schema.ts', () => {
               label: 'Preview Count',
               selector: {
                 text: {
-                  type: 'number' as 'number',
+                  type: 'number' as const,
                 },
               },
             },
@@ -249,7 +249,7 @@ describe('editor-schema.ts', () => {
                     number: {
                       min: 1,
                       max: 6,
-                      mode: 'box' as 'box',
+                      mode: 'box' as const,
                     },
                   },
                 },
@@ -285,6 +285,46 @@ describe('editor-schema.ts', () => {
                   },
                 },
               },
+            },
+            {
+              name: 'sort_devices',
+              label: 'Device Sort',
+              type: 'expandable',
+              flatten: false,
+              icon: 'mdi:sort',
+              schema: [
+                {
+                  type: 'grid',
+                  name: '',
+                  label: '',
+                  schema: [
+                    {
+                      name: 'type',
+                      label: 'Sort By',
+                      required: true,
+                      selector: {
+                        select: {
+                          options: [{ value: 'name', label: 'Name' }],
+                          mode: 'dropdown' as const,
+                        },
+                      },
+                    },
+                    {
+                      name: 'direction',
+                      label: 'Sort Direction',
+                      selector: {
+                        select: {
+                          options: [
+                            { value: 'asc', label: 'Ascending' },
+                            { value: 'desc', label: 'Descending' },
+                          ],
+                          mode: 'dropdown' as const,
+                        },
+                      },
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },
@@ -395,7 +435,7 @@ describe('editor-schema.ts', () => {
                         { value: 'name', label: 'Name' },
                         { value: 'state', label: 'State' },
                       ],
-                      mode: 'dropdown' as 'dropdown',
+                      mode: 'dropdown' as const,
                     },
                   },
                 },
@@ -408,7 +448,7 @@ describe('editor-schema.ts', () => {
                         { value: 'asc', label: 'Ascending' },
                         { value: 'desc', label: 'Descending' },
                       ],
-                      mode: 'dropdown' as 'dropdown',
+                      mode: 'dropdown' as const,
                     },
                   },
                 },
@@ -525,7 +565,7 @@ describe('editor-schema.ts', () => {
               label: 'Preview Count',
               selector: {
                 text: {
-                  type: 'number' as 'number',
+                  type: 'number' as const,
                 },
               },
             },
@@ -704,7 +744,7 @@ describe('editor-schema.ts', () => {
                         { value: 'name', label: 'Name' },
                         { value: 'state', label: 'State' },
                       ],
-                      mode: 'dropdown' as 'dropdown',
+                      mode: 'dropdown' as const,
                     },
                   },
                 },
@@ -717,7 +757,7 @@ describe('editor-schema.ts', () => {
                         { value: 'asc', label: 'Ascending' },
                         { value: 'desc', label: 'Descending' },
                       ],
-                      mode: 'dropdown' as 'dropdown',
+                      mode: 'dropdown' as const,
                     },
                   },
                 },

@@ -85,6 +85,9 @@ export class IntegrationCardEditor extends LitElement {
     if (!config.columns || config.columns <= 0) {
       delete config.columns;
     }
+    if (!config.sort_devices?.type) {
+      delete config.sort_devices;
+    }
 
     this._cleanupDevicesField(config, 'include_devices');
     this._cleanupDevicesField(config, 'exclude_devices');

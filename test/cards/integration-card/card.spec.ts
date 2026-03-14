@@ -20,7 +20,7 @@ describe('integration-card.ts', () => {
     computeIntegrationDevicesStub = stub(
       integrationDevicesModule,
       'computeIntegrationDevices',
-    );
+    ).resolves({ name: 'Zwave Js', devices: ['device_1', 'device_2'] });
 
     mockHass = {
       devices: {
@@ -216,22 +216,14 @@ describe('integration-card.ts', () => {
 
   describe('rendering', () => {
     beforeEach(async () => {
-      card['_integration'] = {
-        name: 'Zwave Js',
-        devices: ['device_1', 'device_2'],
-      };
       card.setConfig({ integration: 'zwave_js' });
       card.hass = mockHass;
+      card.connectedCallback();
+      await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
     // Test for hide_integration_title flag
     it('should hide the integration title when hide_integration_title is true', async () => {
-      // Set up integration data
-      card['_integration'] = {
-        name: 'Zwave Js',
-        devices: ['device_1', 'device_2'],
-      };
-
       // Configure card with hide_integration_title flag
       card.setConfig({
         integration: 'zwave_js',
@@ -247,16 +239,12 @@ describe('integration-card.ts', () => {
 
     // Test for Loading message
     it('should render a loading message when integration is not yet loaded', async () => {
-      // Set integration to undefined to simulate loading state
+      computeIntegrationDevicesStub.returns(new Promise(() => {}));
       (card as any)._integration = undefined;
 
-      // Configure card
-      card.setConfig({
-        integration: 'zwave_js',
-      });
-
-      // Set hass property
+      card.setConfig({ integration: 'zwave_js' });
       card.hass = mockHass;
+      card.connectedCallback();
 
       const el = await fixture(card.render() as TemplateResult);
 
@@ -308,6 +296,29 @@ describe('integration-card.ts', () => {
       const container = el.querySelector('.devices-container');
       expect(container).to.exist;
       expect(container?.getAttribute('style')).to.equal('');
+    });
+
+    it('should sort devices by name when sort_devices is configured', async () => {
+      computeIntegrationDevicesStub.resolves({
+        name: 'Zwave Js',
+        devices: ['device_1', 'device_2', 'device_3'],
+      });
+      card.setConfig({
+        integration: 'zwave_js',
+        sort_devices: { type: 'name', direction: 'asc' },
+      });
+      card.hass = mockHass;
+      card.connectedCallback();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      const el = await fixture(card.render() as TemplateResult);
+
+      const deviceCards = el.querySelectorAll('device-card');
+      expect(deviceCards).to.have.lengthOf(3);
+      const configs = Array.from(deviceCards).map(
+        (el) => (el as any).config?.device_id,
+      );
+      expect(configs).to.deep.equal(['device_1', 'device_2', 'device_3']);
     });
 
     it('should ignore invalid columns values', async () => {
