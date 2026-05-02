@@ -1,10 +1,8 @@
-<p align="center">
-    <img src="docs/assets/cards.png" align="center" width="50%">
-</p>
-<p align="center"><h1 align="center">Device Card</h1></p>
-<p align="center">
-	<em>A comprehensive card to display and organize your Home Assistant device entities</em>
-</p>
+# Device Card
+
+_A comprehensive card to display and organize your Home Assistant device entities_
+
+![Device Card](docs/assets/cards.png)
 
 ![Home Assistant](https://img.shields.io/badge/home%20assistant-%2341BDF5.svg?style=for-the-badge&logo=home-assistant&logoColor=white)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
