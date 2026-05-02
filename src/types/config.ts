@@ -51,6 +51,7 @@ export interface BaseConfig {
 export type Features =
   | 'collapse'
   | 'compact'
+  | 'expanded'
   | 'entity_picture'
   | 'hide_device_model'
   | 'hide_icon'

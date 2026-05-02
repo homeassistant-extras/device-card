@@ -369,6 +369,10 @@ describe('editor-schema.ts', () => {
                       value: 'compact',
                     },
                     {
+                      label: 'Expand Sections by Default',
+                      value: 'expanded',
+                    },
+                    {
                       label: 'Start Collapsed',
                       value: 'collapse',
                     },
@@ -668,6 +672,10 @@ describe('editor-schema.ts', () => {
                     {
                       label: 'Compact Layout',
                       value: 'compact',
+                    },
+                    {
+                      label: 'Expand Sections by Default',
+                      value: 'expanded',
                     },
                     {
                       label: 'Start Collapsed',

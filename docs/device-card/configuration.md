@@ -32,6 +32,7 @@
 | hide_entity_state    | flag | Hides the entity state display in header              |
 | hide_icon            | flag | Hides the icon next to the heading                    |
 | compact              | flag | Uses compact layout with reduced spacing              |
+| expanded             | flag | Each section starts expanded (all entities visible; "Show more" not needed until collapsed) |
 | collapse             | flag | Initially displays the card collapsed                 |
 | show_hidden_entities | flag | Show entities marked as hidden in the entity registry |
 

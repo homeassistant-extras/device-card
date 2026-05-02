@@ -344,6 +344,10 @@ const featuresSchema = (
                 value: 'compact',
               },
               {
+                label: 'Expand Sections by Default',
+                value: 'expanded',
+              },
+              {
                 label: 'Start Collapsed',
                 value: 'collapse',
               },

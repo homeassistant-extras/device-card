@@ -71,6 +71,7 @@ describe('show-more.ts', () => {
         'Test Section',
         false,
         mockUpdater,
+        false,
       );
       const el = (await fixture(result as TemplateResult)) as HTMLElement;
 
@@ -93,6 +94,7 @@ describe('show-more.ts', () => {
         false,
         1,
         mockUpdater,
+        false,
       );
       const el = await fixture(result as TemplateResult);
 
@@ -103,6 +105,19 @@ describe('show-more.ts', () => {
       // Verify state was toggled
       expect(mockExpansions.expandedSections['Test Section']).to.be.true;
     });
+
+    it('should collapse on first click when defaultSectionExpanded is true and key unset', async () => {
+      const result = chevron(
+        mockExpansions,
+        'Test Section',
+        true,
+        mockUpdater,
+        true,
+      );
+      const el = (await fixture(result as TemplateResult)) as HTMLElement;
+      el.click();
+      expect(mockExpansions.expandedSections['Test Section']).to.be.false;
+    });
   });
 
   describe('chevron component', () => {
@@ -112,6 +127,7 @@ describe('show-more.ts', () => {
         'Test Section',
         false,
         mockUpdater,
+        false,
       );
       const el = await fixture(result as TemplateResult);
 
@@ -121,7 +137,13 @@ describe('show-more.ts', () => {
     });
 
     it('should render an up chevron when section is expanded', async () => {
-      const result = chevron(mockExpansions, 'Test Section', true, mockUpdater);
+      const result = chevron(
+        mockExpansions,
+        'Test Section',
+        true,
+        mockUpdater,
+        false,
+      );
       const el = await fixture(result as TemplateResult);
 
       const icon = el.querySelector('ha-icon');
@@ -139,6 +161,7 @@ describe('show-more.ts', () => {
         true,
         1,
         mockUpdater,
+        false,
       );
       const el = await fixture(result as TemplateResult);
 
@@ -154,6 +177,7 @@ describe('show-more.ts', () => {
         false,
         1,
         mockUpdater,
+        false,
       );
       const el = await fixture(result as TemplateResult);
 
@@ -170,6 +194,7 @@ describe('show-more.ts', () => {
         false,
         2,
         mockUpdater,
+        false,
       );
       const el = await fixture(result as TemplateResult);
 

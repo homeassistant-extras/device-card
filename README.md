@@ -1,10 +1,8 @@
-<p align="center">
-    <img src="docs/assets/cards.png" align="center" width="50%">
-</p>
-<p align="center"><h1 align="center">Device Card</h1></p>
-<p align="center">
-	<em>A comprehensive card to display and organize your Home Assistant device entities</em>
-</p>
+# Device Card
+
+_A comprehensive card to display and organize your Home Assistant device entities_
+
+![Device Card](docs/assets/cards.png)
 
 ![Home Assistant](https://img.shields.io/badge/home%20assistant-%2341BDF5.svg?style=for-the-badge&logo=home-assistant&logoColor=white)
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge)](https://github.com/hacs/integration)
@@ -113,7 +111,7 @@ This project is protected under the MIT License. For more details, refer to the 
 - [x] **`Wildcard/regex filtering`**: Exclude devices/entities by wildcard or regex patterns - thanks @andrewjswan
 - [x] **`Device inclusion`**: Include only specific devices option - thanks @andrewjswan
 - [x] **`Entity & device sorting`**: Add ability to sort entities - thanks @andrewjswan, @rudi159
-- [x] **`Card expansion`**: Ability to expand/collapse the device card - thanks @fgamache1
+- [x] **`Card expansion`**: Ability to expand/collapse the device card - thanks @fgamache1, @joshua-beck-0908
 - [x] **`Pinned entity state`**: Add pinned state entity display - thanks @fgamache1
 - [x] **`Integration title control`**: Modify/hide integration card title - thanks @andrewjswan
 - [x] **`Hide title feature`**: Device card can remove title
