@@ -111,7 +111,7 @@ This project is protected under the MIT License. For more details, refer to the 
 - [x] **`Wildcard/regex filtering`**: Exclude devices/entities by wildcard or regex patterns - thanks @andrewjswan
 - [x] **`Device inclusion`**: Include only specific devices option - thanks @andrewjswan
 - [x] **`Entity & device sorting`**: Add ability to sort entities - thanks @andrewjswan, @rudi159
-- [x] **`Card expansion`**: Ability to expand/collapse the device card - thanks @fgamache1
+- [x] **`Card expansion`**: Ability to expand/collapse the device card - thanks @fgamache1, @joshua-beck-0908
 - [x] **`Pinned entity state`**: Add pinned state entity display - thanks @fgamache1
 - [x] **`Integration title control`**: Modify/hide integration card title - thanks @andrewjswan
 - [x] **`Hide title feature`**: Device card can remove title

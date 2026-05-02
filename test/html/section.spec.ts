@@ -251,6 +251,25 @@ describe('section.ts', () => {
       expect(rowStub.callCount).to.equal(3);
     });
 
+    it('should start sections expanded when expanded feature is on and section state is unset', async () => {
+      hasFeatureStub.callsFake((_c, f) => f === 'expanded');
+      mockConfig.preview_count = 1;
+
+      await renderSection(
+        mockExpansions,
+        mockHass,
+        mockConfig,
+        'Test Section',
+        mockEntities,
+        mockUpdater,
+      );
+
+      expect(rowStub.callCount).to.equal(3);
+      expect(chevronStub.calledOnce).to.be.true;
+      expect(chevronStub.firstCall.args[2]).to.be.true;
+      expect(chevronStub.firstCall.args[4]).to.be.true; // defaultSectionExpanded
+    });
+
     it('should call chevron component when section needs expansion', async () => {
       // Set preview count to 1 (less than our 3 entities)
       mockConfig.preview_count = 1;
@@ -270,6 +289,7 @@ describe('section.ts', () => {
       expect(chevronStub.firstCall.args[0]).to.equal(mockExpansions);
       expect(chevronStub.firstCall.args[1]).to.equal('Test Section');
       expect(chevronStub.firstCall.args[2]).to.be.false; // isExpanded = false
+      expect(chevronStub.firstCall.args[4]).to.be.false; // defaultSectionExpanded
     });
 
     it('should not call chevron component when no expansion is needed', async () => {
@@ -310,6 +330,7 @@ describe('section.ts', () => {
       expect(showMoreStub.firstCall.args[2]).to.equal(mockEntities);
       expect(showMoreStub.firstCall.args[3]).to.be.false; // isExpanded = false
       expect(showMoreStub.firstCall.args[4]).to.equal(1); // size = 1
+      expect(showMoreStub.firstCall.args[6]).to.be.false; // defaultSectionExpanded
     });
 
     it('should not call showMore component when no expansion is needed', async () => {

@@ -45,8 +45,10 @@ export const renderSection = async (
   // Check if this section needs collapsible functionality
   const needsExpansion = entities.length > size;
 
-  // Get the current expanded state
-  const isExpanded = expansions.expandedSections[title] || false;
+  // Default for unset section keys must match toggleSection (show-more.ts)
+  const defaultSectionExpanded = hasFeature(config, 'expanded');
+  const isExpanded =
+    expansions.expandedSections[title] ?? defaultSectionExpanded;
 
   // Sort and filter entities based on expanded state
   const sortedEntities = sortEntities(entities, config.sort);
@@ -69,7 +71,13 @@ export const renderSection = async (
     <div class="section-header">
       <div class="section-title">${title}</div>
       ${needsExpansion
-        ? chevron(expansions, title, isExpanded, updateExpansions)
+        ? chevron(
+            expansions,
+            title,
+            isExpanded,
+            updateExpansions,
+            defaultSectionExpanded,
+          )
         : nothing}
     </div>
     ${rowResults}
@@ -81,6 +89,7 @@ export const renderSection = async (
           isExpanded,
           size,
           updateExpansions,
+          defaultSectionExpanded,
         )
       : nothing}
   </div>`;
