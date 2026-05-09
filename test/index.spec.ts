@@ -6,6 +6,7 @@ describe('index.ts', () => {
   let customElementsStub: SinonStub;
   let customCardsStub: Array<Object> | undefined;
   let consoleInfoStub: sinon.SinonStub;
+  let loadCardHelpersStub: sinon.SinonStub | undefined;
 
   beforeEach(() => {
     // Stub customElements.define to prevent actual registration
@@ -29,6 +30,17 @@ describe('index.ts', () => {
     consoleInfoStub.restore();
     customCardsStub = undefined;
     delete require.cache[require.resolve('@/index.ts')];
+  });
+
+  it('should call loadCardHelpers when available (preload)', async () => {
+    loadCardHelpersStub = stub().resolves({
+      createRowElement: stub().returns(document.createElement('div')),
+    });
+    globalThis.loadCardHelpers = loadCardHelpersStub as any;
+
+    require('@/index.ts');
+
+    expect(loadCardHelpersStub.calledOnce).to.be.true;
   });
 
   it('should register all custom elements', () => {

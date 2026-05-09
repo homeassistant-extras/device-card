@@ -1,44 +1,25 @@
+import { getPoatCardHelpers } from '@/helpers/card-helpers';
 import type { HomeAssistant } from '@hass/types';
 import type { EntityInformation } from '@type/config';
-import { html } from 'lit';
-
-// Extend the global object to include loadCardHelpers (Home Assistant provides this)
-declare global {
-  // eslint-disable-next-line no-var
-  var loadCardHelpers: () => Promise<{
-    createRowElement: (config: LovelaceRowConfig) => LovelaceRowElement;
-  }>;
-}
-
-// Lovelace row configuration interface
-interface LovelaceRowConfig {
-  entity: string;
-  name?: string;
-  [key: string]: any;
-}
-
-// Interface for the row element returned by createRowElement
-interface LovelaceRowElement extends HTMLElement {
-  hass?: any;
-}
+import { nothing } from 'lit';
 
 /**
- * Renders a row element using Home Assistant's createRowElement
- * @param {HomeAssistant} hass - The Home Assistant instance
- * @param {EntityInformation} entity - The entity to render
- * @param {string | undefined} className - Optional class name for styling
- * @returns {TemplateResult} A lit-html template for the row element
+ * Renders a row element using Home Assistant's createRowElement (from card helpers).
  */
-export const stateContent = async (
+export const stateContent = (
   hass: HomeAssistant,
   entity: EntityInformation,
   className: string | undefined,
 ) => {
-  // Load the card helpers
-  const helpers = await globalThis.loadCardHelpers();
+  const helpers = getPoatCardHelpers();
+  if (!helpers) {
+    // Card is responsible for gating rendering until helpers are resolved.
+    // If this happens, it indicates a misuse (e.g., calling stateContent too early).
+    return nothing;
+  }
 
   // Create the row configuration - HA's row handles actions using our config.
-  const config: LovelaceRowConfig = {
+  const config = {
     entity: entity.entity_id,
     // our name removes the device name from the friendly name
     name: entity.name,
@@ -57,5 +38,5 @@ export const stateContent = async (
     element.className = className;
   }
 
-  return html`${element}`;
+  return element;
 };

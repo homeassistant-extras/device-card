@@ -6,34 +6,29 @@
  * expandable/collapsible behavior.
  */
 
+import type { OrderedSection } from '@/helpers/device-section';
+import '@cards/components/row/row';
 import { sortEntities } from '@common/sort';
 import { hasFeature } from '@config/feature';
-import type { Config, Expansions } from '@device/types';
+import type { Config } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
-import type { EntityInformation } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';
-import { row } from './row';
 import { chevron, showMore } from './show-more';
 
 /**
- * Renders a section of entities with collapsible functionality
- *
- * @param {Expansions} expansions - The expansion state of the card
- * @param {HomeAssistant} hass - The Home Assistant instance
- * @param {Config} config - The card configuration
- * @param {string} title - The title of the section
- * @param {EntityInformation[]} entities - The entities to display in this section
- * @param {function} updateExpansions - Function to update the expansion state
- * @returns {Promise<TemplateResult|typeof nothing>} A lit-html template for the section or nothing if empty
+ * Renders a section of entities with collapsible functionality.
+ * Section open/closed state is owned by the caller ({@link DeviceCardSection});
+ * entity attribute expansion is owned by each {@link DeviceCardRow}.
  */
-export const renderSection = async (
-  expansions: Expansions,
+export const renderSection = (
   hass: HomeAssistant,
   config: Config,
-  title: string,
-  entities: EntityInformation[],
-  updateExpansions: (expansion: Expansions) => void,
-): Promise<TemplateResult | typeof nothing> => {
+  section: OrderedSection,
+  sectionExpanded: boolean,
+  onToggleSection: () => void,
+): TemplateResult | typeof nothing => {
+  const { name, entities } = section;
+
   // Don't render anything if there are no entities to display
   if (!entities || entities.length === 0) {
     return nothing;
@@ -45,11 +40,7 @@ export const renderSection = async (
   // Check if this section needs collapsible functionality
   const needsExpansion = entities.length > size;
 
-  // Default for unset section keys must match toggleSection (show-more.ts)
-  const defaultSectionExpanded = hasFeature(config, 'expanded');
-  const isExpanded =
-    expansions.expandedSections[title] ?? defaultSectionExpanded;
-
+  const isExpanded = sectionExpanded;
   // Sort and filter entities based on expanded state
   const sortedEntities = sortEntities(entities, config.sort);
   const displayEntities =
@@ -61,36 +52,23 @@ export const renderSection = async (
   const isCompact = hasFeature(config, 'compact');
   const sectionClass = `section ${isExpanded ? 'expanded' : ''} ${needsExpansion ? '' : 'few-items'} ${isCompact ? 'compact' : ''}`;
 
-  // Render all rows asynchronously
-  const rowPromises = displayEntities.map((entity) =>
-    row(hass, entity, expansions, config),
+  const rowTemplates = displayEntities.map(
+    (entity) =>
+      html`<device-card-row
+        .hass=${hass}
+        .entity=${entity}
+        .config=${config}
+      ></device-card-row>`,
   );
-  const rowResults = await Promise.all(rowPromises);
 
   return html`<div class="${sectionClass}">
     <div class="section-header">
-      <div class="section-title">${title}</div>
-      ${needsExpansion
-        ? chevron(
-            expansions,
-            title,
-            isExpanded,
-            updateExpansions,
-            defaultSectionExpanded,
-          )
-        : nothing}
+      <div class="section-title">${name}</div>
+      ${needsExpansion ? chevron(isExpanded, onToggleSection) : nothing}
     </div>
-    ${rowResults}
+    ${rowTemplates}
     ${needsExpansion && !isCompact
-      ? showMore(
-          expansions,
-          title,
-          entities,
-          isExpanded,
-          size,
-          updateExpansions,
-          defaultSectionExpanded,
-        )
+      ? showMore(entities, isExpanded, size, onToggleSection)
       : nothing}
   </div>`;
 };

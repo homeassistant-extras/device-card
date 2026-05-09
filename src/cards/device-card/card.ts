@@ -1,19 +1,18 @@
+import { getOrderedSections } from '@/helpers/device-section';
+import '@cards/components/section/section';
 import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
 import { hasFeature } from '@config/feature';
-import { handleExpandEvent } from '@delegates/handle-expand-event';
 import { getDevice } from '@delegates/utils/get-device';
 import { hasProblem } from '@delegates/utils/has-problem';
 import { styles } from '@device/styles';
 import type { HomeAssistant } from '@hass/types';
 import { deviceCardHeader } from '@html/device-card-header';
-import { renderSections } from '@html/device-section';
 import { picture } from '@html/picture';
 import { pinnedEntity } from '@html/pinned-entity';
-import { Task } from '@lit/task';
 import type { Device } from '@type/config';
 import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
-import type { Config, Expansions } from './types';
+import type { Config } from './types';
 const equal = require('fast-deep-equal');
 
 export class DeviceCard extends HassUpdateMixin(LitElement) {
@@ -36,39 +35,10 @@ export class DeviceCard extends HassUpdateMixin(LitElement) {
   private _hass!: HomeAssistant;
 
   /**
-   * Track the card's expanded state
-   */
-  @state()
-  public _expansions: Expansions = {
-    expandedSections: {},
-    expandedEntities: {},
-  };
-
-  /**
    * Internal collapsed state, separate from the config
    */
   @state()
   private collapse = false;
-
-  /**
-   * Task that renders sections asynchronously
-   */
-  _renderSectionsTask = new Task(this, {
-    task: async ([device, config, hass, expansions]) => {
-      if (!device || !config || !hass) {
-        return html``;
-      }
-      const sections = await renderSections(
-        expansions,
-        hass,
-        config,
-        device,
-        (e) => (this._expansions = e),
-      );
-      return html`${sections}`;
-    },
-    args: () => [this._device, this._config, this._hass, this._expansions],
-  });
 
   /**
    * Returns the component's styles
@@ -152,25 +122,18 @@ export class DeviceCard extends HassUpdateMixin(LitElement) {
     });
 
     return html`
-      <ha-card
-        class="${problem ? 'problem' : ''}"
-        @ll-custom=${(ev: CustomEvent) =>
-          handleExpandEvent(
-            ev,
-            this._expansions,
-            (e) => (this._expansions = e),
-          )}
-      >
+      <ha-card class="${problem ? 'problem' : ''}">
         ${headerContent}
         ${this.collapse
           ? nothing
-          : this._renderSectionsTask.render({
-              initial: () => nothing,
-              pending: () => nothing,
-              complete: (sections) => sections,
-              error: (error) =>
-                html`<div>Error rendering sections: ${error}</div>`,
-            })}
+          : getOrderedSections(this._hass, this._config, this._device).map(
+              (s) =>
+                html`<device-card-section
+                  .hass=${this._hass}
+                  .config=${this._config}
+                  .section=${s}
+                ></device-card-section>`,
+            )}
       </ha-card>
     `;
   }

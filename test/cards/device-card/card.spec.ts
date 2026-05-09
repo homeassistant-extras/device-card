@@ -1,15 +1,11 @@
-// test/cards/device-card/card.spec.ts (Updated with entity state display tests)
-
+import * as deviceSectionHelpers from '@/helpers/device-section';
 import * as deviceUtils from '@delegates/utils/get-device';
 import * as problemUtils from '@delegates/utils/has-problem';
 import { DeviceCard } from '@device/card';
 import { styles } from '@device/styles';
-import type { Expansions } from '@device/types';
 import type { HomeAssistant } from '@hass/types';
-import * as sectionRenderer from '@html/device-section';
 import * as pictureModule from '@html/picture';
 import * as pinnedEntityModule from '@html/pinned-entity';
-import { Task } from '@lit/task';
 import { fixture } from '@open-wc/testing-helpers';
 import type { Device, Features } from '@type/config';
 import { expect } from 'chai';
@@ -22,24 +18,14 @@ describe('card.ts', () => {
   let mockUnit: Device;
   let hasProblemStub: sinon.SinonStub;
   let getDeviceStub: sinon.SinonStub;
-  let renderSectionsStub: sinon.SinonStub;
+  let getOrderedSectionsStub: sinon.SinonStub;
   let pinnedEntityStub: sinon.SinonStub;
-  let taskRenderStub: sinon.SinonStub;
 
   beforeEach(() => {
     hasProblemStub = stub(problemUtils, 'hasProblem');
     getDeviceStub = stub(deviceUtils, 'getDevice');
-    renderSectionsStub = stub(sectionRenderer, 'renderSections');
+    getOrderedSectionsStub = stub(deviceSectionHelpers, 'getOrderedSections');
     pinnedEntityStub = stub(pinnedEntityModule, 'pinnedEntity');
-    taskRenderStub = stub(Task.prototype, 'render');
-
-    // Make renderSections return a Promise since it's now async
-    renderSectionsStub.resolves([
-      html`<div class="section">Mock Section</div>`,
-    ]);
-
-    // Stub the Task render to return our mock sections
-    taskRenderStub.returns(html`<div class="section">Mock Section</div>`);
 
     card = new DeviceCard();
     mockHass = {
@@ -119,7 +105,13 @@ describe('card.ts', () => {
     // Configure stubs
     hasProblemStub.returns(false);
     getDeviceStub.returns(mockUnit);
-    renderSectionsStub.returns(html`<div class="section">Mock Section</div>`);
+    getOrderedSectionsStub.returns([
+      {
+        key: 'controls',
+        name: 'Controls',
+        entities: mockUnit.controls,
+      },
+    ]);
     pinnedEntityStub.returns(
       html`<div class="pinned-entity-state">75.5%</div>`,
     );
@@ -131,9 +123,8 @@ describe('card.ts', () => {
   afterEach(() => {
     hasProblemStub.restore();
     getDeviceStub.restore();
-    renderSectionsStub.restore();
+    getOrderedSectionsStub.restore();
     pinnedEntityStub.restore();
-    taskRenderStub.restore();
   });
 
   describe('setConfig', () => {
@@ -220,9 +211,7 @@ describe('card.ts', () => {
       const header = el.querySelector('.card-header');
       expect(header).to.exist;
       expect(header?.classList.contains('collapsed')).to.be.false;
-
-      // The Task render should be called
-      expect(taskRenderStub.calledOnce).to.be.true;
+      expect(el.querySelector('device-card-section')).to.exist;
     });
 
     it('should add problem class when problem exists', async () => {
@@ -244,18 +233,14 @@ describe('card.ts', () => {
       // Header should not exist at all
       const headerElement = el.querySelector('.card-header');
       expect(headerElement).to.be.null;
-
-      // The Task render should still be called
-      expect(taskRenderStub.calledOnce).to.be.true;
+      expect(el.querySelector('device-card-section')).to.exist;
     });
 
-    it('should call renderSections', async () => {
-      // Render the card to trigger the Task
+    it('should call getOrderedSections', async () => {
       const result = card.render();
       await fixture(result as TemplateResult);
 
-      // The Task render should be called
-      expect(taskRenderStub.calledOnce).to.be.true;
+      expect(getOrderedSectionsStub.calledOnce).to.be.true;
     });
 
     it('should render device when entity_picture feature is enabled', () => {
@@ -283,37 +268,6 @@ describe('card.ts', () => {
       deviceStub.restore();
     });
 
-    it('should update expansions when renderSection is called', async () => {
-      // Render card to trigger the Task
-      const result = card.render();
-      await fixture(result as TemplateResult);
-
-      // The Task render should be called
-      expect(taskRenderStub.calledOnce).to.be.true;
-
-      // Store original expansions object reference
-      const originalExpansions = card['_expansions'];
-
-      // Create a new expansions object
-      const newExpansions: Expansions = {
-        expandedSections: { 'Test Section': true },
-        expandedEntities: { 'entity.test': true },
-      };
-
-      // Since we're using Task stubs, we can't test the actual updateFn callback
-      // Instead, let's test that the expansions can be updated manually
-      card['_expansions'] = newExpansions;
-
-      // Verify that card's _expansions property was updated
-      expect(card['_expansions']).to.deep.equal(newExpansions);
-
-      // Verify that it's not the same object instance (reactive update)
-      expect(card['_expansions']).to.not.equal(originalExpansions);
-
-      // Restore original stub
-      renderSectionsStub.restore();
-    });
-
     it('should not render sections when collapsed', async () => {
       card.setConfig({
         device_id: 'device_1',
@@ -324,8 +278,8 @@ describe('card.ts', () => {
       const el = await fixture(card.render() as TemplateResult);
       const header = el.querySelector('.card-header');
 
-      // Check that renderSections is not called
-      expect(renderSectionsStub.called).to.be.false;
+      // Check that getOrderedSections is not called
+      expect(getOrderedSectionsStub.called).to.be.false;
       expect(header).to.exist;
       expect(header?.classList.contains('collapsed')).to.be.true;
     });
@@ -370,52 +324,6 @@ describe('card.ts', () => {
       const stateElement = element.querySelector('.pinned-entity-state');
       expect(stateElement).to.exist;
       expect(stateElement?.textContent).to.equal('75.5%');
-    });
-
-    it('should toggle entity expansion on ll-custom expand event', async () => {
-      const result = card.render();
-      const el = await fixture(result as TemplateResult);
-
-      const entityId = 'sensor.test_entity';
-      card['_expansions'] = {
-        expandedSections: {},
-        expandedEntities: { [entityId]: false },
-      };
-
-      const ev = document.createEvent('CustomEvent');
-      ev.initCustomEvent(
-        'll-custom',
-        true,
-        false,
-        { device_card: { expand: true, entity_id: entityId } },
-      );
-
-      el.dispatchEvent(ev);
-
-      expect(card['_expansions'].expandedEntities[entityId]).to.be.true;
-    });
-
-    it('should not update when device_card.expand is missing', async () => {
-      const result = card.render();
-      const el = await fixture(result as TemplateResult);
-
-      const entityId = 'sensor.test_entity';
-      card['_expansions'] = {
-        expandedSections: {},
-        expandedEntities: { [entityId]: false },
-      };
-
-      const ev = document.createEvent('CustomEvent');
-      ev.initCustomEvent(
-        'll-custom',
-        true,
-        false,
-        { device_card: { entity_id: entityId } },
-      );
-
-      el.dispatchEvent(ev);
-
-      expect(card['_expansions'].expandedEntities[entityId]).to.be.false;
     });
 
     it('should hide entity state when hide_entity_state feature is enabled', async () => {

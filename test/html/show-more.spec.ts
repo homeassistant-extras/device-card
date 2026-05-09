@@ -1,4 +1,3 @@
-import type { Expansions } from '@device/types';
 import { chevron, showMore } from '@html/show-more';
 import { fixture } from '@open-wc/testing-helpers';
 import type { EntityInformation } from '@type/config';
@@ -6,19 +5,9 @@ import { expect } from 'chai';
 import { type TemplateResult } from 'lit';
 
 describe('show-more.ts', () => {
-  // Common test variables
-  let mockExpansions: Expansions;
   let mockEntities: EntityInformation[];
-  let mockUpdater: (expansion: Expansions) => void;
 
   beforeEach(() => {
-    // Create a mock DeviceCard element
-    mockExpansions = {
-      expandedSections: {},
-      expandedEntities: {},
-    };
-
-    // Create mock entities for testing
     mockEntities = [
       {
         entity_id: 'sensor.test_1',
@@ -54,81 +43,42 @@ describe('show-more.ts', () => {
         isProblemEntity: false,
       } as EntityInformation,
     ];
-
-    mockUpdater = (expansion: Expansions) => {
-      mockExpansions = expansion;
-    };
   });
 
-  describe('toggleSection functionality', () => {
-    it('should toggle section state when interacting with chevron', async () => {
-      // Initial state
-      mockExpansions.expandedSections = { 'Test Section': false };
+  describe('toggle callbacks', () => {
+    it('should invoke onToggleSection when interacting with chevron', async () => {
+      let toggles = 0;
+      const onToggle = () => {
+        toggles += 1;
+      };
 
-      // Render chevron
-      const result = chevron(
-        mockExpansions,
-        'Test Section',
-        false,
-        mockUpdater,
-        false,
-      );
-      const el = (await fixture(result as TemplateResult)) as HTMLElement;
-
-      // Simulate click on chevron
-      el.click();
-
-      // Verify state was toggled
-      expect(mockExpansions.expandedSections['Test Section']).to.be.true;
-    });
-
-    it('should toggle section state when interacting with show more', async () => {
-      // Initial state
-      mockExpansions.expandedSections = { 'Test Section': false };
-
-      // Render show more
-      const result = showMore(
-        mockExpansions,
-        'Test Section',
-        mockEntities,
-        false,
-        1,
-        mockUpdater,
-        false,
-      );
+      const result = chevron(false, onToggle);
       const el = await fixture(result as TemplateResult);
 
-      // Find and click the show more element
+      (el as HTMLElement).click();
+
+      expect(toggles).to.equal(1);
+    });
+
+    it('should invoke onToggleSection when interacting with show more', async () => {
+      let toggles = 0;
+      const onToggle = () => {
+        toggles += 1;
+      };
+
+      const result = showMore(mockEntities, false, 1, onToggle);
+      const el = await fixture(result as TemplateResult);
+
       const showMoreEl = el.querySelector('.show-more') as HTMLElement;
       showMoreEl.click();
 
-      // Verify state was toggled
-      expect(mockExpansions.expandedSections['Test Section']).to.be.true;
-    });
-
-    it('should collapse on first click when defaultSectionExpanded is true and key unset', async () => {
-      const result = chevron(
-        mockExpansions,
-        'Test Section',
-        true,
-        mockUpdater,
-        true,
-      );
-      const el = (await fixture(result as TemplateResult)) as HTMLElement;
-      el.click();
-      expect(mockExpansions.expandedSections['Test Section']).to.be.false;
+      expect(toggles).to.equal(1);
     });
   });
 
   describe('chevron component', () => {
     it('should render a down chevron when section is collapsed', async () => {
-      const result = chevron(
-        mockExpansions,
-        'Test Section',
-        false,
-        mockUpdater,
-        false,
-      );
+      const result = chevron(false, () => {});
       const el = await fixture(result as TemplateResult);
 
       const icon = el.querySelector('ha-icon');
@@ -137,13 +87,7 @@ describe('show-more.ts', () => {
     });
 
     it('should render an up chevron when section is expanded', async () => {
-      const result = chevron(
-        mockExpansions,
-        'Test Section',
-        true,
-        mockUpdater,
-        false,
-      );
+      const result = chevron(true, () => {});
       const el = await fixture(result as TemplateResult);
 
       const icon = el.querySelector('ha-icon');
@@ -154,15 +98,7 @@ describe('show-more.ts', () => {
 
   describe('showMore component', () => {
     it('should not render show more text when section is expanded', async () => {
-      const result = showMore(
-        mockExpansions,
-        'Test Section',
-        mockEntities,
-        true,
-        1,
-        mockUpdater,
-        false,
-      );
+      const result = showMore(mockEntities, true, 1, () => {});
       const el = await fixture(result as TemplateResult);
 
       const showMoreText = el.querySelector('.show-more');
@@ -170,15 +106,7 @@ describe('show-more.ts', () => {
     });
 
     it('should show correct count of hidden entities when collapsed', async () => {
-      const result = showMore(
-        mockExpansions,
-        'Test Section',
-        mockEntities,
-        false,
-        1,
-        mockUpdater,
-        false,
-      );
+      const result = showMore(mockEntities, false, 1, () => {});
       const el = await fixture(result as TemplateResult);
 
       const showMoreText = el.querySelector('.show-more');
@@ -186,16 +114,7 @@ describe('show-more.ts', () => {
     });
 
     it('should display correct message with different number of hidden entities', async () => {
-      // Test with showing 2 of 3 entities (1 hidden)
-      const result = showMore(
-        mockExpansions,
-        'Test Section',
-        mockEntities,
-        false,
-        2,
-        mockUpdater,
-        false,
-      );
+      const result = showMore(mockEntities, false, 2, () => {});
       const el = await fixture(result as TemplateResult);
 
       const showMoreText = el.querySelector('.show-more');

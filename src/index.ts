@@ -1,3 +1,4 @@
+import { resolvePoatCardHelpers } from '@/helpers/card-helpers';
 import { DeviceCard } from '@device/card';
 import { DeviceCardEditor } from '@device/editor';
 import { IntegrationCard } from '@integration/card';
@@ -14,6 +15,9 @@ declare global {
     documentationURL: string;
   }>;
 }
+
+// Kick off HA card helper resolution once when the bundle loads
+resolvePoatCardHelpers(globalThis.loadCardHelpers);
 
 // Register the custom elements with the browser
 customElements.define('device-card', DeviceCard);
