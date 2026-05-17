@@ -60,3 +60,9 @@ integration: zwave_js
 - [Installation](installation.md) – HACS and manual setup
 - [Build & Code Quality](BUILD.md) – CI/CD and SonarCloud badges
 - [Troubleshooting](TROUBLESHOOTING.md) – Common issues
+
+---
+
+<p align="center">
+    <em>Built and maintained by <a href="https://curiouscat.consulting/projects/ha-device-card">Curious Cat Consulting</a></em>
+</p>

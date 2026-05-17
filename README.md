@@ -90,6 +90,7 @@ This project is protected under the MIT License. For more details, refer to the 
 - Built using [LitElement](https://lit.dev/)
 - Inspired by Home Assistant's chip design
 - Thanks to all contributors!
+- Maintained by [Patrick Masters](https://github.com/warmfire540) / [Curious Cat Consulting](https://curiouscat.consulting/projects/ha-device-card)
 
 [![contributors](https://contrib.rocks/image?repo=homeassistant-extras/device-card)](https://github.com/homeassistant-extras/device-card/graphs/contributors)
 
