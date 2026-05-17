@@ -42,16 +42,16 @@ describe('attributes.ts', () => {
       return { key, value };
     });
 
-    expect(attributeValues[0]?.key).to.equal('entity_id');
-    expect(attributeValues[0]?.value).to.equal('sensor.test_temperature');
-    expect(attributeValues[1]?.key).to.equal('temperature');
-    expect(attributeValues[1]?.value).to.equal('22');
-    expect(attributeValues[2]?.key).to.equal('humidity');
-    expect(attributeValues[2]?.value).to.equal('45');
-    expect(attributeValues[3]?.key).to.equal('unit_of_measurement');
-    expect(attributeValues[3]?.value).to.equal('°C');
-    expect(attributeValues[4]?.key).to.equal('device_class');
-    expect(attributeValues[4]?.value).to.equal('temperature');
+    expect(attributeValues[0]?.key).to.equal('temperature');
+    expect(attributeValues[0]?.value).to.equal('22');
+    expect(attributeValues[1]?.key).to.equal('humidity');
+    expect(attributeValues[1]?.value).to.equal('45');
+    expect(attributeValues[2]?.key).to.equal('unit_of_measurement');
+    expect(attributeValues[2]?.value).to.equal('°C');
+    expect(attributeValues[3]?.key).to.equal('device_class');
+    expect(attributeValues[3]?.value).to.equal('temperature');
+    expect(attributeValues[4]?.key).to.equal('entity_id');
+    expect(attributeValues[4]?.value).to.equal('sensor.test_temperature');
   });
 
   it('should filter out excluded attributes', async () => {
@@ -74,14 +74,14 @@ describe('attributes.ts', () => {
     const attributeRows = el.querySelectorAll('.attribute-row');
     expect(attributeRows.length).to.equal(2);
 
-    const key = attributeRows[0]
+    const key = attributeRows[1]
       ?.querySelector('.attribute-key')
       ?.textContent?.replace(':', '');
     const value =
-      attributeRows[0]?.querySelector('.attribute-value')?.textContent;
+      attributeRows[1]?.querySelector('.attribute-value')?.textContent;
 
     expect(key).to.equal('entity_id');
-    expect(value).to.equal('sensor.attribute_value');
+    expect(value).to.equal('sensor.temperature');
   });
 
   it('should render entity ID when all attributes are filtered', async () => {
@@ -121,9 +121,9 @@ describe('attributes.ts', () => {
     expect(attributeRows.length).to.equal(3);
 
     const firstValue =
-      attributeRows[1]?.querySelector('.attribute-value')?.textContent;
+      attributeRows[0]?.querySelector('.attribute-value')?.textContent;
     const secondValue =
-      attributeRows[2]?.querySelector('.attribute-value')?.textContent;
+      attributeRows[1]?.querySelector('.attribute-value')?.textContent;
 
     expect(firstValue).to.equal(JSON.stringify({ min: 0, max: 100, step: 5 }));
     expect(secondValue).to.equal(
@@ -160,11 +160,11 @@ describe('attributes.ts', () => {
       (row) => row.querySelector('.attribute-value')?.textContent,
     );
 
-    expect(values[0]).to.equal('sensor.types');
-    expect(values[1]).to.equal('true');
-    expect(values[2]).to.equal('42');
-    expect(values[3]).to.equal('test string');
-    expect(values[4]).to.equal('null');
-    expect(values[5]).to.equal('[1,2,3]');
+    expect(values[0]).to.equal('true');
+    expect(values[1]).to.equal('42');
+    expect(values[2]).to.equal('test string');
+    expect(values[3]).to.equal('null');
+    expect(values[4]).to.equal('[1,2,3]');
+    expect(values[5]).to.equal('sensor.types');
   });
 });

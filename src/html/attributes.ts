@@ -20,17 +20,15 @@ const EXCLUDE_LIST = [
  */
 export const attributes = (entity: EntityState): TemplateResult => {
   // Filter out common attributes that are less interesting or already shown
-  const atrributes = Object.entries({
-    entity_id: entity.entity_id,
+  const attributes = Object.entries({
     ...entity.attributes,
+    entity_id: entity.entity_id,
   }).filter(([key]) => !EXCLUDE_LIST.includes(key));
-
-  //excludeList.forEach((attr) => delete atrributes[attr]);
 
   return html`
     <div class="entity-attributes">
       ${map(
-        atrributes,
+        attributes,
         ([key, value]) => html`
           <div class="attribute-row">
             <span class="attribute-key">${key}:</span>
