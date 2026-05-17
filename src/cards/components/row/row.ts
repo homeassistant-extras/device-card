@@ -96,7 +96,7 @@ export class DeviceCardRow extends HassConfigMixin(LitElement) {
         ${stateContent(this.hass, this.entity, statusClassName)}
         ${showBar ? percentBar(this.entity, inverseEntities) : nothing}
       </div>
-      ${this._expanded ? attributes(this.entity.attributes) : nothing}
+      ${this._expanded ? attributes(this.entity) : nothing}
     </div>`;
   }
 }

@@ -1,7 +1,16 @@
 import { attributes } from '@html/attributes';
 import { fixture } from '@open-wc/testing-helpers';
+import type { EntityState } from '@type/config';
 import { expect } from 'chai';
-import { type TemplateResult } from 'lit';
+
+const entity = (
+  entity_id: string,
+  entityAttributes: Record<string, any>,
+): EntityState => ({
+  entity_id,
+  state: 'on',
+  attributes: entityAttributes,
+});
 
 describe('attributes.ts', () => {
   it('should render a list of attributes', async () => {
@@ -12,15 +21,17 @@ describe('attributes.ts', () => {
       device_class: 'temperature',
     };
 
-    const result = attributes(testAttributes);
-    const el = await fixture(result as TemplateResult);
+    const result = attributes(
+      entity('sensor.test_temperature', testAttributes),
+    );
+    const el = await fixture(result);
 
     expect(el.tagName.toLowerCase()).to.equal('div');
     expect(el.classList.contains('entity-attributes')).to.be.true;
 
     // Check that all attributes are rendered
     const attributeRows = el.querySelectorAll('.attribute-row');
-    expect(attributeRows.length).to.equal(4);
+    expect(attributeRows.length).to.equal(5);
 
     // Check specific attribute values
     const attributeValues = Array.from(attributeRows).map((row) => {
@@ -31,14 +42,16 @@ describe('attributes.ts', () => {
       return { key, value };
     });
 
-    expect(attributeValues[0]?.key).to.equal('temperature');
-    expect(attributeValues[0]?.value).to.equal('22');
-    expect(attributeValues[1]?.key).to.equal('humidity');
-    expect(attributeValues[1]?.value).to.equal('45');
-    expect(attributeValues[2]?.key).to.equal('unit_of_measurement');
-    expect(attributeValues[2]?.value).to.equal('°C');
-    expect(attributeValues[3]?.key).to.equal('device_class');
-    expect(attributeValues[3]?.value).to.equal('temperature');
+    expect(attributeValues[0]?.key).to.equal('entity_id');
+    expect(attributeValues[0]?.value).to.equal('sensor.test_temperature');
+    expect(attributeValues[1]?.key).to.equal('temperature');
+    expect(attributeValues[1]?.value).to.equal('22');
+    expect(attributeValues[2]?.key).to.equal('humidity');
+    expect(attributeValues[2]?.value).to.equal('45');
+    expect(attributeValues[3]?.key).to.equal('unit_of_measurement');
+    expect(attributeValues[3]?.value).to.equal('°C');
+    expect(attributeValues[4]?.key).to.equal('device_class');
+    expect(attributeValues[4]?.value).to.equal('temperature');
   });
 
   it('should filter out excluded attributes', async () => {
@@ -51,14 +64,15 @@ describe('attributes.ts', () => {
       assumed_state: false,
       attribution: 'Data provided by API',
       hidden: false,
+      entity_id: 'sensor.attribute_value',
     };
 
-    const result = attributes(testAttributes);
-    const el = await fixture(result as TemplateResult);
+    const result = attributes(entity('sensor.temperature', testAttributes));
+    const el = await fixture(result);
 
-    // Only temperature should remain
+    // Only entity_id and temperature should remain
     const attributeRows = el.querySelectorAll('.attribute-row');
-    expect(attributeRows.length).to.equal(1);
+    expect(attributeRows.length).to.equal(2);
 
     const key = attributeRows[0]
       ?.querySelector('.attribute-key')
@@ -66,22 +80,32 @@ describe('attributes.ts', () => {
     const value =
       attributeRows[0]?.querySelector('.attribute-value')?.textContent;
 
-    expect(key).to.equal('temperature');
-    expect(value).to.equal('22');
+    expect(key).to.equal('entity_id');
+    expect(value).to.equal('sensor.attribute_value');
   });
 
-  it('should handle empty attributes after filtering', async () => {
+  it('should render entity ID when all attributes are filtered', async () => {
     const testAttributes = {
       icon: 'mdi:thermometer',
       friendly_name: 'Living Room Temperature',
     };
 
-    const result = attributes(testAttributes);
-    const el = await fixture(result as TemplateResult);
+    const result = attributes(
+      entity('sensor.living_room_temperature', testAttributes),
+    );
+    const el = await fixture(result);
 
     expect(el.tagName.toLowerCase()).to.equal('div');
-    expect(el.classList.contains('entity-attributes-empty')).to.be.true;
-    expect(el.textContent?.trim()).to.equal('No additional attributes');
+    expect(el.classList.contains('entity-attributes')).to.be.true;
+
+    const attributeRows = el.querySelectorAll('.attribute-row');
+    expect(attributeRows.length).to.equal(1);
+    expect(
+      attributeRows[0]?.querySelector('.attribute-key')?.textContent,
+    ).to.equal('entity_id:');
+    expect(
+      attributeRows[0]?.querySelector('.attribute-value')?.textContent,
+    ).to.equal('sensor.living_room_temperature');
   });
 
   it('should handle object values by converting to JSON string', async () => {
@@ -90,16 +114,16 @@ describe('attributes.ts', () => {
       coordinates: { lat: 37.7749, lng: -122.4194 },
     };
 
-    const result = attributes(testAttributes);
-    const el = await fixture(result as TemplateResult);
+    const result = attributes(entity('sensor.options', testAttributes));
+    const el = await fixture(result);
 
     const attributeRows = el.querySelectorAll('.attribute-row');
-    expect(attributeRows.length).to.equal(2);
+    expect(attributeRows.length).to.equal(3);
 
     const firstValue =
-      attributeRows[0]?.querySelector('.attribute-value')?.textContent;
-    const secondValue =
       attributeRows[1]?.querySelector('.attribute-value')?.textContent;
+    const secondValue =
+      attributeRows[2]?.querySelector('.attribute-value')?.textContent;
 
     expect(firstValue).to.equal(JSON.stringify({ min: 0, max: 100, step: 5 }));
     expect(secondValue).to.equal(
@@ -108,11 +132,13 @@ describe('attributes.ts', () => {
   });
 
   it('should handle empty input attributes', async () => {
-    const result = attributes({});
-    const el = await fixture(result as TemplateResult);
+    const result = attributes(entity('sensor.empty', {}));
+    const el = await fixture(result);
 
     expect(el.tagName.toLowerCase()).to.equal('div');
-    expect(el.classList.contains('entity-attributes-empty')).to.be.true;
+    expect(el.classList.contains('entity-attributes')).to.be.true;
+    expect(el.textContent).to.contain('entity_id:');
+    expect(el.textContent).to.contain('sensor.empty');
   });
 
   it('should handle various data types', async () => {
@@ -124,20 +150,21 @@ describe('attributes.ts', () => {
       array_value: [1, 2, 3],
     };
 
-    const result = attributes(testAttributes);
-    const el = await fixture(result as TemplateResult);
+    const result = attributes(entity('sensor.types', testAttributes));
+    const el = await fixture(result);
 
     const attributeRows = el.querySelectorAll('.attribute-row');
-    expect(attributeRows.length).to.equal(5);
+    expect(attributeRows.length).to.equal(6);
 
     const values = Array.from(attributeRows).map(
       (row) => row.querySelector('.attribute-value')?.textContent,
     );
 
-    expect(values[0]).to.equal('true');
-    expect(values[1]).to.equal('42');
-    expect(values[2]).to.equal('test string');
-    expect(values[3]).to.equal('null');
-    expect(values[4]).to.equal('[1,2,3]');
+    expect(values[0]).to.equal('sensor.types');
+    expect(values[1]).to.equal('true');
+    expect(values[2]).to.equal('42');
+    expect(values[3]).to.equal('test string');
+    expect(values[4]).to.equal('null');
+    expect(values[5]).to.equal('[1,2,3]');
   });
 });

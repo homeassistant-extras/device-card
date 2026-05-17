@@ -39,7 +39,7 @@ describe('device-card-row.ts', () => {
     attributesStub.returns(html`<div class="mocked-attributes"></div>`);
 
     hass = {} as HomeAssistant;
-    config = { device_id: 'device_1' } as any;
+    config = { device_id: 'device_1' };
     entity = {
       entity_id: 'sensor.test',
       state: '75',
@@ -48,7 +48,7 @@ describe('device-card-row.ts', () => {
       name: 'Test',
       isActive: false,
       isProblemEntity: false,
-    } as EntityInformation;
+    };
 
     el = new DeviceCardRow();
     el.hass = hass;
@@ -203,7 +203,7 @@ describe('device-card-row.ts', () => {
 
       expect(root.classList.contains('expanded-row')).to.be.true;
       expect(attributesStub.calledOnce).to.be.true;
-      expect(attributesStub.firstCall.args[0]).to.deep.equal(entity.attributes);
+      expect(attributesStub.firstCall.args[0]).to.equal(entity);
     });
   });
 });

@@ -40,17 +40,16 @@ export const renderSection = (
   // Check if this section needs collapsible functionality
   const needsExpansion = entities.length > size;
 
-  const isExpanded = sectionExpanded;
   // Sort and filter entities based on expanded state
   const sortedEntities = sortEntities(entities, config.sort);
   const displayEntities =
-    needsExpansion && !isExpanded
+    needsExpansion && !sectionExpanded
       ? sortedEntities.slice(0, size)
       : sortedEntities;
 
   // Determine section class based on expanded state, number of items, and compact feature
   const isCompact = hasFeature(config, 'compact');
-  const sectionClass = `section ${isExpanded ? 'expanded' : ''} ${needsExpansion ? '' : 'few-items'} ${isCompact ? 'compact' : ''}`;
+  const sectionClass = `section ${sectionExpanded ? 'expanded' : ''} ${needsExpansion ? '' : 'few-items'} ${isCompact ? 'compact' : ''}`;
 
   const rowTemplates = displayEntities.map(
     (entity) =>
@@ -64,11 +63,11 @@ export const renderSection = (
   return html`<div class="${sectionClass}">
     <div class="section-header">
       <div class="section-title">${name}</div>
-      ${needsExpansion ? chevron(isExpanded, onToggleSection) : nothing}
+      ${needsExpansion ? chevron(sectionExpanded, onToggleSection) : nothing}
     </div>
     ${rowTemplates}
     ${needsExpansion && !isCompact
-      ? showMore(entities, isExpanded, size, onToggleSection)
+      ? showMore(entities, sectionExpanded, size, onToggleSection)
       : nothing}
   </div>`;
 };

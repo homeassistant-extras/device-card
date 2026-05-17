@@ -1,38 +1,36 @@
+import type { EntityState } from '@type/config';
 import { type TemplateResult, html } from 'lit';
+import { map } from 'lit/directives/map.js';
+
+// List of attributes to exclude
+const EXCLUDE_LIST = [
+  'icon',
+  'friendly_name',
+  'entity_picture',
+  'supported_features',
+  'assumed_state',
+  'attribution',
+  'hidden',
+];
 
 /**
  * Renders the entity attributes in a list
- * @param {Record<string, any>} attributes - The entity attributes
+ * @param {EntityState} entity - The entity state to show details for
  * @returns {TemplateResult} The rendered attributes list
  */
-export const attributes = (attributes: Record<string, any>): TemplateResult => {
+export const attributes = (entity: EntityState): TemplateResult => {
   // Filter out common attributes that are less interesting or already shown
-  const filteredAttributes = { ...attributes };
+  const atrributes = Object.entries({
+    entity_id: entity.entity_id,
+    ...entity.attributes,
+  }).filter(([key]) => !EXCLUDE_LIST.includes(key));
 
-  // List of attributes to exclude
-  const excludeList = [
-    'icon',
-    'friendly_name',
-    'entity_picture',
-    'supported_features',
-    'assumed_state',
-    'attribution',
-    'hidden',
-  ];
-
-  excludeList.forEach((attr) => delete filteredAttributes[attr]);
-
-  const attributeEntries = Object.entries(filteredAttributes);
-
-  if (attributeEntries.length === 0) {
-    return html`<div class="entity-attributes-empty">
-      No additional attributes
-    </div>`;
-  }
+  //excludeList.forEach((attr) => delete atrributes[attr]);
 
   return html`
     <div class="entity-attributes">
-      ${attributeEntries.map(
+      ${map(
+        atrributes,
         ([key, value]) => html`
           <div class="attribute-row">
             <span class="attribute-key">${key}:</span>
