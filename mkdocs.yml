@@ -73,5 +73,5 @@ extra:
     - icon: fontawesome/brands/discord
       link: https://discord.gg/NpH4Pt8Jmr
     - icon: fontawesome/solid/globe
-      link: https://curiouscat.consulting/projects/ha-device-card
+      link: https://curiouscat.consulting/projects/ha-device-card?utm_source=github-device-card&utm_medium=docs-site&utm_campaign=oss-presence&utm_content=nav-link
       name: Maintained by Curious Cat Consulting

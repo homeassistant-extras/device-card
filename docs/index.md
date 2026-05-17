@@ -64,5 +64,5 @@ integration: zwave_js
 ---
 
 <p align="center">
-    <em>Built and maintained by <a href="https://curiouscat.consulting/projects/ha-device-card">Curious Cat Consulting</a></em>
+    <em>Built and maintained by <a href="https://curiouscat.consulting/projects/ha-device-card?utm_source=github-device-card&utm_medium=docs-site&utm_campaign=oss-presence&utm_content=footer">Curious Cat Consulting</a></em>
 </p>
