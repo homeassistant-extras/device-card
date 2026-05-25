@@ -7,7 +7,7 @@ describe('integration-devices', () => {
   describe('computeIntegrationDevices', () => {
     it('returns integration name and device IDs from config entries', async () => {
       const mockHass = {
-        callWS: async () => [{ entry_id: 'entry_1' }],
+        callWS: () => Promise.resolve([{ entry_id: 'entry_1' }]),
         devices: {
           dev1: {
             id: 'dev1',
@@ -32,7 +32,7 @@ describe('integration-devices', () => {
 
     it('applies include filter', async () => {
       const mockHass = {
-        callWS: async () => [{ entry_id: 'entry_1' }],
+        callWS: () => Promise.resolve([{ entry_id: 'entry_1' }]),
         devices: {
           dev1: { id: 'dev1', config_entries: ['entry_1'], name: 'Device 1' },
           dev2: { id: 'dev2', config_entries: ['entry_1'], name: 'Device 2' },
@@ -49,7 +49,7 @@ describe('integration-devices', () => {
 
     it('applies exclude filter', async () => {
       const mockHass = {
-        callWS: async () => [{ entry_id: 'entry_1' }],
+        callWS: () => Promise.resolve([{ entry_id: 'entry_1' }]),
         devices: {
           dev1: { id: 'dev1', config_entries: ['entry_1'], name: 'Device 1' },
           dev2: { id: 'dev2', config_entries: ['entry_1'], name: 'Device 2' },
@@ -66,7 +66,7 @@ describe('integration-devices', () => {
 
     it('sorts devices by name when sortDevices is provided', async () => {
       const mockHass = {
-        callWS: async () => [{ entry_id: 'entry_1' }],
+        callWS: () => Promise.resolve([{ entry_id: 'entry_1' }]),
         devices: {
           dev_c: {
             id: 'dev_c',

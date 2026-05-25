@@ -10,10 +10,16 @@ import { deviceCardHeader } from '@html/device-card-header';
 import { picture } from '@html/picture';
 import { pinnedEntity } from '@html/pinned-entity';
 import type { Device } from '@type/config';
-import { CSSResult, html, LitElement, nothing, type TemplateResult } from 'lit';
+import equal from 'fast-deep-equal';
+import {
+  type CSSResult,
+  html,
+  LitElement,
+  nothing,
+  type TemplateResult,
+} from 'lit';
 import { state } from 'lit/decorators.js';
 import type { Config } from './types';
-const equal = require('fast-deep-equal');
 
 export class DeviceCard extends HassUpdateMixin(LitElement) {
   /**
@@ -89,7 +95,7 @@ export class DeviceCard extends HassUpdateMixin(LitElement) {
     return document.createElement('device-card-editor');
   }
 
-  public static async getStubConfig(hass: HomeAssistant): Promise<Config> {
+  public static getStubConfig(hass: HomeAssistant): Config {
     const device = Object.values(hass.devices)[0];
 
     return {

@@ -27,10 +27,8 @@ export const sortDevices = (
   result.sort((a, b) => {
     const deviceA = hass.devices[a];
     const deviceB = hass.devices[b];
-    const valueA =
-      deviceA?.name_by_user ?? deviceA?.name ?? deviceA?.id ?? a;
-    const valueB =
-      deviceB?.name_by_user ?? deviceB?.name ?? deviceB?.id ?? b;
+    const valueA = deviceA?.name_by_user ?? deviceA?.name ?? deviceA?.id ?? a;
+    const valueB = deviceB?.name_by_user ?? deviceB?.name ?? deviceB?.id ?? b;
 
     const comparison = valueA.localeCompare(valueB, undefined, {
       sensitivity: 'base',

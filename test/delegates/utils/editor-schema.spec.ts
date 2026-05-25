@@ -16,7 +16,7 @@ describe('editor-schema.ts', () => {
     beforeEach(() => {
       // Create a mock HomeAssistant instance
       mockHass = {
-        callWS: async () => [],
+        callWS: () => Promise.resolve([]),
       } as unknown as HomeAssistant;
 
       // Create a stub for the callWS method
@@ -497,7 +497,7 @@ describe('editor-schema.ts', () => {
   describe('getDeviceSchema', () => {
     let getDeviceEntitiesStub: sinon.SinonStub;
 
-    beforeEach(async () => {
+    beforeEach(() => {
       // Stub the getDeviceEntities function
       getDeviceEntitiesStub = stub(cardEntitiesModule, 'getDeviceEntities');
       getDeviceEntitiesStub.returns([

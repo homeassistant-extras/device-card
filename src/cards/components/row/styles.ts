@@ -124,4 +124,3 @@ export const styles = css`
     word-break: break-word;
   }
 `;
-

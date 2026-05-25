@@ -1,7 +1,6 @@
 import type { CardHelpers } from '@type/lovelace';
 
 declare global {
-  // eslint-disable-next-line no-var
   var poatCardHelpers: CardHelpers | undefined;
 }
 

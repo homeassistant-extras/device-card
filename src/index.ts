@@ -6,7 +6,6 @@ import { IntegrationCardEditor } from '@integration/editor';
 import { version } from '../package.json';
 
 declare global {
-  // eslint-disable-next-line no-var
   var customCards: Array<{
     type: string;
     name: string;
@@ -17,7 +16,7 @@ declare global {
 }
 
 // Kick off HA card helper resolution once when the bundle loads
-resolvePoatCardHelpers(globalThis.loadCardHelpers);
+void resolvePoatCardHelpers(globalThis.loadCardHelpers);
 
 // Register the custom elements with the browser
 customElements.define('device-card', DeviceCard);

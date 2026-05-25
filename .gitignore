@@ -9,6 +9,7 @@
 !*.json
 !*.yml
 !*.ts
+!eslint.config.mjs
 !.prettierrc
 !.nycrc
 !docs/assets/**

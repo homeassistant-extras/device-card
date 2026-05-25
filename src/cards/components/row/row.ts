@@ -5,7 +5,13 @@ import { percentBar } from '@html/percent';
 import { stateContent } from '@html/state-content';
 import type { EntityInformation } from '@type/config';
 import type { CardHelpers } from '@type/lovelace';
-import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
+import {
+  LitElement,
+  html,
+  nothing,
+  type CSSResult,
+  type TemplateResult,
+} from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styles } from './styles';
 
@@ -79,8 +85,10 @@ export class DeviceCardRow extends HassConfigMixin(LitElement) {
       statusClassName = this.entity.isActive ? 'status-error' : 'status-ok';
     }
 
+    const unitOfMeasurement = this.entity.attributes.unit_of_measurement;
     const showBar =
-      this.entity.attributes.unit_of_measurement?.includes('%') &&
+      typeof unitOfMeasurement === 'string' &&
+      unitOfMeasurement.includes('%') &&
       !Number.isNaN(Number(this.entity.state));
 
     const inverseEntities = this.config?.inverse_percent || [];

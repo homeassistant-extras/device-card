@@ -4,7 +4,6 @@ import type {
 } from '@hass/panels/lovelace/entity-rows/types';
 
 declare global {
-  // eslint-disable-next-line no-var
   var loadCardHelpers: (() => Promise<CardHelpers>) | undefined;
 }
 

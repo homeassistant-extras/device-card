@@ -11,10 +11,7 @@ import { html, nothing } from 'lit';
 /**
  * Renders a chevron (up/down arrow) for expanding/collapsing a section
  */
-export const chevron = (
-  isExpanded: boolean,
-  onToggleSection: () => void,
-) =>
+export const chevron = (isExpanded: boolean, onToggleSection: () => void) =>
   html`<div
     class="section-chevron ${isExpanded ? 'expanded' : ''}"
     @click=${onToggleSection}

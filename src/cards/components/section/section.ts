@@ -2,7 +2,12 @@ import type { OrderedSection } from '@/helpers/device-section';
 import '@cards/components/row/row';
 import { HassConfigMixin } from '@cards/mixins/hass-config-mixin';
 import { hasFeature } from '@config/feature';
-import { CSSResult, LitElement, nothing, type TemplateResult } from 'lit';
+import {
+  type CSSResult,
+  LitElement,
+  type nothing,
+  type TemplateResult,
+} from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { renderSection } from '../../../html/section';
 import { styles } from './styles';

@@ -32,7 +32,7 @@ describe('index.ts', () => {
     delete require.cache[require.resolve('@/index.ts')];
   });
 
-  it('should call loadCardHelpers when available (preload)', async () => {
+  it('should call loadCardHelpers when available (preload)', () => {
     loadCardHelpersStub = stub().resolves({
       createRowElement: stub().returns(document.createElement('div')),
     });

@@ -33,10 +33,20 @@ export const getDeviceEntities = (
       }
 
       // convenience
-      const name =
-        state.attributes.friendly_name === deviceName
-          ? deviceName
-          : state.attributes.friendly_name.replace(deviceName, '').trim();
+      const friendlyName = state.attributes.friendly_name;
+      let name: string;
+      if (typeof friendlyName === 'string') {
+        if (deviceName && friendlyName === deviceName) {
+          name = deviceName;
+        } else if (deviceName) {
+          name =
+            friendlyName.replace(deviceName, '').trim() || entity.entity_id;
+        } else {
+          name = friendlyName;
+        }
+      } else {
+        name = entity.entity_id;
+      }
       const active = stateActive(state);
       return {
         name,

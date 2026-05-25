@@ -46,7 +46,7 @@ describe('sort-devices.ts', () => {
       entities: {},
       language: 'en',
       connection: {} as any,
-      callWS: async () => [],
+      callWS: () => Promise.resolve([]),
     } as any as HomeAssistant;
   });
 

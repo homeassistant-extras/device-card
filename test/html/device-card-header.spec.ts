@@ -6,8 +6,7 @@ import * as localizeModule from '@localize/localize';
 import { fixture } from '@open-wc/testing-helpers';
 import type { Device } from '@type/config';
 import { expect } from 'chai';
-import type { TemplateResult } from 'lit';
-import { html, nothing } from 'lit';
+import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
 
 describe('device-card-header.ts', () => {

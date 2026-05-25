@@ -12,4 +12,4 @@ import type { HomeAssistant } from '@hass/types';
 export const getDevice = (
   hass: HomeAssistant,
   deviceId: string,
-): DeviceRegistryEntry => (hass.devices as { [key: string]: any })[deviceId];
+): DeviceRegistryEntry | undefined => hass.devices[deviceId];

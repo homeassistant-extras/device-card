@@ -17,7 +17,7 @@ Most configuration options from the Device Card are supported. Integration-speci
 | exclude_entities       | list        | _none_          | Entities to remove from the card                             |
 | inverse_percent        | list        | _none_          | Entity IDs with inverted percent colors                      |
 | section_order          | list        | _none_          | Custom order for displaying sections                         |
-| sort_devices           | object      | _none_          | Sort devices by name (see [Device Sort](#device-sort))                |
+| sort_devices           | object      | _none_          | Sort devices by name (see [Device Sort](#device-sort))       |
 | features               | list        | See Device Card | Optional flags to toggle different features                  |
 | tap_action             | object      | none            | Action to perform when tapping the card                      |
 | hold_action            | object      | none            | Action to perform when holding the card                      |
@@ -27,10 +27,10 @@ Most configuration options from the Device Card are supported. Integration-speci
 
 Control the order in which devices appear in the Integration card:
 
-| Option    | Type   | Default  | Description                                               |
-| --------- | ------ | -------- | --------------------------------------------------------- |
-| type      | string | Required | Sort by: `name` (device name)                              |
-| direction | string | asc      | Sort direction: `asc` (ascending) or `desc` (descending)  |
+| Option    | Type   | Default  | Description                                              |
+| --------- | ------ | -------- | -------------------------------------------------------- |
+| type      | string | Required | Sort by: `name` (device name)                            |
+| direction | string | asc      | Sort direction: `asc` (ascending) or `desc` (descending) |
 
 ```yaml
 type: custom:integration-card

@@ -1,6 +1,7 @@
 import { getDeviceSchema } from '@delegates/utils/editor-schema';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
+import '@hass/panels/lovelace/editor/hui-element-editor';
 import type { HomeAssistant } from '@hass/types';
 import { html, LitElement, nothing, type TemplateResult } from 'lit';
 import { state } from 'lit/decorators.js';
@@ -69,7 +70,6 @@ export class DeviceCardEditor extends LitElement {
       delete config.inverse_percent;
     }
 
-    // @ts-ignore
     fireEvent(this, 'config-changed', {
       config,
     });

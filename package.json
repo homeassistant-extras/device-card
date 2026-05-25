@@ -25,13 +25,18 @@
   "scripts": {
     "watch": "parcel watch",
     "build": "parcel build",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
+    "pass": "yarn format && yarn typecheck && yarn lint && yarn test",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json --noEmit",
     "test": "TS_NODE_PROJECT='./tsconfig.test.json' mocha",
     "test:coverage": "nyc yarn test",
     "test:watch": "TS_NODE_PROJECT='./tsconfig.test.json' mocha --watch",
     "update": "npx npm-check-updates -u && yarn install"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@open-wc/testing": "^4.0.0",
     "@parcel/transformer-inline-string": "^2.16.4",
@@ -42,6 +47,10 @@
     "@types/mocha": "^10.0.10",
     "@types/sinon": "^21.0.1",
     "chai": "^6.2.2",
+    "eslint": "^10.4.0",
+    "eslint-plugin-lit": "^2.3.1",
+    "eslint-plugin-wc": "^3.1.0",
+    "globals": "^17.6.0",
     "jsdom": "^29.1.1",
     "mocha": "^11.7.5",
     "nyc": "^18.0.0",
@@ -52,7 +61,8 @@
     "sinon": "^22.0.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.4"
   },
   "dependencies": {
     "@lit/task": "^1.0.3",

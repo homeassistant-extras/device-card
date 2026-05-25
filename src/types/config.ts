@@ -129,7 +129,7 @@ export interface EntityState {
   state: string;
 
   /** Additional attributes associated with the state */
-  attributes: Record<string, any>;
+  attributes: Record<string, unknown>;
 }
 
 /**

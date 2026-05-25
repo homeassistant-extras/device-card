@@ -3,14 +3,16 @@
     /* Base Options: */
     "skipLibCheck": true,
     "target": "es2022",
-    "lib": ["es2021"],
-    "moduleResolution": "node",
+    "lib": ["es2022", "dom"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "isolatedModules": true,
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "verbatimModuleSyntax": true,
+    "allowSyntheticDefaultImports": true,
 
     /* Strictness */
     "strict": true,
@@ -18,7 +20,6 @@
     "noImplicitOverride": true,
 
     /* Paths */
-    "baseUrl": ".",
     "paths": {
       "@cards/*": ["./src/cards/*"],
       "@device/*": ["./src/cards/device-card/*"],
@@ -33,5 +34,6 @@
       "@delegates/*": ["./src/delegates/*"],
       "@/*": ["./src/*"]
     }
-  }
+  },
+  "include": ["src/**/*.ts"]
 }

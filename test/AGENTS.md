@@ -40,5 +40,8 @@ Fix the type errors it reports, then rerun `yarn test`. Do not investigate path 
 ## Other Commands
 
 - Format with `yarn format`.
+- Lint with `yarn lint` / `yarn lint:fix`.
+- Typecheck with `yarn typecheck`.
+- Full gate with `yarn pass` (format + typecheck + lint + test).
 - Build with `yarn build`.
 - Check `CLAUDE.md` for repo-specific architecture, directory layout, and aliases.

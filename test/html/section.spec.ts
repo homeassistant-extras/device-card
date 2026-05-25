@@ -1,7 +1,7 @@
+import type { OrderedSection } from '@/helpers/device-section';
 import * as sortEntitiesModule from '@common/sort';
 import * as featureModule from '@config/feature';
 import type { Config } from '@device/types';
-import type { OrderedSection } from '@/helpers/device-section';
 import type { HomeAssistant } from '@hass/types';
 import { renderSection } from '@html/section';
 import * as showMoreModule from '@html/show-more';
@@ -225,13 +225,7 @@ describe('section.ts', () => {
     it('should call chevron component when section needs expansion', () => {
       mockConfig.preview_count = 1;
 
-      renderSection(
-        mockHass,
-        mockConfig,
-        mockSection,
-        false,
-        noopToggle,
-      );
+      renderSection(mockHass, mockConfig, mockSection, false, noopToggle);
 
       expect(chevronStub.calledOnce).to.be.true;
       expect(chevronStub.firstCall.args[0]).to.be.false;
@@ -241,13 +235,7 @@ describe('section.ts', () => {
     it('should not call chevron component when no expansion is needed', () => {
       mockConfig.preview_count = 5;
 
-      renderSection(
-        mockHass,
-        mockConfig,
-        mockSection,
-        false,
-        noopToggle,
-      );
+      renderSection(mockHass, mockConfig, mockSection, false, noopToggle);
 
       expect(chevronStub.called).to.be.false;
     });
@@ -255,13 +243,7 @@ describe('section.ts', () => {
     it('should call showMore component when section needs expansion', () => {
       mockConfig.preview_count = 1;
 
-      renderSection(
-        mockHass,
-        mockConfig,
-        mockSection,
-        false,
-        noopToggle,
-      );
+      renderSection(mockHass, mockConfig, mockSection, false, noopToggle);
 
       expect(showMoreStub.calledOnce).to.be.true;
       expect(showMoreStub.firstCall.args[0]).to.equal(mockEntities);
@@ -273,13 +255,7 @@ describe('section.ts', () => {
     it('should not call showMore component when no expansion is needed', () => {
       mockConfig.preview_count = 5;
 
-      renderSection(
-        mockHass,
-        mockConfig,
-        mockSection,
-        false,
-        noopToggle,
-      );
+      renderSection(mockHass, mockConfig, mockSection, false, noopToggle);
 
       expect(showMoreStub.called).to.be.false;
     });
@@ -318,13 +294,7 @@ describe('section.ts', () => {
       mockConfig.preview_count = 1;
       hasFeatureStub.withArgs(mockConfig, 'compact').returns(true);
 
-      renderSection(
-        mockHass,
-        mockConfig,
-        mockSection,
-        false,
-        noopToggle,
-      );
+      renderSection(mockHass, mockConfig, mockSection, false, noopToggle);
 
       expect(showMoreStub.called).to.be.false;
       expect(chevronStub.called).to.be.true;
@@ -334,13 +304,7 @@ describe('section.ts', () => {
       mockConfig.preview_count = 1;
       hasFeatureStub.withArgs(mockConfig, 'compact').returns(false);
 
-      renderSection(
-        mockHass,
-        mockConfig,
-        mockSection,
-        false,
-        noopToggle,
-      );
+      renderSection(mockHass, mockConfig, mockSection, false, noopToggle);
 
       expect(showMoreStub.called).to.be.true;
     });
@@ -349,13 +313,7 @@ describe('section.ts', () => {
       const sortConfig: SortConfig = { type: 'name', direction: 'asc' };
       mockConfig.sort = sortConfig;
 
-      renderSection(
-        mockHass,
-        mockConfig,
-        mockSection,
-        false,
-        noopToggle,
-      );
+      renderSection(mockHass, mockConfig, mockSection, false, noopToggle);
 
       expect(sortEntitiesStub.calledOnce).to.be.true;
       expect(sortEntitiesStub.firstCall.args[0]).to.equal(mockEntities);

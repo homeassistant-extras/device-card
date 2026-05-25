@@ -8,22 +8,33 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **Yarn project**. Use `yarn`, not `npm`.
 
+## Lint / typecheck
+
+- `yarn lint` / `yarn lint:fix` — ESLint flat config (`eslint.config.mjs`); Lit + WC rules on card/html files; vendored `src/hass/**` is ignored.
+- `yarn typecheck` — production `tsconfig.json` (`include`: `src/**/*.ts` only) plus test `tsconfig.test.json`.
+- `yarn pass` — format, typecheck, lint, and test in one shot.
+
+If `yarn test` fails with `ERR_MODULE_NOT_FOUND` on an `@cards/*`/`@hass/*`/etc. import, **don't chase path-alias config**. It's almost always a TypeScript compile error in the imported file or a transitive import. Run `yarn typecheck` (or `npx tsc -p tsconfig.test.json --noEmit`) and fix what it reports.
+
 ## Commands
 
 - `yarn build` — Parcel production build (outputs `dist/device-card.js`)
 - `yarn watch` — Parcel watch mode
-- `yarn format` — Prettier write
 - `yarn test` — Mocha + ts-node + JSDOM (see [test/AGENTS.md](test/AGENTS.md))
 - `yarn test:coverage` — same, with NYC coverage
 - `yarn test:watch` — mocha watch mode
+- `yarn lint` — ESLint (TypeScript + Lit + web component best practices)
+- `yarn lint:fix` — ESLint with auto-fix where safe
+- `yarn typecheck` — `tsc` against `tsconfig.json` and `tsconfig.test.json`
+- `yarn format` — Prettier write
+- `yarn pass` — format + typecheck + lint + test (run before shipping)
+- `yarn update` — `npx npm-check-updates -u && yarn install`
 
 Run a single test file:
 
 ```bash
 TS_NODE_PROJECT='./tsconfig.test.json' npx mocha test/path/to/specific.spec.ts
 ```
-
-If `yarn test` fails with `ERR_MODULE_NOT_FOUND` on an `@cards/*`/`@hass/*`/etc. import, **don't chase path-alias config**. It's almost always a TypeScript compile error in the imported file or a transitive import. Run `npx tsc -p tsconfig.test.json --noEmit` and fix what it reports.
 
 ## What this repo ships
 

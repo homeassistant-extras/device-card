@@ -14,7 +14,7 @@ describe('editor.ts', () => {
   let getDeviceSchemaStub: sinon.SinonStub;
   let mockSchema: any[];
 
-  beforeEach(async () => {
+  beforeEach(() => {
     // Create mock schema
     mockSchema = [
       {
@@ -79,13 +79,13 @@ describe('editor.ts', () => {
   });
 
   describe('render', () => {
-    it('should return nothing when hass is not set', async () => {
+    it('should return nothing when hass is not set', () => {
       card.hass = undefined as any;
       const result = card.render();
       expect(result).to.equal(nothing);
     });
 
-    it('should return nothing when config is not set', async () => {
+    it('should return nothing when config is not set', () => {
       const result = card.render();
       expect(result).to.equal(nothing);
     });
@@ -100,7 +100,7 @@ describe('editor.ts', () => {
       expect(el.outerHTML).to.equal('<ha-form></ha-form>');
     });
 
-    it('should call getDeviceSchema with correct parameters', async () => {
+    it('should call getDeviceSchema with correct parameters', () => {
       const testConfig: Config = {
         device_id: 'device_1',
       };

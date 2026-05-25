@@ -19,4 +19,3 @@ export const HassConfigMixin = <T extends Constructor<LitElement>>(
 
   return HassConfigClass;
 };
-

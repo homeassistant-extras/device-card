@@ -12,5 +12,4 @@ import type { HomeAssistant } from '@hass/types';
 export const getEntity = (
   hass: HomeAssistant,
   entityId: string,
-): EntityRegistryDisplayEntry =>
-  (hass.entities as { [key: string]: any })[entityId];
+): EntityRegistryDisplayEntry | undefined => hass.entities[entityId];

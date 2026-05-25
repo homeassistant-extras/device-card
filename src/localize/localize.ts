@@ -8,7 +8,7 @@ import * as ru from '../translations/ru.json';
 // Import other languages as needed above this line and in order
 
 // Define supported languages
-const languages: Record<string, any> = {
+const languages: Record<string, typeof en> = {
   en: en,
   fr: fr,
   pt: pt,
@@ -48,17 +48,20 @@ export const localize = (
 };
 
 // Helper function to safely navigate nested objects
-function getNestedTranslation(obj: any, path: string): string | undefined {
+function getNestedTranslation(
+  obj: Record<string, unknown> | typeof en | undefined,
+  path: string,
+): string | undefined {
   if (!obj) return undefined;
 
   const keys = path.split('.');
-  let result = obj;
+  let result: unknown = obj;
 
   for (const key of keys) {
     if (result === undefined || result === null || typeof result !== 'object') {
       return undefined;
     }
-    result = result[key];
+    result = (result as Record<string, unknown>)[key];
   }
 
   return typeof result === 'string' ? result : undefined;

@@ -14,7 +14,7 @@ describe('editor.ts', () => {
   let getIntegrationSchemaStub: sinon.SinonStub;
   let mockSchema: any[];
 
-  beforeEach(async () => {
+  beforeEach(() => {
     // Create mock schema
     mockSchema = [
       {
@@ -41,7 +41,7 @@ describe('editor.ts', () => {
 
     // Create mock HomeAssistant instance
     hass = {
-      callWS: async () => [],
+      callWS: () => Promise.resolve([]),
     } as any as HomeAssistant;
 
     // Create component instance
@@ -269,8 +269,9 @@ describe('editor.ts', () => {
       const event = new CustomEvent('value-changed', { detail });
       card['_valueChanged'](event);
 
-      expect(dispatchStub.firstCall.args[0].detail.config.sort_devices).to.deep
-        .equal({ type: 'name', direction: 'asc' });
+      expect(
+        dispatchStub.firstCall.args[0].detail.config.sort_devices,
+      ).to.deep.equal({ type: 'name', direction: 'asc' });
     });
 
     describe('include_devices / exclude_devices (string template vs array)', () => {

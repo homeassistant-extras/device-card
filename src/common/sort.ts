@@ -25,8 +25,8 @@ export const sortEntities = (
 
   // Apply the sorting
   result.sort((a, b) => {
-    let valueA: any;
-    let valueB: any;
+    let valueA: string | number;
+    let valueB: string | number;
 
     switch (type) {
       case 'domain':
@@ -37,10 +37,13 @@ export const sortEntities = (
         valueA = a.entity_id;
         valueB = b.entity_id;
         break;
-      case 'name':
-        valueA = a.attributes.friendly_name ?? a.entity_id;
-        valueB = b.attributes.friendly_name ?? b.entity_id;
+      case 'name': {
+        const nameA = a.attributes.friendly_name;
+        const nameB = b.attributes.friendly_name;
+        valueA = typeof nameA === 'string' ? nameA : a.entity_id;
+        valueB = typeof nameB === 'string' ? nameB : b.entity_id;
         break;
+      }
       case 'state':
         valueA = a.state;
         valueB = b.state;

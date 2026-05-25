@@ -3,13 +3,19 @@ import { computeIntegrationDevices } from '@delegates/integration-devices';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HomeAssistant } from '@hass/types';
 import { localize } from '@localize/localize';
-import { CSSResult, LitElement, html, nothing, type TemplateResult } from 'lit';
+import equal from 'fast-deep-equal';
+import {
+  LitElement,
+  html,
+  nothing,
+  type CSSResult,
+  type TemplateResult,
+} from 'lit';
 import { state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { integrationStyles } from './styles';
 import { TemplateSubscription } from './template-subscription';
 import type { Config, IntegrationData } from './types';
-const equal = require('fast-deep-equal');
 
 declare global {
   interface HASSDomEvents {
@@ -173,7 +179,7 @@ export class IntegrationCard extends LitElement {
         ? this._excludeTemplateSub.deviceIds
         : this._config.exclude_devices;
 
-    computeIntegrationDevices(hass, {
+    void computeIntegrationDevices(hass, {
       integration: this._config.integration,
       includeDevices: effectiveIncludeDevices,
       excludeDevices: effectiveExcludeDevices,
@@ -194,7 +200,7 @@ export class IntegrationCard extends LitElement {
    * Returns a stub configuration for the card
    * @param {HomeAssistant} hass - The Home Assistant instance
    */
-  public static async getStubConfig(hass: HomeAssistant): Promise<Config> {
+  public static getStubConfig(hass: HomeAssistant): Config {
     const device = Object.values(hass.devices).find(
       (device) => device.identifiers && device.identifiers.length > 0,
     );

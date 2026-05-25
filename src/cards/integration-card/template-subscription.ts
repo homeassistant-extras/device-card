@@ -56,7 +56,7 @@ export class TemplateSubscription {
   /** Tear down the active subscription (if any). */
   disconnect(): void {
     if (this._unsub) {
-      this._unsub.then((unsub) => unsub());
+      void this._unsub.then((unsub) => unsub());
       this._unsub = undefined;
     }
     this._subscribedTemplate = undefined;

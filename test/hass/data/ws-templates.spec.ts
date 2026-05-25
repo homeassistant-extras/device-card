@@ -9,7 +9,7 @@ describe('ws-templates.ts', () => {
       const unsubscribe: UnsubscribeFunc = () => {};
       let capturedCallback: (msg: unknown) => void;
       const conn: Connection = {
-        subscribeMessage: (callback, _msg) => {
+        subscribeMessage: (callback) => {
           capturedCallback = callback as (msg: unknown) => void;
           return Promise.resolve(unsubscribe);
         },

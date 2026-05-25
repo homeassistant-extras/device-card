@@ -1,6 +1,7 @@
 import { getIntegrationSchema } from '@delegates/utils/editor-schema';
 import { fireEvent } from '@hass/common/dom/fire_event';
 import type { HaFormSchema } from '@hass/components/ha-form/types';
+import '@hass/panels/lovelace/editor/hui-element-editor';
 import type { HomeAssistant } from '@hass/types';
 import { Task } from '@lit/task';
 import { html, LitElement, nothing, type TemplateResult } from 'lit';
@@ -92,7 +93,6 @@ export class IntegrationCardEditor extends LitElement {
     this._cleanupDevicesField(config, 'include_devices');
     this._cleanupDevicesField(config, 'exclude_devices');
 
-    // @ts-ignore
     fireEvent(this, 'config-changed', {
       config,
     });

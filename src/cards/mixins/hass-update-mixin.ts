@@ -9,7 +9,8 @@ export interface HassUpdateElement {
   hass?: HomeAssistant;
 }
 
-export type Constructor<T = {}> = new (...args: any[]) => T;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- mixin constructor
+export type Constructor<T = object> = new (...args: any[]) => T;
 
 /**
  * Provides a hass property that is updated when the hass-update event is fired.
