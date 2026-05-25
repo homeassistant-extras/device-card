@@ -124,3 +124,4 @@ This project is protected under the MIT License. For more details, refer to the 
 - [x] **`Jinja template support`**: Certain config properties support Jinja - thanks @LenirSantiago
 - [x] **`Auto-entities support`**: `entity` config property for auto-entities integration - thanks @misc-brabs
 - [x] **`Heading icon`**: Entity icon next to card heading when entity_id/entity is configured - thanks @LennartPl
+- [x] **`More-info from attributes`**: Tap an entity's attribute details to open its more-info dialog - thanks @mleiber

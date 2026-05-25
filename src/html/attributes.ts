@@ -1,3 +1,4 @@
+import { fireEvent } from '@hass/common/dom/fire_event';
 import type { EntityState } from '@type/config';
 import { type TemplateResult, html } from 'lit';
 import { map } from 'lit/directives/map.js';
@@ -14,19 +15,32 @@ const EXCLUDE_LIST = [
 ];
 
 /**
- * Renders the entity attributes in a list
+ * Renders the entity attributes in a list. Clicking anywhere in the list opens
+ * Home Assistant's more-info dialog for the entity, mirroring what the native
+ * `more-info` action does via the `hass-more-info` event.
+ *
  * @param {EntityState} entity - The entity state to show details for
  * @returns {TemplateResult} The rendered attributes list
  */
 export const attributes = (entity: EntityState): TemplateResult => {
-  // Filter out common attributes that are less interesting or already shown
+  // Filter out common attributes that are less interesting or already shown.
+  // entity_id is listed first as it's logically superior to individual attributes.
   const attributes = Object.entries({
-    ...entity.attributes,
     entity_id: entity.entity_id,
+    ...entity.attributes,
   }).filter(([key]) => !EXCLUDE_LIST.includes(key));
 
+  // Open the entity's more-info dialog. The event bubbles + is composed by
+  // default, so it reaches HA's more-info handler across the shadow boundary.
+  const openMoreInfo = (ev: Event): void => {
+    ev.stopPropagation();
+    fireEvent(ev.currentTarget as HTMLElement, 'hass-more-info', {
+      entityId: entity.entity_id,
+    });
+  };
+
   return html`
-    <div class="entity-attributes">
+    <div class="entity-attributes" @click=${openMoreInfo}>
       ${map(
         attributes,
         ([key, value]) => html`

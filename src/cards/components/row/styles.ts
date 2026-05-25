@@ -89,6 +89,7 @@ export const styles = css`
     margin: 0 0 4px 50px;
     font-size: 0.9rem;
     border-left: 1px solid var(--divider-color);
+    cursor: pointer;
   }
 
   .entity-attributes-empty {

@@ -159,6 +159,8 @@ hold_action:
   action: more-info
 ```
 
+> **Tip:** You don't need a custom action to reach more-info. With the default tap behavior, tap an entity to expand its attributes, then click anywhere in the attribute list to open Home Assistant's [more-info dialog](https://www.home-assistant.io/dashboards/more-info-dialog/) for that entity.
+
 ## With Sort Configuration
 
 ```yaml

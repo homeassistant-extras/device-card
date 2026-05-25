@@ -2,6 +2,7 @@ import { attributes } from '@html/attributes';
 import { fixture } from '@open-wc/testing-helpers';
 import type { EntityState } from '@type/config';
 import { expect } from 'chai';
+import { stub } from 'sinon';
 
 const entity = (
   entity_id: string,
@@ -42,16 +43,32 @@ describe('attributes.ts', () => {
       return { key, value };
     });
 
-    expect(attributeValues[0]?.key).to.equal('temperature');
-    expect(attributeValues[0]?.value).to.equal('22');
-    expect(attributeValues[1]?.key).to.equal('humidity');
-    expect(attributeValues[1]?.value).to.equal('45');
-    expect(attributeValues[2]?.key).to.equal('unit_of_measurement');
-    expect(attributeValues[2]?.value).to.equal('°C');
-    expect(attributeValues[3]?.key).to.equal('device_class');
-    expect(attributeValues[3]?.value).to.equal('temperature');
-    expect(attributeValues[4]?.key).to.equal('entity_id');
-    expect(attributeValues[4]?.value).to.equal('sensor.test_temperature');
+    // entity_id is rendered first, above individual attributes
+    expect(attributeValues[0]?.key).to.equal('entity_id');
+    expect(attributeValues[0]?.value).to.equal('sensor.test_temperature');
+    expect(attributeValues[1]?.key).to.equal('temperature');
+    expect(attributeValues[1]?.value).to.equal('22');
+    expect(attributeValues[2]?.key).to.equal('humidity');
+    expect(attributeValues[2]?.value).to.equal('45');
+    expect(attributeValues[3]?.key).to.equal('unit_of_measurement');
+    expect(attributeValues[3]?.value).to.equal('°C');
+    expect(attributeValues[4]?.key).to.equal('device_class');
+    expect(attributeValues[4]?.value).to.equal('temperature');
+  });
+
+  it('should fire hass-more-info when the attribute list is clicked', async () => {
+    const result = attributes(entity('sensor.test_temperature', {}));
+    const el = await fixture(result);
+
+    const dispatchStub = stub(el, 'dispatchEvent');
+    (el as HTMLElement).click();
+
+    expect(dispatchStub.called).to.be.true;
+    const event = dispatchStub.firstCall.args[0] as CustomEvent<{
+      entityId: string;
+    }>;
+    expect(event.type).to.equal('hass-more-info');
+    expect(event.detail.entityId).to.equal('sensor.test_temperature');
   });
 
   it('should filter out excluded attributes', async () => {
@@ -64,21 +81,20 @@ describe('attributes.ts', () => {
       assumed_state: false,
       attribution: 'Data provided by API',
       hidden: false,
-      entity_id: 'sensor.attribute_value',
     };
 
     const result = attributes(entity('sensor.temperature', testAttributes));
     const el = await fixture(result);
 
-    // Only entity_id and temperature should remain
+    // Only entity_id and temperature should remain; entity_id renders first
     const attributeRows = el.querySelectorAll('.attribute-row');
     expect(attributeRows.length).to.equal(2);
 
-    const key = attributeRows[1]
+    const key = attributeRows[0]
       ?.querySelector('.attribute-key')
       ?.textContent?.replace(':', '');
     const value =
-      attributeRows[1]?.querySelector('.attribute-value')?.textContent;
+      attributeRows[0]?.querySelector('.attribute-value')?.textContent;
 
     expect(key).to.equal('entity_id');
     expect(value).to.equal('sensor.temperature');
@@ -117,13 +133,14 @@ describe('attributes.ts', () => {
     const result = attributes(entity('sensor.options', testAttributes));
     const el = await fixture(result);
 
+    // entity_id is first, followed by the object-valued attributes
     const attributeRows = el.querySelectorAll('.attribute-row');
     expect(attributeRows.length).to.equal(3);
 
     const firstValue =
-      attributeRows[0]?.querySelector('.attribute-value')?.textContent;
-    const secondValue =
       attributeRows[1]?.querySelector('.attribute-value')?.textContent;
+    const secondValue =
+      attributeRows[2]?.querySelector('.attribute-value')?.textContent;
 
     expect(firstValue).to.equal(JSON.stringify({ min: 0, max: 100, step: 5 }));
     expect(secondValue).to.equal(
@@ -160,11 +177,12 @@ describe('attributes.ts', () => {
       (row) => row.querySelector('.attribute-value')?.textContent,
     );
 
-    expect(values[0]).to.equal('true');
-    expect(values[1]).to.equal('42');
-    expect(values[2]).to.equal('test string');
-    expect(values[3]).to.equal('null');
-    expect(values[4]).to.equal('[1,2,3]');
-    expect(values[5]).to.equal('sensor.types');
+    // entity_id renders first, then the attributes in insertion order
+    expect(values[0]).to.equal('sensor.types');
+    expect(values[1]).to.equal('true');
+    expect(values[2]).to.equal('42');
+    expect(values[3]).to.equal('test string');
+    expect(values[4]).to.equal('null');
+    expect(values[5]).to.equal('[1,2,3]');
   });
 });

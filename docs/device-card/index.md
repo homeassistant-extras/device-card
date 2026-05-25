@@ -40,6 +40,8 @@ With an optional flag, you can showcase entity pictures when available. There mu
 ### Entity Attributes
 
 - Click an entity to expand it and show its attributes
+- The entity's ID is listed first, above its individual attributes
+- Click anywhere in the expanded attribute list to open Home Assistant's [more-info dialog](https://www.home-assistant.io/dashboards/more-info-dialog/) for that entity
 - This behavior can be disabled by setting `tap_action` to "none"
 
 ![Attributes](../assets/attributes.png)
