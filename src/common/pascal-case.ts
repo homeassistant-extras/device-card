@@ -1,4 +1,4 @@
-import { capitalizeFirstLetter } from '@hass/common/string/capitalize-first-letter';
+import { capitalizeFirstLetter } from '@homeassistant-extras/hass/common/string/capitalize-first-letter';
 
 /**
  * Converts a string to PascalCase

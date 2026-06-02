@@ -1,13 +1,13 @@
-import * as cardHelpersModule from '@/helpers/card-helpers';
 import { DeviceCardRow } from '@cards/components/row/row';
 import type { Config } from '@device/types';
-import type { HomeAssistant } from '@hass/types';
+import type { CardHelpers } from '@homeassistant-extras/hass/helpers/card-helpers';
+import * as cardHelpersModule from '@homeassistant-extras/hass/helpers/card-helpers';
+import * as entityRowModule from '@homeassistant-extras/hass/html/entity-row';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import * as attributesModule from '@html/attributes';
 import * as percentBarModule from '@html/percent';
-import * as stateContentModule from '@html/state-content';
 import { fixture } from '@open-wc/testing-helpers';
 import type { EntityInformation } from '@type/config';
-import type { CardHelpers } from '@type/lovelace';
 import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
@@ -19,7 +19,7 @@ describe('device-card-row.ts', () => {
   let entity: EntityInformation;
 
   let resolvePoatCardHelpersStub: sinon.SinonStub;
-  let stateContentStub: sinon.SinonStub;
+  let entityRowStub: sinon.SinonStub;
   let percentBarStub: sinon.SinonStub;
   let attributesStub: sinon.SinonStub;
 
@@ -29,8 +29,8 @@ describe('device-card-row.ts', () => {
       'resolvePoatCardHelpers',
     );
 
-    stateContentStub = stub(stateContentModule, 'stateContent');
-    stateContentStub.returns(html`<div class="mocked-state-content"></div>`);
+    entityRowStub = stub(entityRowModule, 'entityRow');
+    entityRowStub.returns(html`<div class="mocked-entity-row"></div>`);
 
     percentBarStub = stub(percentBarModule, 'percentBar');
     percentBarStub.returns(html`<div class="mocked-percent-bar"></div>`);
@@ -58,7 +58,7 @@ describe('device-card-row.ts', () => {
 
   afterEach(() => {
     resolvePoatCardHelpersStub.restore();
-    stateContentStub.restore();
+    entityRowStub.restore();
     percentBarStub.restore();
     attributesStub.restore();
   });
@@ -92,7 +92,7 @@ describe('device-card-row.ts', () => {
 
       expect(root.classList.contains('row')).to.be.true;
       expect(root.querySelector('.row-content')).to.exist;
-      expect(stateContentStub.calledOnce).to.be.true;
+      expect(entityRowStub.calledOnce).to.be.true;
       expect(percentBarStub.calledOnce).to.be.true;
     });
 
@@ -145,8 +145,8 @@ describe('device-card-row.ts', () => {
       const root = await fixture(el.render() as TemplateResult);
 
       expect(root.classList.contains('status-error')).to.be.true;
-      expect(stateContentStub.calledOnce).to.be.true;
-      expect(stateContentStub.firstCall.args[2]).to.equal('status-error');
+      expect(entityRowStub.calledOnce).to.be.true;
+      expect(entityRowStub.firstCall.args[2]).to.equal('status-error');
     });
 
     it('should apply status-ok class for inactive problem entities', async () => {
@@ -156,8 +156,8 @@ describe('device-card-row.ts', () => {
       const root = await fixture(el.render() as TemplateResult);
 
       expect(root.classList.contains('status-ok')).to.be.true;
-      expect(stateContentStub.calledOnce).to.be.true;
-      expect(stateContentStub.firstCall.args[2]).to.equal('status-ok');
+      expect(entityRowStub.calledOnce).to.be.true;
+      expect(entityRowStub.firstCall.args[2]).to.equal('status-ok');
     });
 
     it('should pass inverse_percent entities to percentBar when configured', async () => {

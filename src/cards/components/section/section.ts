@@ -1,7 +1,8 @@
 import type { OrderedSection } from '@/helpers/device-section';
 import '@cards/components/row/row';
-import { HassConfigMixin } from '@cards/mixins/hass-config-mixin';
-import { hasFeature } from '@config/feature';
+import type { Config } from '@device/types';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
 import {
   type CSSResult,
   LitElement,
@@ -17,7 +18,10 @@ import { styles } from './styles';
  * expansion is local to each {@link DeviceCardRow}.
  */
 @customElement('device-card-section')
-export class DeviceCardSection extends HassConfigMixin(LitElement) {
+export class DeviceCardSection extends HassConfigMixin<
+  typeof LitElement,
+  Config
+>(LitElement) {
   /** Section metadata and entities (controls, sensors, etc.). */
   @property({ attribute: false })
   public section!: OrderedSection;

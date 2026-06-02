@@ -1,7 +1,7 @@
 import type { OrderedSection } from '@/helpers/device-section';
-import * as featureModule from '@config/feature';
 import type { Config } from '@device/types';
-import type { HomeAssistant } from '@hass/types';
+import * as featureModule from '@homeassistant-extras/hass/common/config/feature';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import type { EntityInformation } from '@type/config';
 import { expect } from 'chai';

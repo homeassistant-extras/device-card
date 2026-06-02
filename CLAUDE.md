@@ -56,7 +56,7 @@ Both cards have visual editors (`device-card-editor`, `integration-card-editor`)
 - [src/cards/device-card/](src/cards/device-card/) — `DeviceCard` (extends `HassUpdateMixin(LitElement)`), its editor, styles, and config `types.ts`.
 - [src/cards/integration-card/](src/cards/integration-card/) — `IntegrationCard`, editor, styles, and a `TemplateSubscription` helper that subscribes to a HA `render_template` WS stream so Jinja-templated config reacts to state changes.
 - [src/cards/components/](src/cards/components/) — reusable `row` and `section` sub-components used by `DeviceCard`.
-- [src/cards/mixins/](src/cards/mixins/) — `HassUpdateMixin` (custom `shouldUpdate` + `hass-update` event so children can ask the card to re-evaluate) and `HassConfigMixin`.
+- `@homeassistant-extras/hass/mixins/` — `HassUpdateMixin` and `HassConfigMixin` (device-card sets `_hassUpdateGlobal` on `DeviceCard` for integration-card events).
 
 ### Delegates (business logic, no Lit)
 
@@ -72,7 +72,7 @@ Both cards have visual editors (`device-card-editor`, `integration-card-editor`)
 
 ### HTML render helpers
 
-[src/html/](src/html/) holds composable Lit-template helpers (`section`, `attributes`, `percent`, `picture`, `pinned-entity`, `device-card-header`, `show-more`, `state-content`, `state-display`). Business logic should sit in delegates/helpers; these stay declarative.
+[src/html/](src/html/) holds composable Lit-template helpers (`section`, `attributes`, `percent`, `picture`, `pinned-entity`, `device-card-header`, `show-more`, `state-display`). Entity rows use `@homeassistant-extras/hass/html/entity-row`. Business logic should sit in delegates/helpers; these stay declarative.
 
 ### Helpers
 

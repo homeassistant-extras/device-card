@@ -1,6 +1,6 @@
 # AGENTS.md - Cards
 
-This folder contains Lit-based card UI, editors, mixins, and card-specific components.
+This folder contains Lit-based card UI, editors, and card-specific components. Shared Lit mixins live in `@homeassistant-extras/hass/mixins/`.
 
 - Keep rendering logic declarative and close to the component that owns the UI state.
 - Use delegates, helpers, or common utilities for business logic that can be tested without DOM rendering.

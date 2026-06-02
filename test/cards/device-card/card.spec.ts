@@ -3,7 +3,7 @@ import * as deviceUtils from '@delegates/utils/get-device';
 import * as problemUtils from '@delegates/utils/has-problem';
 import { DeviceCard } from '@device/card';
 import { styles } from '@device/styles';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import * as pictureModule from '@html/picture';
 import * as pinnedEntityModule from '@html/pinned-entity';
 import { fixture } from '@open-wc/testing-helpers';
@@ -26,6 +26,10 @@ describe('card.ts', () => {
     getDeviceStub = stub(deviceUtils, 'getDevice');
     getOrderedSectionsStub = stub(deviceSectionHelpers, 'getOrderedSections');
     pinnedEntityStub = stub(pinnedEntityModule, 'pinnedEntity');
+
+    if (!customElements.get('device-card')) {
+      customElements.define('device-card', DeviceCard);
+    }
 
     card = new DeviceCard();
     mockHass = {

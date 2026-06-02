@@ -1,8 +1,8 @@
 import type { OrderedSection } from '@/helpers/device-section';
 import * as sortEntitiesModule from '@common/sort';
-import * as featureModule from '@config/feature';
 import type { Config } from '@device/types';
-import type { HomeAssistant } from '@hass/types';
+import * as featureModule from '@homeassistant-extras/hass/common/config/feature';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { renderSection } from '@html/section';
 import * as showMoreModule from '@html/show-more';
 import { fixture } from '@open-wc/testing-helpers';

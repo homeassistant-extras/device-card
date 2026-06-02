@@ -1,7 +1,7 @@
 import * as editorSchemaModule from '@delegates/utils/editor-schema';
 import { DeviceCardEditor } from '@device/editor';
 import type { Config } from '@device/types';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { fixture } from '@open-wc/testing-helpers';
 import { expect } from 'chai';
 import { nothing, type TemplateResult } from 'lit';
@@ -38,6 +38,10 @@ describe('editor.ts', () => {
       entities: {},
       devices: {},
     } as any as HomeAssistant;
+
+    if (!customElements.get('device-card-editor')) {
+      customElements.define('device-card-editor', DeviceCardEditor);
+    }
 
     card = new DeviceCardEditor();
     dispatchStub = stub(card, 'dispatchEvent');

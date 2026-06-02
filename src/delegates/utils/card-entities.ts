@@ -1,6 +1,7 @@
-import { getState } from '@delegates/retrievers/state';
-import { stateActive } from '@hass/common/entity/state_active';
-import type { HomeAssistant } from '@hass/types';
+import { stateActive } from '@homeassistant-extras/hass/common/entity/state_active';
+import type { ActionConfig } from '@homeassistant-extras/hass/data/lovelace/config/action';
+import { getState } from '@homeassistant-extras/hass/delegates/retrievers/state';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { BaseConfig, EntityInformation } from '@type/config';
 
 /**
@@ -56,13 +57,15 @@ export const getDeviceEntities = (
         isProblemEntity: state.attributes.device_class === 'problem',
         isActive: active,
         config: {
-          tap_action: config.tap_action || {
-            action: 'fire-dom-event',
-            device_card: {
-              expand: true,
-              entity_id: entity.entity_id,
-            },
-          },
+          tap_action:
+            config.tap_action ||
+            ({
+              action: 'fire-dom-event',
+              device_card: {
+                expand: true,
+                entity_id: entity.entity_id,
+              },
+            } as unknown as ActionConfig),
           hold_action: config.hold_action || {
             action: 'more-info',
           },

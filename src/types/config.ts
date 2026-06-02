@@ -3,8 +3,8 @@
  * @description Core type definitions for card configuration.
  */
 
-import type { EntityCategory } from '@hass/data/entity/entity_registry';
-import type { ActionConfig } from '@hass/data/lovelace/config/action';
+import type { EntityCategory } from '@homeassistant-extras/hass/data/entity/entity_registry';
+import type { ActionConfig } from '@homeassistant-extras/hass/data/lovelace/config/action';
 
 /**
  * Configuration settings for entity display and behavior within Home Assistant.

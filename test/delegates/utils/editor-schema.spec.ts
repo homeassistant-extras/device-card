@@ -3,7 +3,7 @@ import {
   getDeviceSchema,
   getIntegrationSchema,
 } from '@delegates/utils/editor-schema';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 

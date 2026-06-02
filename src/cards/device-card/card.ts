@@ -1,11 +1,12 @@
 import { getOrderedSections } from '@/helpers/device-section';
 import '@cards/components/section/section';
-import { HassUpdateMixin } from '@cards/mixins/hass-update-mixin';
-import { hasFeature } from '@config/feature';
 import { getDevice } from '@delegates/utils/get-device';
 import { hasProblem } from '@delegates/utils/has-problem';
 import { styles } from '@device/styles';
-import type { HomeAssistant } from '@hass/types';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
+import { HassUpdateMixin } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { deviceCardHeader } from '@html/device-card-header';
 import { picture } from '@html/picture';
 import { pinnedEntity } from '@html/pinned-entity';
@@ -21,7 +22,7 @@ import {
 import { state } from 'lit/decorators.js';
 import type { Config } from './types';
 
-export class DeviceCard extends HassUpdateMixin(LitElement) {
+export class DeviceCard extends HassUpdateMixin(HassConfigMixin(LitElement)) {
   /**
    * Card configuration object
    */
@@ -65,7 +66,7 @@ export class DeviceCard extends HassUpdateMixin(LitElement) {
   }
 
   // required for integration card
-  set config(config: Config) {
+  override set config(config: Config) {
     this.setConfig(config);
   }
 

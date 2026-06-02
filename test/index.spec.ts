@@ -1,3 +1,4 @@
+import { resetPoatCardHelpersForTests } from '@homeassistant-extras/hass/helpers/card-helpers';
 import { expect } from 'chai';
 import { stub, type SinonStub } from 'sinon';
 import { version } from '../package.json';
@@ -9,6 +10,7 @@ describe('index.ts', () => {
   let loadCardHelpersStub: sinon.SinonStub | undefined;
 
   beforeEach(() => {
+    resetPoatCardHelpersForTests();
     // Stub customElements.define to prevent actual registration
     customElementsStub = stub(customElements, 'define');
     consoleInfoStub = stub(console, 'info');
@@ -25,6 +27,7 @@ describe('index.ts', () => {
   });
 
   afterEach(() => {
+    resetPoatCardHelpersForTests();
     // Restore the original customElements.define
     customElementsStub.restore();
     consoleInfoStub.restore();

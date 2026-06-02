@@ -1,6 +1,6 @@
 import { getOrderedSections } from '@/helpers/device-section';
 import type { Config } from '@device/types';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { Device, EntityInformation } from '@type/config';
 import { expect } from 'chai';
 
@@ -10,7 +10,7 @@ describe('device-section.ts', () => {
   let mockDevice: Device;
 
   beforeEach(() => {
-    mockHass = { language: 'en' } as HomeAssistant;
+    mockHass = { language: 'en' } as unknown as HomeAssistant;
 
     mockConfig = {
       preview_count: 3,

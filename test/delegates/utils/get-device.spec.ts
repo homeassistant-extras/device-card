@@ -1,9 +1,8 @@
-import * as deviceRetriever from '@delegates/retrievers/device';
 import * as cardEntities from '@delegates/utils/card-entities';
 import { getDevice } from '@delegates/utils/get-device';
 import type { Config } from '@device/types';
-import * as domainUtils from '@hass/common/entity/compute_domain';
-import type { HomeAssistant } from '@hass/types';
+import * as domainUtils from '@homeassistant-extras/hass/common/entity/compute_domain';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { EntityInformation } from '@type/config';
 import { expect } from 'chai';
 import { stub } from 'sinon';
@@ -11,13 +10,10 @@ import { stub } from 'sinon';
 describe('get-device.ts', () => {
   let mockHass: HomeAssistant;
   let mockConfig: Config;
-  let getDeviceStub: sinon.SinonStub;
   let getDeviceEntitiesStub: sinon.SinonStub;
   let computeDomainStub: sinon.SinonStub;
 
   beforeEach(() => {
-    // Create stubs for imported functions
-    getDeviceStub = stub(deviceRetriever, 'getDevice');
     getDeviceEntitiesStub = stub(cardEntities, 'getDeviceEntities');
     computeDomainStub = stub(domainUtils, 'computeDomain');
 
@@ -41,14 +37,11 @@ describe('get-device.ts', () => {
     };
 
     // Configure stubs with default behavior
-    getDeviceStub.returns(mockHass.devices.device_1);
     getDeviceEntitiesStub.returns([]);
     computeDomainStub.callsFake((entity_id) => entity_id.split('.')[0]!);
   });
 
   afterEach(() => {
-    // Restore all stubs
-    getDeviceStub.restore();
     getDeviceEntitiesStub.restore();
     computeDomainStub.restore();
   });
@@ -90,7 +83,7 @@ describe('get-device.ts', () => {
   });
 
   it('should return undefined if device not found', () => {
-    getDeviceStub.returns(undefined);
+    mockConfig = { device_id: 'missing_device' };
     const result = getDevice(mockHass, mockConfig);
     expect(result).to.be.undefined;
   });
@@ -103,10 +96,12 @@ describe('get-device.ts', () => {
   });
 
   it('should use default name if device name is missing', () => {
-    getDeviceStub.returns({
-      ...mockHass.devices.device_1,
-      name: null,
-    });
+    mockHass.devices = {
+      device_1: {
+        ...mockHass.devices.device_1,
+        name: null,
+      },
+    } as typeof mockHass.devices;
 
     const result = getDevice(mockHass, mockConfig);
     expect(result?.name).to.equal('Device');

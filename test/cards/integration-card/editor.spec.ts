@@ -1,5 +1,5 @@
 import * as integrationSchemaModule from '@delegates/utils/editor-schema';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { IntegrationCardEditor } from '@integration/editor';
 import type { Config } from '@integration/types';
 import { fixture } from '@open-wc/testing-helpers';
@@ -44,7 +44,10 @@ describe('editor.ts', () => {
       callWS: () => Promise.resolve([]),
     } as any as HomeAssistant;
 
-    // Create component instance
+    if (!customElements.get('integration-card-editor')) {
+      customElements.define('integration-card-editor', IntegrationCardEditor);
+    }
+
     card = new IntegrationCardEditor();
 
     // Stub the dispatch event method

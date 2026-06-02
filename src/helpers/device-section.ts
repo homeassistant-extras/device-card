@@ -4,7 +4,7 @@
  */
 
 import type { Config } from '@device/types';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { localize } from '@localize/localize';
 import type { Device, EntityInformation } from '@type/config';
 

@@ -1,14 +1,13 @@
 import { matchesPattern } from '@/common/matches';
-import { getDevice as getHassDevice } from '@delegates/retrievers/device';
-import { getEntity } from '@delegates/retrievers/entity';
-import { getState } from '@delegates/retrievers/state';
 import type { Config } from '@device/types';
-import { computeDomain } from '@hass/common/entity/compute_domain';
-import type { HomeAssistant } from '@hass/types';
+import { SENSOR_ENTITIES } from '@homeassistant-extras/hass/common/const';
+import { computeDomain } from '@homeassistant-extras/hass/common/entity/compute_domain';
+import { getDevice as getHassDevice } from '@homeassistant-extras/hass/delegates/retrievers/device';
+import { getEntity } from '@homeassistant-extras/hass/delegates/retrievers/entity';
+import { getState } from '@homeassistant-extras/hass/delegates/retrievers/state';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { Device, EntityInformation } from '@type/config';
-import { SENSOR_ENTITIES } from '../../hass/common/const';
 import { getDeviceEntities } from './card-entities';
-
 /**
  * Gets a device with all its entities sorted into appropriate categories
  * @param hass - The Home Assistant instance

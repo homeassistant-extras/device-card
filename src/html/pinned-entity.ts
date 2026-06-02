@@ -1,9 +1,9 @@
-import { hasFeature } from '@config/feature';
-import { getState } from '@delegates/retrievers/state';
 import type { Config } from '@device/types';
-import type { HomeAssistant } from '@hass/types';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import { getState } from '@homeassistant-extras/hass/delegates/retrievers/state';
+import { stateDisplay } from '@homeassistant-extras/hass/render/state-display';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { nothing, type TemplateResult } from 'lit';
-import { stateDisplay } from './state-display';
 
 /**
  * Renders a state display for a pinned entity

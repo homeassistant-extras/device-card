@@ -1,8 +1,8 @@
-import * as stateRetriever from '@delegates/retrievers/state';
 import { getDeviceEntities } from '@delegates/utils/card-entities';
 import type { Config } from '@device/types';
-import * as stateActiveModule from '@hass/common/entity/state_active';
-import type { HomeAssistant } from '@hass/types';
+import * as stateActiveModule from '@homeassistant-extras/hass/common/entity/state_active';
+import * as stateRetriever from '@homeassistant-extras/hass/delegates/retrievers/state';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 
@@ -360,8 +360,6 @@ describe('card-entities.ts', () => {
       device_id: 'petkit_device_1',
       entity_category: undefined,
       translation_key: 'light',
-      area_id: 'area_1',
-      labels: [],
     };
 
     // Configure stateActive for the new entity

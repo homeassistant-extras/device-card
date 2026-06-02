@@ -1,5 +1,5 @@
 import { pascalCase } from '@/common/pascal-case';
-import * as capitalizeModule from '@hass/common/string/capitalize-first-letter';
+import * as capitalizeModule from '@homeassistant-extras/hass/common/string/capitalize-first-letter';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 

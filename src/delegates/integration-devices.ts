@@ -2,7 +2,7 @@ import { matchesDevicePatterns } from '@/common/matches';
 import { pascalCase } from '@/common/pascal-case';
 import { sortDevices } from '@/common/sort-devices';
 import { isInIntegration } from '@delegates/utils/is-integration';
-import type { HomeAssistant } from '@hass/types';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import type { DeviceSortConfig } from '@type/config';
 
 /**

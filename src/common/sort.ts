@@ -1,5 +1,5 @@
 // src/delegates/utils/sort-entities.ts
-import { computeDomain } from '@hass/common/entity/compute_domain';
+import { computeDomain } from '@homeassistant-extras/hass/common/entity/compute_domain';
 import type { EntityInformation, SortConfig } from '@type/config';
 
 /**

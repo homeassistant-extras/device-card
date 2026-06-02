@@ -1,5 +1,8 @@
-import { subscribeRenderTemplate } from '@hass/data/ws-templates';
-import type { Connection, UnsubscribeFunc } from '@hass/ws/types';
+import { subscribeRenderTemplate } from '@homeassistant-extras/hass/data/ws-templates';
+import type {
+  Connection,
+  UnsubscribeFunc,
+} from '@homeassistant-extras/hass/ws/types';
 
 /**
  * Manages a live Jinja template subscription over the HA websocket.
@@ -46,7 +49,16 @@ export class TemplateSubscription {
           return;
         }
 
-        this._deviceIds = result.result as string[];
+        const resolved: unknown = result.result;
+        if (!Array.isArray(resolved)) {
+          console.error(
+            'Integration Card: template must resolve to a list, got:',
+            resolved,
+          );
+          return;
+        }
+
+        this._deviceIds = resolved;
         this._onChange();
       },
       { template },

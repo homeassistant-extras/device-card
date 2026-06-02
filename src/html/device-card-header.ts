@@ -1,6 +1,6 @@
-import { hasFeature } from '@config/feature';
 import type { Config } from '@device/types';
-import type { HomeAssistant } from '@hass/types';
+import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { localize } from '@localize/localize';
 import type { Device } from '@type/config';
 import { html, nothing, type TemplateResult } from 'lit';

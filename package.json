@@ -6,6 +6,7 @@
     "url": "https://curiouscat.consulting/projects/ha-device-card?utm_source=github-device-card&utm_medium=package-metadata&utm_campaign=oss-presence&utm_content=author-url"
   },
   "license": "ISC",
+  "prettier": "@homeassistant-extras/config/prettier",
   "description": "Custom Home Assistant card to show info about your devices.",
   "homepage": "https://homeassistant-extras.github.io/device-card/",
   "repository": {
@@ -22,6 +23,9 @@
       "includeNodeModules": true
     }
   },
+  "@parcel/resolver-default": {
+    "packageExports": true
+  },
   "scripts": {
     "watch": "parcel watch",
     "build": "parcel build",
@@ -37,6 +41,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@homeassistant-extras/config": "^0.2.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@open-wc/testing": "^4.0.0",
     "@parcel/transformer-inline-string": "^2.16.4",
@@ -45,14 +50,15 @@
     "@types/chai": "^5.2.3",
     "@types/jsdom": "^28.0.3",
     "@types/mocha": "^10.0.10",
+    "@types/node": "^25.9.1",
     "@types/sinon": "^21.0.1",
     "chai": "^6.2.2",
-    "eslint": "^10.4.0",
+    "eslint": "^10.4.1",
     "eslint-plugin-lit": "^2.3.1",
     "eslint-plugin-wc": "^3.1.0",
     "globals": "^17.6.0",
     "jsdom": "^29.1.1",
-    "mocha": "^11.7.5",
+    "mocha": "^11.7.6",
     "nyc": "^18.0.0",
     "parcel": "^2.16.4",
     "prettier": "3.8.3",
@@ -62,9 +68,10 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.59.4"
+    "typescript-eslint": "^8.60.1"
   },
   "dependencies": {
+    "@homeassistant-extras/hass": "^0.4.0",
     "@lit/task": "^1.0.3",
     "fast-deep-equal": "^3.1.3",
     "lit": "^3.3.3"

@@ -1,33 +1,13 @@
 {
+  "extends": "@homeassistant-extras/config/tsconfig.base.json",
   "compilerOptions": {
-    /* Base Options: */
-    "skipLibCheck": true,
-    "target": "es2022",
-    "lib": ["es2022", "dom"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "isolatedModules": true,
     "experimentalDecorators": true,
-    "useDefineForClassFields": false,
-    "resolveJsonModule": true,
-    "moduleDetection": "force",
-    "verbatimModuleSyntax": true,
-    "allowSyntheticDefaultImports": true,
-
-    /* Strictness */
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-
-    /* Paths */
     "paths": {
       "@cards/*": ["./src/cards/*"],
       "@device/*": ["./src/cards/device-card/*"],
       "@integration/*": ["./src/cards/integration-card/*"],
       "@type/*": ["./src/types/*"],
-      "@hass/*": ["./src/hass/*"],
       "@common/*": ["./src/common/*"],
-      "@config/*": ["./src/config/*"],
       "@localize/*": ["./src/localize/*"],
       "@theme/*": ["./src/theme/*"],
       "@html/*": ["./src/html/*"],

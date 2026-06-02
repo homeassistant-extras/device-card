@@ -1,11 +1,11 @@
 // test/html/pinned-entity.spec.ts
 
-import * as featureModule from '@config/feature';
-import * as stateRetrieverModule from '@delegates/retrievers/state';
 import type { Config } from '@device/types';
-import type { HomeAssistant } from '@hass/types';
+import * as featureModule from '@homeassistant-extras/hass/common/config/feature';
+import * as stateRetrieverModule from '@homeassistant-extras/hass/delegates/retrievers/state';
+import * as stateDisplayModule from '@homeassistant-extras/hass/render/state-display';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { pinnedEntity } from '@html/pinned-entity';
-import * as stateDisplayModule from '@html/state-display';
 import { expect } from 'chai';
 import { html, nothing } from 'lit';
 import { stub } from 'sinon';

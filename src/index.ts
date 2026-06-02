@@ -1,6 +1,6 @@
-import { resolvePoatCardHelpers } from '@/helpers/card-helpers';
 import { DeviceCard } from '@device/card';
 import { DeviceCardEditor } from '@device/editor';
+import { resolvePoatCardHelpers } from '@homeassistant-extras/hass/helpers/card-helpers';
 import { IntegrationCard } from '@integration/card';
 import { IntegrationCardEditor } from '@integration/editor';
 import { version } from '../package.json';

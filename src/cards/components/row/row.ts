@@ -1,10 +1,13 @@
-import { resolvePoatCardHelpers } from '@/helpers/card-helpers';
-import { HassConfigMixin } from '@cards/mixins/hass-config-mixin';
+import type { Config } from '@device/types';
+import {
+  resolvePoatCardHelpers,
+  type CardHelpers,
+} from '@homeassistant-extras/hass/helpers/card-helpers';
+import { entityRow } from '@homeassistant-extras/hass/html/entity-row';
+import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
 import { attributes } from '@html/attributes';
 import { percentBar } from '@html/percent';
-import { stateContent } from '@html/state-content';
 import type { EntityInformation } from '@type/config';
-import type { CardHelpers } from '@type/lovelace';
 import {
   LitElement,
   html,
@@ -16,7 +19,9 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { styles } from './styles';
 
 @customElement('device-card-row')
-export class DeviceCardRow extends HassConfigMixin(LitElement) {
+export class DeviceCardRow extends HassConfigMixin<typeof LitElement, Config>(
+  LitElement,
+) {
   @property({ attribute: false })
   public entity!: EntityInformation;
 
@@ -101,7 +106,15 @@ export class DeviceCardRow extends HassConfigMixin(LitElement) {
       ].join(' ')}"
     >
       <div class="row-content">
-        ${stateContent(this.hass, this.entity, statusClassName)}
+        ${entityRow(
+          this.hass,
+          {
+            entity: this.entity.entity_id,
+            name: this.entity.name,
+            ...this.entity.config,
+          },
+          statusClassName,
+        )}
         ${showBar ? percentBar(this.entity, inverseEntities) : nothing}
       </div>
       ${this._expanded ? attributes(this.entity) : nothing}

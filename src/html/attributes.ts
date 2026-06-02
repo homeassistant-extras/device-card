@@ -1,4 +1,4 @@
-import { fireEvent } from '@hass/common/dom/fire_event';
+import { moreInfo } from '@homeassistant-extras/hass/events/more-info';
 import type { EntityState } from '@type/config';
 import { type TemplateResult, html } from 'lit';
 import { map } from 'lit/directives/map.js';
@@ -34,9 +34,7 @@ export const attributes = (entity: EntityState): TemplateResult => {
   // default, so it reaches HA's more-info handler across the shadow boundary.
   const openMoreInfo = (ev: Event): void => {
     ev.stopPropagation();
-    fireEvent(ev.currentTarget as HTMLElement, 'hass-more-info', {
-      entityId: entity.entity_id,
-    });
+    moreInfo(ev.currentTarget as HTMLElement, entity.entity_id);
   };
 
   return html`

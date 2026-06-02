@@ -1,6 +1,7 @@
 import * as integrationDevicesModule from '@delegates/integration-devices';
-import * as wsTemplatesModule from '@hass/data/ws-templates';
-import type { HomeAssistant } from '@hass/types';
+import { DeviceCard } from '@device/card';
+import * as wsTemplatesModule from '@homeassistant-extras/hass/data/ws-templates';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { IntegrationCard } from '@integration/card';
 import type { Config } from '@integration/types';
 import { fixture } from '@open-wc/testing-helpers';
@@ -15,6 +16,13 @@ describe('integration-card.ts', () => {
   let subscribeRenderTemplateStub: sinon.SinonStub;
 
   beforeEach(() => {
+    if (!customElements.get('device-card')) {
+      customElements.define('device-card', DeviceCard);
+    }
+    if (!customElements.get('integration-card')) {
+      customElements.define('integration-card', IntegrationCard);
+    }
+
     card = new IntegrationCard();
 
     computeIntegrationDevicesStub = stub(
@@ -316,7 +324,7 @@ describe('integration-card.ts', () => {
       const deviceCards = el.querySelectorAll('device-card');
       expect(deviceCards).to.have.lengthOf(3);
       const configs = Array.from(deviceCards).map(
-        (el) => (el as any).config?.device_id,
+        (deviceCard) => (deviceCard as any)._config?.device_id,
       );
       expect(configs).to.deep.equal(['device_1', 'device_2', 'device_3']);
     });

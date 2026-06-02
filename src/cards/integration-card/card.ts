@@ -1,7 +1,6 @@
-import type { HassUpdateEvent } from '@cards/mixins/hass-update-mixin';
 import { computeIntegrationDevices } from '@delegates/integration-devices';
-import { fireEvent } from '@hass/common/dom/fire_event';
-import type { HomeAssistant } from '@hass/types';
+import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { localize } from '@localize/localize';
 import equal from 'fast-deep-equal';
 import {
@@ -16,12 +15,6 @@ import { styleMap } from 'lit/directives/style-map.js';
 import { integrationStyles } from './styles';
 import { TemplateSubscription } from './template-subscription';
 import type { Config, IntegrationData } from './types';
-
-declare global {
-  interface HASSDomEvents {
-    'hass-update': HassUpdateEvent;
-  }
-}
 
 /**
  * Integration Card

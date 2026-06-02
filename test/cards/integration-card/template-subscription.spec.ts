@@ -1,5 +1,5 @@
-import * as wsTemplatesModule from '@hass/data/ws-templates';
-import type { Connection } from '@hass/ws/types';
+import * as wsTemplatesModule from '@homeassistant-extras/hass/data/ws-templates';
+import type { Connection } from '@homeassistant-extras/hass/ws/types';
 import { TemplateSubscription } from '@integration/template-subscription';
 import { expect } from 'chai';
 import { stub } from 'sinon';
@@ -48,6 +48,24 @@ describe('template-subscription.ts', () => {
     capturedCallback!({ result: ['dev1', 'dev2'] });
     expect(onChange.calledOnce).to.be.true;
     expect(sub.deviceIds).to.deep.equal(['dev1', 'dev2']);
+  });
+
+  it('should not invoke onChange when template result is not an array', async () => {
+    let capturedCallback: (msg: { result: unknown }) => void;
+    subscribeStub.callsFake((_conn, cb) => {
+      capturedCallback = cb;
+      return Promise.resolve(() => {});
+    });
+
+    const onChange = stub();
+    const sub = new TemplateSubscription(onChange);
+
+    sub.connect(mockConn, '{{ "dev1" }}');
+    await Promise.resolve();
+
+    capturedCallback!({ result: 'dev1' });
+    expect(onChange.called).to.be.false;
+    expect(sub.deviceIds).to.be.undefined;
   });
 
   it('should not invoke onChange when template returns error', async () => {

@@ -1,7 +1,7 @@
 import type { Config } from '@device/types';
-import type { HaFormSchema } from '@hass/components/ha-form/types';
-import type { IntegrationManifest } from '@hass/data/integration';
-import type { HomeAssistant } from '@hass/types';
+import type { HaFormSchema } from '@homeassistant-extras/hass/components/ha-form/types';
+import type { IntegrationManifest } from '@homeassistant-extras/hass/data/integration';
+import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { getDeviceEntities } from './card-entities';
 
 /**
@@ -410,7 +410,7 @@ export const getIntegrationSchema = async (
     await hass.callWS<IntegrationManifest[]>({
       type: 'manifest/list',
     })
-  ).filter((m) =>
+  ).filter((m: IntegrationManifest) =>
     ['device', 'hub', 'service', 'integration'].includes(
       m.integration_type ?? 'unknown',
     ),
