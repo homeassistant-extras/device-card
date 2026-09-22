@@ -260,6 +260,24 @@ describe('integration-card.ts', () => {
       expect(el.textContent).to.include('Loading...');
     });
 
+    it('should pass the featured state config to each device card', async () => {
+      card.setConfig({
+        integration: 'zwave_js',
+        state_entity: 'sensor.*_state',
+        state_colors: [{ state: 'dead', color: 'red' }],
+      });
+
+      const el = await fixture(card.render() as TemplateResult);
+
+      const deviceCard = el.querySelector('device-card') as DeviceCard;
+      expect((deviceCard as any)._config.state_entity).to.equal(
+        'sensor.*_state',
+      );
+      expect((deviceCard as any)._config.state_colors).to.deep.equal([
+        { state: 'dead', color: 'red' },
+      ]);
+    });
+
     it('should render one device card in preview mode', async () => {
       // Set preview mode to true
       Object.defineProperty(card, 'isPreview', {

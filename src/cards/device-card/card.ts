@@ -2,6 +2,7 @@ import { getOrderedSections } from '@/helpers/device-section';
 import '@cards/components/section/section';
 import { getDevice } from '@delegates/utils/get-device';
 import { hasProblem } from '@delegates/utils/has-problem';
+import { stateColor } from '@delegates/utils/state-color';
 import { styles } from '@device/styles';
 import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
 import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
@@ -20,6 +21,7 @@ import {
   type TemplateResult,
 } from 'lit';
 import { state } from 'lit/decorators.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import type { Config } from './types';
 
 export class DeviceCard extends HassUpdateMixin(HassConfigMixin(LitElement)) {
@@ -117,8 +119,14 @@ export class DeviceCard extends HassUpdateMixin(HassConfigMixin(LitElement)) {
       return picture(this._device);
     }
 
-    const problem = hasProblem(this._device);
-    const entity = pinnedEntity(this._hass, this._config);
+    const color = stateColor(this._config, this._device.entity);
+    const cardClass = color
+      ? 'tinted'
+      : hasProblem(this._device)
+        ? 'problem'
+        : '';
+    const cardStyle = styleMap(color ? { '--state-color': color } : {});
+    const entity = pinnedEntity(this._hass, this._config, this._device);
     const headerContent = deviceCardHeader({
       config: this._config,
       device: this._device,
@@ -129,7 +137,7 @@ export class DeviceCard extends HassUpdateMixin(HassConfigMixin(LitElement)) {
     });
 
     return html`
-      <ha-card class="${problem ? 'problem' : ''}">
+      <ha-card class="${cardClass}" style=${cardStyle}>
         ${headerContent}
         ${this.collapse
           ? nothing

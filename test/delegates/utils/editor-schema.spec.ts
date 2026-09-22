@@ -416,6 +416,46 @@ describe('editor-schema.ts', () => {
           ],
         },
         {
+          name: 'state',
+          label: 'Featured State',
+          type: 'expandable',
+          flatten: true,
+          icon: 'mdi:palette',
+          schema: [
+            {
+              name: 'state_entity',
+              label: 'State entity - exact ID, wildcard, or /regex/',
+              required: false,
+              selector: {
+                text: {},
+              },
+            },
+            {
+              name: 'state_colors',
+              label: 'Card color by state',
+              required: false,
+              selector: {
+                object: {
+                  multiple: true,
+                  label_field: 'state',
+                  fields: {
+                    state: {
+                      label: 'State',
+                      required: true,
+                      selector: { text: {} },
+                    },
+                    color: {
+                      label: 'Color',
+                      required: true,
+                      selector: { ui_color: {} },
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        },
+        {
           name: 'sort',
           label: 'Sort Options',
           type: 'expandable',
@@ -723,6 +763,46 @@ describe('editor-schema.ts', () => {
                     'sensor.test_sensor',
                     'switch.test_switch',
                   ],
+                },
+              },
+            },
+          ],
+        },
+        {
+          name: 'state',
+          label: 'Featured State',
+          type: 'expandable',
+          flatten: true,
+          icon: 'mdi:palette',
+          schema: [
+            {
+              name: 'state_entity',
+              label: 'State entity - exact ID, wildcard, or /regex/',
+              required: false,
+              selector: {
+                text: {},
+              },
+            },
+            {
+              name: 'state_colors',
+              label: 'Card color by state',
+              required: false,
+              selector: {
+                object: {
+                  multiple: true,
+                  label_field: 'state',
+                  fields: {
+                    state: {
+                      label: 'State',
+                      required: true,
+                      selector: { text: {} },
+                    },
+                    color: {
+                      label: 'Color',
+                      required: true,
+                      selector: { ui_color: {} },
+                    },
+                  },
                 },
               },
             },

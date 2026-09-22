@@ -45,6 +45,26 @@ export interface BaseConfig {
 
   /** Options to enable disable features **/
   features?: Features[];
+
+  /**
+   * Entity ID pattern used to pick the entity whose state is featured in the
+   * header (exact ID, wildcard, or /regex/). Resolved per device.
+   */
+  state_entity?: string;
+
+  /** Colors applied to the card based on the featured entity state */
+  state_colors?: StateColorConfig[];
+}
+
+/**
+ * Maps a state of the featured entity to a card color.
+ */
+export interface StateColorConfig {
+  /** State to match (exact, wildcard, or /regex/) */
+  state: string;
+
+  /** CSS color used to tint the card and its icon */
+  color: string;
 }
 
 /** Features to enable or disable functionality */
@@ -97,7 +117,7 @@ export interface Device {
   /** The configurations of the device */
   configurations: EntityInformation[];
 
-  /** State object for the header entity (entity_id), used for ha-state-icon */
+  /** State object for the featured entity, used for ha-state-icon and the header state */
   entity?: EntityState;
 }
 

@@ -224,6 +224,53 @@ describe('card.ts', () => {
       expect(el.classList.contains('problem')).to.be.true;
     });
 
+    it('should tint the card with the color matching the featured state', async () => {
+      hasProblemStub.returns(true);
+      (card as any)._device = {
+        ...mockUnit,
+        entity: {
+          entity_id: 'sensor.container_state',
+          state: 'dead',
+          attributes: {},
+        },
+      };
+      card.setConfig({
+        device_id: 'device_1',
+        state_colors: [{ state: 'dead', color: '#ff0000' }],
+      });
+
+      const el = await fixture(card.render() as TemplateResult);
+
+      // the configured color wins over the problem styling
+      expect(el.classList.contains('tinted')).to.be.true;
+      expect(el.classList.contains('problem')).to.be.false;
+      expect(
+        (el as HTMLElement).style.getPropertyValue('--state-color'),
+      ).to.equal('#ff0000');
+    });
+
+    it('should not tint the card when no state color matches', async () => {
+      (card as any)._device = {
+        ...mockUnit,
+        entity: {
+          entity_id: 'sensor.container_state',
+          state: 'running',
+          attributes: {},
+        },
+      };
+      card.setConfig({
+        device_id: 'device_1',
+        state_colors: [{ state: 'dead', color: '#ff0000' }],
+      });
+
+      const el = await fixture(card.render() as TemplateResult);
+
+      expect(el.classList.contains('tinted')).to.be.false;
+      expect(
+        (el as HTMLElement).style.getPropertyValue('--state-color'),
+      ).to.equal('');
+    });
+
     it('should not display header when both hide_title and hide_device_model are set', async () => {
       // Configure the card with both hide flags
       card.setConfig({

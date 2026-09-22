@@ -125,3 +125,4 @@ This project is protected under the MIT License. For more details, refer to the 
 - [x] **`Auto-entities support`**: `entity` config property for auto-entities integration - thanks @misc-brabs
 - [x] **`Heading icon`**: Entity icon next to card heading when entity_id/entity is configured - thanks @LennartPl
 - [x] **`More-info from attributes`**: Tap an entity's attribute details to open its more-info dialog - thanks @mleiber
+- [x] **`Featured state & card colors`**: Pick the header state entity by pattern and color the card by its state - thanks @LouPaloma

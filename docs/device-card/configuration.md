@@ -14,6 +14,8 @@
 | exclude_entities  | list   | _none_      | Entities to remove from the card                                                                                         |
 | inverse_percent   | list   | _none_      | Entity IDs with inverted percent colors (green for low, red for high)                                                    |
 | section_order     | list   | _none_      | Custom order for displaying sections. See below.                                                                         |
+| state_entity      | string | _none_      | Entity ID pattern picking the entity shown in the header. See below.                                                     |
+| state_colors      | list   | _none_      | Colors applied to the card based on that entity's state. See below.                                                      |
 | sort              | object | See below   | Sort options for entities                                                                                                |
 | features          | list   | See below   | Optional flags to toggle different features                                                                              |
 | tap_action        | object | _none_      | Action to perform when tapping the card                                                                                  |
@@ -35,6 +37,23 @@
 | expanded             | flag | Each section starts expanded (all entities visible; "Show more" not needed until collapsed) |
 | collapse             | flag | Initially displays the card collapsed                                                       |
 | show_hidden_entities | flag | Show entities marked as hidden in the entity registry                                       |
+
+## Featured State
+
+`state_entity` picks the entity whose state is shown in the header and used for the card icon. It accepts an exact entity ID, a wildcard (`sensor.*_state`), or a regex (`/sensor\.\w+_state/`), so a single pattern resolves per device on the Integration card. `entity_id` (or `entity`) wins when both are set.
+
+`state_colors` tints the card and its icon based on that entity's state. Each entry takes a `state` (exact, wildcard, or regex) and a `color` - either a Home Assistant color name (`red`, `deep-purple`) or any CSS color (`#ffd101`, `var(--warning-color)`). The first match wins, and a matching color takes precedence over the problem styling.
+
+```yaml
+type: custom:device-card
+device_id: 1b4a6cf3e0e3c3e4e3c3e4e3c3e4e3c3
+state_entity: sensor.*_state
+state_colors:
+  - state: dead
+    color: red
+  - state: paused
+    color: '#ffd101'
+```
 
 ## Sorting Options
 

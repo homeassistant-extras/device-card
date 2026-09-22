@@ -140,6 +140,51 @@ const CONTENT_SCHEMA: HaFormSchema = {
 };
 
 /**
+ * Schema for the featured state options used in both device and integration cards
+ * Defines which entity drives the header state and how the card is colored by it
+ */
+const STATE_SCHEMA: HaFormSchema = {
+  name: 'state',
+  label: 'Featured State',
+  type: 'expandable',
+  flatten: true,
+  icon: 'mdi:palette',
+  schema: [
+    {
+      name: 'state_entity',
+      label: 'State entity - exact ID, wildcard, or /regex/',
+      required: false,
+      selector: {
+        text: {},
+      },
+    },
+    {
+      name: 'state_colors',
+      label: 'Card color by state',
+      required: false,
+      selector: {
+        object: {
+          multiple: true,
+          label_field: 'state',
+          fields: {
+            state: {
+              label: 'State',
+              required: true,
+              selector: { text: {} },
+            },
+            color: {
+              label: 'Color',
+              required: true,
+              selector: { ui_color: {} },
+            },
+          },
+        },
+      },
+    },
+  ],
+};
+
+/**
  * Generates the schema for the sort options in the device card
  * This includes options for sorting by domain, entity ID, name, or state
  *
@@ -436,6 +481,7 @@ export const getIntegrationSchema = async (
     CONTENT_SCHEMA,
     layoutSchema(integration),
     featuresSchema(integration),
+    STATE_SCHEMA,
     SORT_SCHEMA,
     INTERACTIONS_SCHEMA,
   ];
@@ -483,6 +529,7 @@ export const getDeviceSchema = (
     },
     CONTENT_SCHEMA,
     featuresSchema(undefined, entities),
+    STATE_SCHEMA,
     SORT_SCHEMA,
     INTERACTIONS_SCHEMA,
   ];

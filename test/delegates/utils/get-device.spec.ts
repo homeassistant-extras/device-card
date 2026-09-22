@@ -82,6 +82,103 @@ describe('get-device.ts', () => {
     expect(result?.entity?.state).to.equal('23.5');
   });
 
+  it('should resolve the featured entity from the state_entity pattern', () => {
+    mockHass.states = {
+      'sensor.container_state': {
+        entity_id: 'sensor.container_state',
+        state: 'running',
+        attributes: {},
+      },
+    } as any;
+    getDeviceEntitiesStub.returns([
+      {
+        entity_id: 'sensor.container_uptime',
+        state: '5',
+        attributes: {},
+        name: 'Uptime',
+        category: undefined,
+        translation_key: undefined,
+        isActive: true,
+        isProblemEntity: false,
+      },
+      {
+        entity_id: 'sensor.container_state',
+        state: 'running',
+        attributes: {},
+        name: 'State',
+        category: undefined,
+        translation_key: undefined,
+        isActive: true,
+        isProblemEntity: false,
+      },
+    ]);
+
+    const result = getDevice(mockHass, {
+      ...mockConfig,
+      state_entity: 'sensor.*_state',
+    });
+
+    expect(result?.entity?.entity_id).to.equal('sensor.container_state');
+    expect(result?.entity?.state).to.equal('running');
+  });
+
+  it('should prefer the configured entity_id over the state_entity pattern', () => {
+    mockHass.states = {
+      'sensor.th_outdoor': {
+        entity_id: 'sensor.th_outdoor',
+        state: '23.5',
+        attributes: {},
+      },
+    } as any;
+    mockHass.entities = {
+      'sensor.th_outdoor': {
+        entity_id: 'sensor.th_outdoor',
+        device_id: 'device_1',
+      },
+    } as any;
+    getDeviceEntitiesStub.returns([
+      {
+        entity_id: 'sensor.container_state',
+        state: 'running',
+        attributes: {},
+        name: 'State',
+        category: undefined,
+        translation_key: undefined,
+        isActive: true,
+        isProblemEntity: false,
+      },
+    ]);
+
+    const result = getDevice(mockHass, {
+      entity_id: 'sensor.th_outdoor',
+      state_entity: 'sensor.*_state',
+    } as Config);
+
+    expect(result?.entity?.entity_id).to.equal('sensor.th_outdoor');
+  });
+
+  it('should leave the featured entity unset when the pattern matches nothing', () => {
+    getDeviceEntitiesStub.returns([
+      {
+        entity_id: 'sensor.container_uptime',
+        state: '5',
+        attributes: {},
+        name: 'Uptime',
+        category: undefined,
+        translation_key: undefined,
+        isActive: true,
+        isProblemEntity: false,
+      },
+    ]);
+
+    const result = getDevice(mockHass, {
+      ...mockConfig,
+      state_entity: 'sensor.*_state',
+    });
+
+    expect(result?.entity).to.be.undefined;
+  });
+
   it('should return undefined if device not found', () => {
     mockConfig = { device_id: 'missing_device' };
     const result = getDevice(mockHass, mockConfig);

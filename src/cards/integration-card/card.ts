@@ -256,6 +256,8 @@ export class IntegrationCard extends LitElement {
                   hold_action: this._config.hold_action,
                   double_tap_action: this._config.double_tap_action,
                   features: this._config.features,
+                  state_entity: this._config.state_entity,
+                  state_colors: this._config.state_colors,
                 }}
                 .hass=${this._hass}
               ></device-card>

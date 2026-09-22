@@ -73,8 +73,9 @@ export const styles = css`
     margin-bottom: 8px;
   }
 
-  /* Style for when card is on fire */
-  .problem::before {
+  /* Style for when card is on fire, or colored by its featured entity state */
+  .problem::before,
+  .tinted::before {
     content: '';
     position: absolute;
     top: 0;
@@ -82,9 +83,21 @@ export const styles = css`
     right: 0;
     bottom: 0;
     border-radius: var(--ha-card-border-radius, 12px);
-    background: var(--error-color);
     opacity: 0.08;
     z-index: -1;
+  }
+
+  .problem::before {
+    background: var(--error-color);
+  }
+
+  .tinted::before {
+    background: var(--state-color);
+  }
+
+  .tinted ha-icon,
+  .tinted ha-state-icon {
+    color: var(--state-color);
   }
 
   .model {

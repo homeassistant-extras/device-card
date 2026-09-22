@@ -17,11 +17,28 @@ Most configuration options from the Device Card are supported. Integration-speci
 | exclude_entities       | list        | _none_          | Entities to remove from the card                             |
 | inverse_percent        | list        | _none_          | Entity IDs with inverted percent colors                      |
 | section_order          | list        | _none_          | Custom order for displaying sections                         |
+| state_entity           | string      | _none_          | Entity ID pattern picking the state shown per device card    |
+| state_colors           | list        | _none_          | Colors applied to each device card based on that state       |
 | sort_devices           | object      | _none_          | Sort devices by name (see [Device Sort](#device-sort))       |
 | features               | list        | See Device Card | Optional flags to toggle different features                  |
 | tap_action             | object      | none            | Action to perform when tapping the card                      |
 | hold_action            | object      | none            | Action to perform when holding the card                      |
 | double_tap_action      | object      | none            | Action when double-tapping the card                          |
+
+### Featured State
+
+`state_entity` and `state_colors` are passed to every device card, so one pattern resolves the matching entity on each device. See [Featured State](../device-card/configuration.md#featured-state) for the full description.
+
+```yaml
+type: custom:integration-card
+integration: portainer
+state_entity: sensor.*_state
+state_colors:
+  - state: dead
+    color: red
+  - state: paused
+    color: '#ffd101'
+```
 
 ### Device Sort
 

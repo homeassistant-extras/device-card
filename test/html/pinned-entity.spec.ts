@@ -6,12 +6,14 @@ import * as stateRetrieverModule from '@homeassistant-extras/hass/delegates/retr
 import * as stateDisplayModule from '@homeassistant-extras/hass/render/state-display';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { pinnedEntity } from '@html/pinned-entity';
+import type { Device } from '@type/config';
 import { expect } from 'chai';
 import { html, nothing } from 'lit';
 import { stub } from 'sinon';
 
 describe('pinned-entity.ts', () => {
   let mockHass: HomeAssistant;
+  let mockDevice: Device;
   let getStateStub: sinon.SinonStub;
   let stateDisplayStub: sinon.SinonStub;
   let hasFeatureStub: sinon.SinonStub;
@@ -19,6 +21,13 @@ describe('pinned-entity.ts', () => {
   beforeEach(() => {
     // Create mock HomeAssistant instance
     mockHass = {} as HomeAssistant;
+
+    mockDevice = {
+      sensors: [],
+      controls: [],
+      diagnostics: [],
+      configurations: [],
+    };
 
     // Create stubs for the dependencies
     getStateStub = stub(stateRetrieverModule, 'getState');
@@ -39,189 +48,59 @@ describe('pinned-entity.ts', () => {
     hasFeatureStub.restore();
   });
 
-  describe('basic functionality', () => {
-    it('should return nothing when no entityId is provided', () => {
-      // Arrange
-      const config: Config = {};
+  it('should return nothing when the device has no featured entity', () => {
+    const result = pinnedEntity(mockHass, {} as Config, mockDevice);
 
-      // Act
-      const result = pinnedEntity(mockHass, config);
-
-      // Assert
-      expect(result).to.equal(nothing);
-      expect(getStateStub.called).to.be.false;
-      expect(stateDisplayStub.called).to.be.false;
-    });
-
-    it('should use entity property when entity_id is not provided (auto-entities)', () => {
-      const config: Config = { entity: 'sensor.auto_entities_entity' };
-      getStateStub.returns({
-        entity_id: 'sensor.auto_entities_entity',
-        state: '22',
-        attributes: { unit_of_measurement: '°C' },
-      });
-      pinnedEntity(mockHass, config);
-      expect(getStateStub.calledWith(mockHass, 'sensor.auto_entities_entity'))
-        .to.be.true;
-    });
-
-    it('should call getState with the provided entityId', () => {
-      // Arrange
-      const config: Config = {
-        entity_id: 'sensor.test_entity',
-      };
-      getStateStub.returns({
-        entity_id: 'sensor.test_entity',
-        state: '50',
-        attributes: { unit_of_measurement: '%' },
-      });
-
-      // Act
-      pinnedEntity(mockHass, config);
-
-      // Assert
-      expect(getStateStub.calledOnce).to.be.true;
-      expect(getStateStub.calledWith(mockHass, 'sensor.test_entity')).to.be
-        .true;
-    });
-
-    it('should call stateDisplay with hass and state when state exists', () => {
-      // Arrange
-      const config: Config = {
-        entity_id: 'sensor.test_entity',
-      };
-      const mockState = {
-        entity_id: 'sensor.test_entity',
-        state: '50',
-        attributes: { unit_of_measurement: '%' },
-      };
-      getStateStub.returns(mockState);
-
-      // Act
-      const result = pinnedEntity(mockHass, config);
-
-      // Assert
-      expect(stateDisplayStub.calledOnce).to.be.true;
-      expect(stateDisplayStub.calledWith(mockHass, mockState)).to.be.true;
-      expect(result).to.not.equal(nothing);
-    });
+    expect(result).to.equal(nothing);
+    expect(getStateStub.calledWith(mockHass, undefined)).to.be.true;
+    expect(stateDisplayStub.called).to.be.false;
   });
 
-  describe('edge cases', () => {
-    it('should return nothing when getState returns undefined', () => {
-      // Arrange
-      const config: Config = {
-        entity_id: 'sensor.non_existent_entity',
-      };
-      getStateStub.returns(undefined);
+  it('should render the state of the featured entity', () => {
+    const mockState = {
+      entity_id: 'sensor.test_entity',
+      state: '50',
+      attributes: { unit_of_measurement: '%' },
+    };
+    mockDevice.entity = mockState;
+    getStateStub.returns(mockState);
 
-      // Act
-      const result = pinnedEntity(mockHass, config);
+    const result = pinnedEntity(mockHass, {} as Config, mockDevice);
 
-      // Assert
-      expect(result).to.equal(nothing);
-      expect(getStateStub.calledOnce).to.be.true;
-      expect(stateDisplayStub.called).to.be.false;
-    });
-
-    it('should handle empty string entity IDs', () => {
-      // Arrange
-      const config: Config = {
-        entity_id: '',
-      };
-      getStateStub.returns(undefined);
-
-      // Act
-      const result = pinnedEntity(mockHass, config);
-
-      // Assert
-      expect(result).to.equal(nothing);
-      expect(getStateStub.called).to.be.false;
-    });
-
-    it('should support all state types through stateDisplay', () => {
-      // Arrange - test with states of different types
-      const testStates = [
-        {
-          entity_id: 'sensor.temperature',
-          state: '22.5',
-          attributes: { unit_of_measurement: '°C' },
-        },
-        { entity_id: 'switch.light', state: 'on', attributes: {} },
-        {
-          entity_id: 'sensor.progress',
-          state: '75.5',
-          attributes: { unit_of_measurement: '%' },
-        },
-      ];
-
-      for (const state of testStates) {
-        // Reset stubs for each test case
-        getStateStub.reset();
-        stateDisplayStub.reset();
-
-        // Set up stubs for this test case
-        getStateStub.returns(state);
-
-        // Create config with entity_id
-        const config: Config = {
-          entity_id: state.entity_id,
-        };
-
-        // Act
-        const result = pinnedEntity(mockHass, config);
-
-        // Assert
-        expect(getStateStub.calledOnce).to.be.true;
-        expect(stateDisplayStub.calledOnce).to.be.true;
-        expect(stateDisplayStub.calledWith(mockHass, state)).to.be.true;
-        expect(result).to.not.equal(nothing);
-      }
-    });
+    expect(getStateStub.calledWith(mockHass, 'sensor.test_entity')).to.be.true;
+    expect(stateDisplayStub.calledOnceWith(mockHass, mockState)).to.be.true;
+    expect(result).to.not.equal(nothing);
   });
 
-  describe('hide_entity_state feature flag', () => {
-    it('should return nothing when hide_entity_state feature is enabled', () => {
-      // Arrange
-      const config: Config = {
-        entity_id: 'sensor.test_entity',
-        features: ['hide_entity_state'],
-      };
-      hasFeatureStub.returns(true);
+  it('should return nothing when the state is no longer available', () => {
+    mockDevice.entity = {
+      entity_id: 'sensor.non_existent_entity',
+      state: 'unknown',
+      attributes: {},
+    };
+    getStateStub.returns(undefined);
 
-      // Act
-      const result = pinnedEntity(mockHass, config);
+    const result = pinnedEntity(mockHass, {} as Config, mockDevice);
 
-      // Assert
-      expect(result).to.equal(nothing);
-      expect(hasFeatureStub.calledOnce).to.be.true;
-      expect(hasFeatureStub.calledWith(config, 'hide_entity_state')).to.be.true;
-      expect(getStateStub.called).to.be.false;
-      expect(stateDisplayStub.called).to.be.false;
-    });
+    expect(result).to.equal(nothing);
+    expect(stateDisplayStub.called).to.be.false;
+  });
 
-    it('should render normally when hide_entity_state feature is not enabled', () => {
-      // Arrange
-      const config: Config = {
-        entity_id: 'sensor.test_entity',
-      };
-      const mockState = {
-        entity_id: 'sensor.test_entity',
-        state: '50',
-        attributes: { unit_of_measurement: '%' },
-      };
-      hasFeatureStub.returns(false);
-      getStateStub.returns(mockState);
+  it('should return nothing when hide_entity_state feature is enabled', () => {
+    const config: Config = { features: ['hide_entity_state'] };
+    mockDevice.entity = {
+      entity_id: 'sensor.test_entity',
+      state: '50',
+      attributes: {},
+    };
+    hasFeatureStub.returns(true);
 
-      // Act
-      const result = pinnedEntity(mockHass, config);
+    const result = pinnedEntity(mockHass, config, mockDevice);
 
-      // Assert
-      expect(result).to.not.equal(nothing);
-      expect(hasFeatureStub.calledOnce).to.be.true;
-      expect(hasFeatureStub.calledWith(config, 'hide_entity_state')).to.be.true;
-      expect(getStateStub.calledOnce).to.be.true;
-      expect(stateDisplayStub.calledOnce).to.be.true;
-    });
+    expect(result).to.equal(nothing);
+    expect(hasFeatureStub.calledOnceWith(config, 'hide_entity_state')).to.be
+      .true;
+    expect(getStateStub.called).to.be.false;
+    expect(stateDisplayStub.called).to.be.false;
   });
 });

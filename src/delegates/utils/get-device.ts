@@ -52,6 +52,12 @@ export const getDevice = (
 
   const entities = getDeviceEntities(hass, config, hassDevice.id, device.name);
 
+  // fall back to the first entity matching the configured state entity pattern
+  const statePattern = config.state_entity;
+  device.entity ??= statePattern
+    ? entities.find((entity) => matchesPattern(entity.entity_id, statePattern))
+    : undefined;
+
   entities.forEach((entity) => {
     if (shouldSkipEntity(entity, config)) {
       return;
