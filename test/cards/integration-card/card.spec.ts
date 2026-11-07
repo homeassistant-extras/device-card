@@ -274,11 +274,23 @@ describe('integration-card.ts', () => {
     });
 
     it('should render all device cards when not in preview mode', async () => {
+      card.setConfig({
+        integration: 'zwave_js',
+        inverse_percent: ['sensor.disk'],
+        percent_colors: { 'sensor.*_humidity': 'blue' },
+      });
       const el = await fixture(card.render() as TemplateResult);
 
       // Should show all device cards
       const deviceCards = el.querySelectorAll('device-card');
       expect(deviceCards).to.have.lengthOf(2);
+
+      // Percent options are forwarded to each device card
+      const childConfig = (deviceCards[0] as any)._config;
+      expect(childConfig.inverse_percent).to.deep.equal(['sensor.disk']);
+      expect(childConfig.percent_colors).to.deep.equal({
+        'sensor.*_humidity': 'blue',
+      });
     });
 
     it('should use grid styles based on columns configuration', async () => {

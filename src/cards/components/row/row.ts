@@ -115,7 +115,15 @@ export class DeviceCardRow extends HassConfigMixin<typeof LitElement, Config>(
           },
           statusClassName,
         )}
-        ${showBar ? percentBar(this.entity, inverseEntities) : nothing}
+        ${
+          showBar
+            ? percentBar(
+                this.entity,
+                inverseEntities,
+                this.config?.percent_colors,
+              )
+            : nothing
+        }
       </div>
       ${this._expanded ? attributes(this.entity) : nothing}
     </div>`;

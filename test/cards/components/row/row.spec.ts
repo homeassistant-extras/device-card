@@ -160,11 +160,13 @@ describe('device-card-row.ts', () => {
       expect(entityRowStub.firstCall.args[2]).to.equal('status-ok');
     });
 
-    it('should pass inverse_percent entities to percentBar when configured', async () => {
+    it('should pass inverse_percent and percent_colors to percentBar when configured', async () => {
       (el as any)._cardHelpers = {} as CardHelpers;
+      const percentColors = { 'sensor.*': 'blue' };
       el.config = {
         ...config,
         inverse_percent: ['sensor.test', 'sensor.other_sensor'],
+        percent_colors: percentColors,
       };
 
       await fixture(el.render() as TemplateResult);
@@ -175,6 +177,7 @@ describe('device-card-row.ts', () => {
         'sensor.test',
         'sensor.other_sensor',
       ]);
+      expect(percentBarStub.firstCall.args[2]).to.equal(percentColors);
     });
 
     it('should pass empty array to percentBar when inverse_percent is not configured', async () => {

@@ -16,6 +16,7 @@ Most configuration options from the Device Card are supported. Integration-speci
 | exclude_sections       | list        | _none_          | Sections of entities to exclude                              |
 | exclude_entities       | list        | _none_          | Entities to remove from the card                             |
 | inverse_percent        | list        | _none_          | Entity IDs with inverted percent colors                      |
+| percent_colors         | map         | _none_          | Custom percent bar colors by entity pattern (YAML only)      |
 | section_order          | list        | _none_          | Custom order for displaying sections                         |
 | sort_devices           | object      | _none_          | Sort devices by name (see [Device Sort](#device-sort))       |
 | features               | list        | See Device Card | Optional flags to toggle different features                  |

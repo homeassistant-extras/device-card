@@ -1,0 +1,17 @@
+#####
+# Configures the lovelace dashboards via YAML
+#
+# Copy the dashboard file to <config>/dashboards/device-card/ and merge this
+# into configuration.yaml (or a package) to load it in YAML mode.
+#####
+
+lovelace:
+  mode: storage
+  dashboards:
+    # device-card
+    dc-percent-bars-test:
+      mode: yaml
+      title: Device Card - Percent Bar Test
+      icon: mdi:percent
+      show_in_sidebar: false
+      filename: dashboards/device-card/percent-bars-test.yaml

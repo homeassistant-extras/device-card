@@ -253,6 +253,8 @@ export class IntegrationCard extends LitElement {
                   exclude_entities: this._config.exclude_entities,
                   exclude_sections: this._config.exclude_sections,
                   section_order: this._config.section_order,
+                  inverse_percent: this._config.inverse_percent,
+                  percent_colors: this._config.percent_colors,
                   sort: this._config.sort,
                   tap_action: this._config.tap_action,
                   hold_action: this._config.hold_action,

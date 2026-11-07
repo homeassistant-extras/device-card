@@ -31,6 +31,13 @@ export interface BaseConfig {
   /** Entity IDs that should use inverted percent bar colors (green for low, red for high) */
   inverse_percent?: string[];
 
+  /**
+   * Custom percent bar colors keyed by entity pattern (exact, `*` wildcard, or `/regex/`).
+   * A string value is a single solid color; a list of thresholds picks a color by value.
+   * Takes precedence over `inverse_percent`. YAML-only.
+   */
+  percent_colors?: PercentColors;
+
   /** The order in which entities should be displayed */
   sort?: SortConfig;
 
@@ -46,6 +53,21 @@ export interface BaseConfig {
   /** Options to enable disable features **/
   features?: Features[];
 }
+
+/**
+ * A percent bar color threshold. The color applies from `value` upward
+ * until the next higher threshold.
+ */
+export interface PercentThreshold {
+  /** Lower bound (inclusive) for this color */
+  value: number;
+
+  /** Any CSS color (e.g. `#03a9f4`, `var(--primary-color)`) */
+  color: string;
+}
+
+/** Entity pattern → solid CSS color or threshold list */
+export type PercentColors = Record<string, string | PercentThreshold[]>;
 
 /** Features to enable or disable functionality */
 export type Features =

@@ -110,6 +110,23 @@ inverse_percent:
   - sensor.memory_usage_percent
 ```
 
+## With Custom Percent Colors
+
+Turn off the red/yellow/green scale for battery bars and use comfort bands for humidity:
+
+```yaml
+type: custom:device-card
+device_id: 1a2b3c4d5e6f7g8h9i0j
+percent_colors:
+  sensor.*_battery: var(--primary-color)
+  sensor.*_humidity:
+    - { value: 0, color: '#ff9800' }
+    - { value: 30, color: '#4caf50' }
+    - { value: 60, color: '#03a9f4' }
+```
+
+See [Percent Bar Colors](configuration.md#percent-bar-colors) for details.
+
 ## Custom Section Order
 
 ```yaml

@@ -13,6 +13,7 @@
 | exclude_sections  | list   | _none_      | Sections of entities to exclude. See below.                                                                              |
 | exclude_entities  | list   | _none_      | Entities to remove from the card                                                                                         |
 | inverse_percent   | list   | _none_      | Entity IDs with inverted percent colors (green for low, red for high)                                                    |
+| percent_colors    | map    | _none_      | Custom percent bar colors by entity pattern (YAML only). See [Percent Bar Colors](#percent-bar-colors).                  |
 | section_order     | list   | _none_      | Custom order for displaying sections. See below.                                                                         |
 | sort              | object | See below   | Sort options for entities                                                                                                |
 | features          | list   | See below   | Optional flags to toggle different features                                                                              |
@@ -21,6 +22,40 @@
 | double_tap_action | object | _none_      | Action when double-tapping the card                                                                                      |
 
 \*Either `device_id`, `entity_id`, or `entity` is required. If `entity_id` or `entity` is provided, the card will automatically determine the device.
+
+## Percent Bar Colors
+
+Entities measured in `%` get a small bar under their row. By default it uses a red / yellow / green scale (`inverse_percent` flips it). `percent_colors` lets you replace that scale per entity. It is YAML only (not in the visual editor).
+
+Each **key** is an entity pattern, matched the same way as `exclude_entities`:
+
+- Exact entity ID: `sensor.office_humidity`
+- Wildcard: `sensor.*_humidity`
+- Regex wrapped in slashes: `/sensor\.(disk|memory)_.*/`
+
+Each **value** is either:
+
+- **One color** – the bar is always this color (no scale). Any CSS color works, including theme variables like `var(--primary-color)`.
+- **A list of thresholds** – each `{ value, color }` applies from `value` upward until the next threshold. Values below the lowest threshold use the lowest threshold's color.
+
+```yaml
+percent_colors:
+  # No scale – always the theme's primary color
+  sensor.*_battery: var(--primary-color)
+
+  # Humidity comfort bands
+  sensor.*_humidity:
+    - value: 0
+      color: '#ff9800' # dry
+    - value: 30
+      color: '#4caf50' # comfortable
+    - value: 60
+      color: '#03a9f4' # humid
+```
+
+!!! note
+
+    If more than one key matches an entity, the first one listed wins. A matching `percent_colors` entry takes precedence over `inverse_percent`.
 
 ## Feature Options
 

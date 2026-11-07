@@ -1,0 +1,360 @@
+# Percent bar test dashboard — issue #100 (percent_colors)
+#
+# Exercises the default percent bar scale, `inverse_percent`, the new
+# `percent_colors` option (solid color, thresholds, wildcard/regex keys,
+# precedence), the integration-card pass-through, plus a few related
+# options (pattern `exclude_entities`, `compact`, `expanded`, `collapse`).
+#
+# Test device: "Device Card Test" (MQTT, device_id 24f24884e1723f7c7fce2be0ceaa037a)
+#   sensor.test_device_percentage ┐
+#   sensor.test_humidity          ├─ all driven by input_number.test_percentage (unit %)
+#   sensor.test_disk_usage        ┘
+#   sensor.test_device_fraction      driven by input_number.test_fraction
+#   binary_sensor.test_device_*      always_on / always_off / toggle
+#
+# Every bar moves together when you sweep input_number.test_percentage, so
+# one slider shows every card's color at the same value. Card titles say what
+# SHOULD happen. Default scale: ≤30 red · 31–60 yellow · >60 green.
+#
+# Usage: Settings → Dashboards → Add Dashboard → ⋮ → Raw configuration editor →
+# paste this file. Or load it in YAML mode via lovelace.yaml.
+
+title: Device Card Percent Bar Test
+views:
+  - title: Percent Bars
+    path: percent-bars
+    icon: mdi:percent
+    type: sections
+    max_columns: 4
+    sections:
+      #################################################
+      # CONTROLS — sweep the shared value
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Sweep value'
+            heading_style: title
+
+          - type: entities
+            entities:
+              - entity: input_number.test_percentage
+                name: Percent (drives every bar)
+              - entity: input_number.test_fraction
+              - entity: input_boolean.test_toggle
+
+          # Boundary presets: the default scale flips at 30/31 and 60/61,
+          # the humidity thresholds below flip at 30 and 60 (inclusive).
+          - type: button
+            name: '0'
+            icon: mdi:numeric-0-circle-outline
+            show_state: false
+            grid_options:
+              columns: 3
+              rows: 1
+            tap_action:
+              action: perform-action
+              perform_action: input_number.set_value
+              target:
+                entity_id: input_number.test_percentage
+              data:
+                value: 0
+          - type: button
+            name: '29'
+            icon: mdi:chevron-left
+            show_state: false
+            grid_options:
+              columns: 3
+              rows: 1
+            tap_action:
+              action: perform-action
+              perform_action: input_number.set_value
+              target:
+                entity_id: input_number.test_percentage
+              data:
+                value: 29
+          - type: button
+            name: '30'
+            icon: mdi:numeric-3-circle-outline
+            show_state: false
+            grid_options:
+              columns: 3
+              rows: 1
+            tap_action:
+              action: perform-action
+              perform_action: input_number.set_value
+              target:
+                entity_id: input_number.test_percentage
+              data:
+                value: 30
+          - type: button
+            name: '31'
+            icon: mdi:chevron-right
+            show_state: false
+            grid_options:
+              columns: 3
+              rows: 1
+            tap_action:
+              action: perform-action
+              perform_action: input_number.set_value
+              target:
+                entity_id: input_number.test_percentage
+              data:
+                value: 31
+          - type: button
+            name: '60'
+            icon: mdi:numeric-6-circle-outline
+            show_state: false
+            grid_options:
+              columns: 3
+              rows: 1
+            tap_action:
+              action: perform-action
+              perform_action: input_number.set_value
+              target:
+                entity_id: input_number.test_percentage
+              data:
+                value: 60
+          - type: button
+            name: '61'
+            icon: mdi:chevron-right
+            show_state: false
+            grid_options:
+              columns: 3
+              rows: 1
+            tap_action:
+              action: perform-action
+              perform_action: input_number.set_value
+              target:
+                entity_id: input_number.test_percentage
+              data:
+                value: 61
+          - type: button
+            name: '80'
+            icon: mdi:numeric-8-circle-outline
+            show_state: false
+            grid_options:
+              columns: 3
+              rows: 1
+            tap_action:
+              action: perform-action
+              perform_action: input_number.set_value
+              target:
+                entity_id: input_number.test_percentage
+              data:
+                value: 80
+          - type: button
+            name: '100'
+            icon: mdi:numeric-10-circle-outline
+            show_state: false
+            grid_options:
+              columns: 3
+              rows: 1
+            tap_action:
+              action: perform-action
+              perform_action: input_number.set_value
+              target:
+                entity_id: input_number.test_percentage
+              data:
+                value: 100
+
+      #################################################
+      # BASELINE + inverse_percent
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Baseline & inverse'
+            heading_style: title
+
+          # No percent options.
+          # Expect: all three % bars share one color:
+          # ≤30 red, 31–60 yellow, >60 green.
+          - type: custom:device-card
+            device_id: 24f24884e1723f7c7fce2be0ceaa037a
+            title: 'Baseline: all bars same scale'
+            features:
+              - expanded
+
+          # inverse_percent on disk only.
+          # Expect: disk ≤30 green, 31–60 yellow, >60 red.
+          # Humidity + percentage keep the normal scale (opposite of disk at the ends).
+          - type: custom:device-card
+            device_id: 24f24884e1723f7c7fce2be0ceaa037a
+            title: 'inverse: disk flipped, others normal'
+            features:
+              - expanded
+            inverse_percent:
+              - sensor.test_disk_usage
+
+      #################################################
+      # percent_colors — the issue #100 asks
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'percent_colors'
+            heading_style: title
+
+          # Solid color — "turn the scale off" for humidity.
+          # Expect: humidity is ALWAYS the theme primary color at every value.
+          # Disk + percentage keep the default scale.
+          - type: custom:device-card
+            device_id: 24f24884e1723f7c7fce2be0ceaa037a
+            title: 'solid: humidity always primary'
+            features:
+              - expanded
+            percent_colors:
+              sensor.test_humidity: var(--primary-color)
+
+          # Threshold list — humidity comfort bands (listed out of order on purpose).
+          # Expect humidity: 0–29 orange, 30–59 green, 60–100 blue.
+          # Disk thresholds start at 20: below 20 still uses the lowest
+          # threshold's color (teal), 20–79 teal, 80+ deep purple.
+          - type: custom:device-card
+            device_id: 24f24884e1723f7c7fce2be0ceaa037a
+            title: 'thresholds: humidity bands, disk 20/80'
+            features:
+              - expanded
+            percent_colors:
+              sensor.test_humidity:
+                - value: 60
+                  color: '#03a9f4'
+                - value: 0
+                  color: '#ff9800'
+                - value: 30
+                  color: '#4caf50'
+              sensor.test_disk_usage:
+                - value: 20
+                  color: '#009688'
+                - value: 80
+                  color: '#673ab7'
+
+      #################################################
+      # Patterns & precedence
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Patterns & precedence'
+            heading_style: title
+
+          # Wildcard + first-match-wins.
+          # Expect: humidity pink (exact key listed first);
+          # disk + percentage purple (caught by the wildcard).
+          - type: custom:device-card
+            device_id: 24f24884e1723f7c7fce2be0ceaa037a
+            title: 'wildcard: humidity pink, rest purple'
+            features:
+              - expanded
+            percent_colors:
+              sensor.test_humidity: '#e91e63'
+              sensor.test_*: '#9c27b0'
+
+          # Regex key.
+          # Expect: disk + humidity amber (regex match);
+          # percentage keeps the default scale (no match).
+          - type: custom:device-card
+            device_id: 24f24884e1723f7c7fce2be0ceaa037a
+            title: 'regex: disk+humidity amber, pct default'
+            features:
+              - expanded
+            percent_colors:
+              '/sensor\.test_(disk_usage|humidity)/': '#ffc107'
+
+          # percent_colors beats inverse_percent.
+          # Disk is in BOTH lists → percent_colors wins: always cyan.
+          # Percentage is only in inverse_percent → still inverted
+          # (≤30 green, >60 red). Humidity → default scale.
+          - type: custom:device-card
+            device_id: 24f24884e1723f7c7fce2be0ceaa037a
+            title: 'precedence: disk cyan, pct inverted'
+            features:
+              - expanded
+            inverse_percent:
+              - sensor.test_disk_usage
+              - sensor.test_device_percentage
+            percent_colors:
+              sensor.test_disk_usage: '#00bcd4'
+
+          # No-op configs fall back to the default scale.
+          # Expect: identical to the Baseline card.
+          - type: custom:device-card
+            device_id: 24f24884e1723f7c7fce2be0ceaa037a
+            title: 'no-op: same as baseline'
+            features:
+              - expanded
+            percent_colors:
+              sensor.does_not_exist: '#000000'
+              sensor.test_humidity: []
+
+      #################################################
+      # Integration card pass-through
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Integration card'
+            heading_style: title
+
+          # Before this release the integration card silently dropped
+          # inverse_percent. Expect: same as the "precedence" card —
+          # disk cyan, percentage inverted, humidity default.
+          - type: custom:integration-card
+            integration: mqtt
+            title: 'integration: disk cyan, pct inverted'
+            include_devices:
+              - 24f24884e1723f7c7fce2be0ceaa037a
+            features:
+              - expanded
+            inverse_percent:
+              - sensor.test_disk_usage
+              - sensor.test_device_percentage
+            percent_colors:
+              sensor.test_disk_usage: '#00bcd4'
+
+      #################################################
+      # Related options
+      #################################################
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Related options'
+            heading_style: title
+
+          # entity_id instead of device_id + pattern exclude_entities.
+          # Expect: card resolves the device from the humidity sensor;
+          # fraction and the always_off binary sensor are hidden.
+          - type: custom:device-card
+            entity_id: sensor.test_humidity
+            title: 'exclude: no fraction / always_off'
+            features:
+              - expanded
+            exclude_entities:
+              - '*_fraction'
+              - '/binary_sensor\..*always_off/'
+
+          # compact layout with a custom color.
+          # Expect: tighter spacing, no "show more"; bars still render
+          # and humidity is green. compact hides "show more", so
+          # preview_count is raised to keep the % rows visible.
+          - type: custom:device-card
+            device_id: 24f24884e1723f7c7fce2be0ceaa037a
+            title: 'compact: humidity green'
+            preview_count: 10
+            features:
+              - compact
+            percent_colors:
+              sensor.test_humidity: var(--success-color)
+
+          # collapse + sort by state.
+          # Expect: card starts collapsed; expand it and entities are
+          # sorted by state descending.
+          - type: custom:device-card
+            device_id: 24f24884e1723f7c7fce2be0ceaa037a
+            title: 'collapse: starts closed, sorted by state'
+            features:
+              - collapse
+            sort:
+              type: state
+              direction: desc

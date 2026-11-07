@@ -64,6 +64,10 @@ Visual percentage indicators for entities with percentage values. Gauges automat
 
 ![Percent gauges](../assets/percent-gauges.png)
 
+Don't want the red / yellow / green scale for every entity? `percent_colors` lets you pick a single color or your own thresholds per entity or pattern. Below, all three values are 45%: the top bar uses the default scale, humidity uses custom comfort bands, and disk usage uses a solid theme color. See [Percent Bar Colors](configuration.md#percent-bar-colors).
+
+![Custom percent colors](../assets/percent-colors.png)
+
 ### Collapsible Card
 
 Cards can be configured to start in a collapsed state. Simply click the header to expand and reveal all sections.

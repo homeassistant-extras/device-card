@@ -1,4 +1,4 @@
-import { percentBar } from '@html/percent';
+import { percentBar, resolvePercentColor } from '@html/percent';
 import { fixture } from '@open-wc/testing-helpers';
 import type { EntityInformation } from '@type/config';
 import { expect } from 'chai';
@@ -223,18 +223,6 @@ describe('percent.ts', () => {
       expect(fillElement?.classList.contains('low')).to.be.false;
     });
 
-    it('should handle empty inverse_percent list', async () => {
-      mockEntity.state = '75';
-      const result = percentBar(mockEntity, []);
-      const el = await fixture(result as TemplateResult);
-
-      const fillElement = el.querySelector('.percent-gauge-fill');
-      expect(fillElement).to.exist;
-      // Should use normal logic with empty list
-      expect(fillElement?.classList.contains('high')).to.be.true;
-      expect(fillElement?.classList.contains('low')).to.be.false;
-    });
-
     it('should handle multiple entities in inverse_percent list correctly', async () => {
       mockEntity.state = '80';
       const result = percentBar(mockEntity, [
@@ -249,6 +237,48 @@ describe('percent.ts', () => {
       // Should invert because entity_id is in the list
       expect(fillElement?.classList.contains('low')).to.be.true;
       expect(fillElement?.classList.contains('high')).to.be.false;
+    });
+  });
+
+  describe('percent_colors functionality', () => {
+    it('should use a single solid color instead of the scale, overriding inverse_percent', async () => {
+      mockEntity.state = '45';
+      const result = percentBar(mockEntity, [mockEntity.entity_id], {
+        'sensor.other': 'red',
+        'sensor.test_*': 'blue',
+      });
+      const el = await fixture(result as TemplateResult);
+
+      const fillElement = el.querySelector(
+        '.percent-gauge-fill',
+      ) as HTMLElement;
+      expect(fillElement.style.backgroundColor).to.equal('blue');
+      expect(fillElement.style.width).to.equal('45%');
+      expect(fillElement.classList.contains('medium')).to.be.false;
+      expect(fillElement.classList.contains('low')).to.be.false;
+      expect(fillElement.classList.contains('high')).to.be.false;
+    });
+
+    it('should pick threshold colors by value and fall back to the scale when nothing matches', () => {
+      const colors = {
+        '/percent/': [
+          { value: 60, color: 'blue' },
+          { value: 0, color: 'orange' },
+          { value: 30, color: 'green' },
+          { value: 50, color: undefined as unknown as string }, // ignored
+        ],
+      };
+      const id = mockEntity.entity_id;
+
+      expect(resolvePercentColor(id, -5, colors)).to.equal('orange');
+      expect(resolvePercentColor(id, 29.9, colors)).to.equal('orange');
+      expect(resolvePercentColor(id, 30, colors)).to.equal('green');
+      expect(resolvePercentColor(id, 55, colors)).to.equal('green');
+      expect(resolvePercentColor(id, 100, colors)).to.equal('blue');
+      expect(resolvePercentColor('sensor.humidity', 50, colors)).to.be
+        .undefined;
+      expect(resolvePercentColor(id, 50, { [id]: [] })).to.be.undefined;
+      expect(resolvePercentColor(id, 50, undefined)).to.be.undefined;
     });
   });
 });
