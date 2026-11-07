@@ -237,9 +237,11 @@ export class IntegrationCard extends LitElement {
 
     return html`
       <div>
-        ${title && !this._config.hide_integration_title
-          ? html`<h1 class="integration-title">${title}</h1>`
-          : nothing}
+        ${
+          title && !this._config.hide_integration_title
+            ? html`<h1 class="integration-title">${title}</h1>`
+            : nothing
+        }
 
         <div class="devices-container" style=${styleMap(gridStyles)}>
           ${devicesToShow.map((deviceId) => {

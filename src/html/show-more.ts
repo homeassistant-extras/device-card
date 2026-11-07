@@ -29,11 +29,13 @@ export const showMore = (
   onToggleSection: () => void,
 ) =>
   html`<div class="section-footer">
-    ${isExpanded
-      ? nothing
-      : html`
-          <div class="show-more" @click=${onToggleSection}>
-            Show ${entities.length - size} more...
-          </div>
-        `}
+    ${
+      isExpanded
+        ? nothing
+        : html`
+            <div class="show-more" @click=${onToggleSection}>
+              Show ${entities.length - size} more...
+            </div>
+          `
+    }
   </div>`;

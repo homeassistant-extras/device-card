@@ -131,16 +131,18 @@ export class DeviceCard extends HassUpdateMixin(HassConfigMixin(LitElement)) {
     return html`
       <ha-card class="${problem ? 'problem' : ''}">
         ${headerContent}
-        ${this.collapse
-          ? nothing
-          : getOrderedSections(this._hass, this._config, this._device).map(
-              (s) =>
-                html`<device-card-section
-                  .hass=${this._hass}
-                  .config=${this._config}
-                  .section=${s}
-                ></device-card-section>`,
-            )}
+        ${
+          this.collapse
+            ? nothing
+            : getOrderedSections(this._hass, this._config, this._device).map(
+                (s) =>
+                  html`<device-card-section
+                    .hass=${this._hass}
+                    .config=${this._config}
+                    .section=${s}
+                  ></device-card-section>`,
+              )
+        }
       </ha-card>
     `;
   }

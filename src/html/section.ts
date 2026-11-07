@@ -66,8 +66,10 @@ export const renderSection = (
       ${needsExpansion ? chevron(sectionExpanded, onToggleSection) : nothing}
     </div>
     ${rowTemplates}
-    ${needsExpansion && !isCompact
-      ? showMore(entities, sectionExpanded, size, onToggleSection)
-      : nothing}
+    ${
+      needsExpansion && !isCompact
+        ? showMore(entities, sectionExpanded, size, onToggleSection)
+        : nothing
+    }
   </div>`;
 };

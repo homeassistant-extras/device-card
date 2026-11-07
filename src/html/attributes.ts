@@ -45,9 +45,9 @@ export const attributes = (entity: EntityState): TemplateResult => {
           <div class="attribute-row">
             <span class="attribute-key">${key}:</span>
             <span class="attribute-value"
-              >${typeof value === 'object'
-                ? JSON.stringify(value)
-                : value}</span
+              >${
+                typeof value === 'object' ? JSON.stringify(value) : value
+              }</span
             >
           </div>
         `,
