@@ -14,6 +14,17 @@ describe('integration-card.ts', () => {
   let mockHass: HomeAssistant;
   let computeIntegrationDevicesStub: sinon.SinonStub;
   let subscribeRenderTemplateStub: sinon.SinonStub;
+  const nativeCustomEvent = globalThis.CustomEvent;
+
+  // The shared mocha setup only swaps in JSDOM's Event; JSDOM rejects
+  // Node's native CustomEvent when dispatched on a JSDOM ShadowRoot.
+  before(() => {
+    globalThis.CustomEvent = window.CustomEvent;
+  });
+
+  after(() => {
+    globalThis.CustomEvent = nativeCustomEvent;
+  });
 
   beforeEach(() => {
     if (!customElements.get('device-card')) {
@@ -291,6 +302,30 @@ describe('integration-card.ts', () => {
       expect(childConfig.percent_colors).to.deep.equal({
         'sensor.*_humidity': 'blue',
       });
+    });
+
+    it('should push hass updates to nested device cards', async () => {
+      card.setConfig({ integration: 'zwave_js' });
+      card.hass = mockHass;
+      document.body.appendChild(card);
+      await computeIntegrationDevicesStub.firstCall.returnValue;
+      await card.updateComplete;
+
+      const children = card.shadowRoot!.querySelectorAll('device-card');
+      expect(children).to.have.lengthOf(2);
+      children.forEach((child) =>
+        expect((child as DeviceCard).hass).to.equal(mockHass),
+      );
+
+      const nextHass = {
+        ...mockHass,
+        states: { 'sensor.test': { state: '55' } },
+      } as any as HomeAssistant;
+      card.hass = nextHass;
+
+      children.forEach((child) =>
+        expect((child as DeviceCard).hass).to.equal(nextHass),
+      );
     });
 
     it('should use grid styles based on columns configuration', async () => {

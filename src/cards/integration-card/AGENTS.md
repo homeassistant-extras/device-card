@@ -4,7 +4,7 @@ The `custom:integration-card` Lovelace card: a grid of device cards for every de
 
 ## Files
 
-- **`card.ts`** — `IntegrationCard` (`<integration-card>`). Plain `LitElement` (does NOT use `HassUpdateMixin`; it owns its own re-render path). Resolves device list via `computeIntegrationDevices` from `@delegates/integration-devices`, optionally narrowed by a live Jinja template through `TemplateSubscription`. Renders each device by composing a `<device-card>` and forwards `hass-update` events via `fireEvent` so children re-evaluate.
+- **`card.ts`** — `IntegrationCard` (`<integration-card>`). Plain `LitElement` (does NOT use `HassUpdateMixin`; it owns its own re-render path). Resolves device list via `computeIntegrationDevices` from `@delegates/integration-devices`, optionally narrowed by a live Jinja template through `TemplateSubscription`. Renders each device by composing a `<device-card>` and, in the `hass` setter, dispatches a non-bubbling `hass-update` `CustomEvent` on its own `shadowRoot` so child device-cards (`HassUpdateMixin` listens on its root node) get live state without a full re-render. Do not fire it on the host element — that event never enters the shadow tree and children go stale.
 - **`editor.ts`** — `IntegrationCardEditor` (`<integration-card-editor>`). Same `<ha-form>` pattern as the device-card editor.
 - **`styles.ts`** — grid styles; column count is set with `styleMap` from `config.columns`.
 - **`template-subscription.ts`** — `TemplateSubscription`. Wraps `subscribeRenderTemplate` over the HA WS connection. `connect(connection, template)` is a no-op if the template string is unchanged; on change it tears down the previous subscription. Resolved values are delivered through the constructor callback.

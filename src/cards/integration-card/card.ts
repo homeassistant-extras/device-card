@@ -1,5 +1,5 @@
 import { computeIntegrationDevices } from '@delegates/integration-devices';
-import { fireEvent } from '@homeassistant-extras/hass/common/dom/fire_event';
+import type { HassUpdateEvent } from '@homeassistant-extras/hass/mixins/hass-update-mixin';
 import type { HomeAssistant } from '@homeassistant-extras/hass/types';
 import { localize } from '@localize/localize';
 import equal from 'fast-deep-equal';
@@ -94,10 +94,14 @@ export class IntegrationCard extends LitElement {
   set hass(hass: HomeAssistant) {
     this._hass = hass;
 
-    // update children who are subscribed
-    fireEvent(this, 'hass-update', {
-      hass,
-    });
+    // Child device-cards (HassUpdateMixin) listen on their root node, which is
+    // this card's shadow root. Dispatch there so the event reaches them and
+    // stays scoped to this card; firing on the host never enters the shadow tree.
+    this.shadowRoot?.dispatchEvent(
+      new CustomEvent<HassUpdateEvent>('hass-update', {
+        detail: { hass },
+      }),
+    );
   }
 
   override connectedCallback(): void {

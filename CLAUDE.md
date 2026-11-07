@@ -56,7 +56,7 @@ Both cards have visual editors (`device-card-editor`, `integration-card-editor`)
 - [src/cards/device-card/](src/cards/device-card/) — `DeviceCard` (extends `HassUpdateMixin(LitElement)`), its editor, styles, and config `types.ts`.
 - [src/cards/integration-card/](src/cards/integration-card/) — `IntegrationCard`, editor, styles, and a `TemplateSubscription` helper that subscribes to a HA `render_template` WS stream so Jinja-templated config reacts to state changes.
 - [src/cards/components/](src/cards/components/) — reusable `row` and `section` sub-components used by `DeviceCard`.
-- `@homeassistant-extras/hass/mixins/` — `HassUpdateMixin` and `HassConfigMixin` (device-card sets `_hassUpdateGlobal` on `DeviceCard` for integration-card events).
+- `@homeassistant-extras/hass/mixins/` — `HassUpdateMixin` and `HassConfigMixin` (`DeviceCard` uses `HassUpdateMixin`, which listens for `hass-update` on its root node — inside `integration-card` that is the integration card's shadow root).
 
 ### Delegates (business logic, no Lit)
 
