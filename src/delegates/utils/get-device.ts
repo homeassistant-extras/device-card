@@ -41,6 +41,7 @@ export const getDevice = (
     return undefined;
   }
 
+  device.id = hassDevice.id;
   device.name = hassDevice.name_by_user ?? hassDevice.name ?? 'Device';
   device.model = [
     hassDevice.manufacturer,

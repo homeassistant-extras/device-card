@@ -2,7 +2,7 @@
 
 A custom card for Home Assistant that provides a comprehensive overview of any device in your system. The card organizes device information into expandable sections, displaying sensors, controls, configuration options, and diagnostic data in a clean, user-friendly interface.
 
-![Device sections](../assets/cards.png)
+![Device sections](../assets/cards.webp)
 
 ## Features
 
@@ -21,13 +21,13 @@ A custom card for Home Assistant that provides a comprehensive overview of any d
 - Visual indication when problems are detected (card border turns red)
 - Problem entities show a green or red indicator to their left
 
-![Problem detection](../assets/problems.png)
+![Problem detection](../assets/problems.webp)
 
 ### Entity Pictures
 
 With an optional flag, you can showcase entity pictures when available. There must exist an entity with an `entity_picture` attribute.
 
-![Entity pictures](../assets/portraits.png)
+![Entity pictures](../assets/portraits.webp)
 
 ### Expandable Sections
 
@@ -35,7 +35,7 @@ With an optional flag, you can showcase entity pictures when available. There mu
 - Preview counts for sensors to reduce visual clutter
 - Ability to expand sections to see all entities
 
-![Expanded](../assets/expanded.png)
+![Expanded](../assets/expanded.webp)
 
 ### Entity Attributes
 
@@ -44,41 +44,45 @@ With an optional flag, you can showcase entity pictures when available. There mu
 - Click anywhere in the expanded attribute list to open Home Assistant's [more-info dialog](https://www.home-assistant.io/dashboards/more-info-dialog/) for that entity
 - This behavior can be disabled by setting `tap_action` to "none"
 
-![Attributes](../assets/attributes.png)
+![Attributes](../assets/attributes.webp)
 
 ### Pinned Entity State
 
 Display a specific entity's state prominently in the card header, providing instant visibility for your most important information. Perfect for temperature sensors, battery levels, or any critical value you want to monitor at a glance.
 
-![Pinned entity state](../assets/pinned-entity-state.png)
+![Pinned entity state](../assets/pinned-entity-state.webp)
 
 ### Heading Icon
 
 An icon appears next to the card heading. When `entity_id` or `entity` is configured, the entity's icon is shown (reflecting its current state). You can also set a custom `icon` in the config (e.g. `mdi:thermometer`) to override the entity icon or display an icon when no entity is configured. Use the `hide_icon` feature flag to hide the icon if you prefer a cleaner look.
 
-![Icon](../assets/icon.png)
+![Icon](../assets/icon.webp)
+
+### Device Page Shortcut
+
+Long-press (hold) the card header to open the device's page in Home Assistant settings (**Settings → Devices & services → Devices**). A normal tap still collapses or expands the card. Requires Home Assistant 2026.11 or newer.
 
 ### Percent Gauges
 
 Visual percentage indicators for entities with percentage values. Gauges automatically change color based on the value (red for low, yellow for medium, green for high).
 
-![Percent gauges](../assets/percent-gauges.png)
+![Percent gauges](../assets/percent-gauges.webp)
 
 Don't want the red / yellow / green scale for every entity? `percent_colors` lets you pick a single color or your own thresholds per entity or pattern. Below, all three values are 45%: the top bar uses the default scale, humidity uses custom comfort bands, and disk usage uses a solid theme color. See [Percent Bar Colors](configuration.md#percent-bar-colors).
 
-![Custom percent colors](../assets/percent-colors.png)
+![Custom percent colors](../assets/percent-colors.webp)
 
 ### Collapsible Card
 
 Cards can be configured to start in a collapsed state. Simply click the header to expand and reveal all sections.
 
-![Collapsible card](../assets/collapsible-card.png)
+![Collapsible card](../assets/collapsible-card.webp)
 
 ### Compact Mode
 
 A space-efficient layout option that reduces padding and margins, ideal for information-dense dashboards or smaller screens.
 
-![Compact mode](../assets/compact-mode.png)
+![Compact mode](../assets/compact-mode.webp)
 
 ### Advanced Sorting
 
@@ -102,7 +106,7 @@ The card is fully configurable in the UI editor. Simply select "Custom: Device C
 !!! caution
 The editor may delete advanced settings, such as regex or wildcards. Make a copy of the card config prior to using the UI editor.
 
-![Editor](../assets/editor.png)
+![Editor](../assets/editor.webp)
 
 ## Quick Start
 

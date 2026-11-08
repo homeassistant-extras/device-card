@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="assets/cards.png" align="center" width="50%">
+    <img src="assets/cards.webp" align="center" width="50%">
 </p>
 <p align="center"><h1 align="center">Device Card</h1></p>
 <p align="center">

@@ -8,7 +8,8 @@
     "device_card_name": "Cartão de Dispositivo",
     "device_card_description": "Um cartão para resumir o status de um Dispositivo.",
     "integration_card_name": "Cartão de Integração",
-    "integration_card_description": "Um cartão para exibir todos os dispositivos de uma integração específica."
+    "integration_card_description": "Um cartão para exibir todos os dispositivos de uma integração específica.",
+    "hold_for_device": "Segure para abrir a página do dispositivo"
   },
   "sections": {
     "controls": "Controles",

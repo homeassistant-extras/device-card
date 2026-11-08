@@ -1,8 +1,4 @@
 import type { Config } from '@device/types';
-import {
-  resolvePoatCardHelpers,
-  type CardHelpers,
-} from '@homeassistant-extras/hass/helpers/card-helpers';
 import { entityRow } from '@homeassistant-extras/hass/html/entity-row';
 import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
 import { attributes } from '@html/attributes';
@@ -30,18 +26,12 @@ export class DeviceCardRow extends HassConfigMixin<typeof LitElement, Config>(
   private _expanded = false;
 
   /**
-   * Resolved once from {@link globalThis.loadCardHelpers}; used via global helper accessor.
-   */
-  @state()
-  private _cardHelpers?: CardHelpers;
-
-  /**
    * Handles the ll-custom expand event to toggle entity attribute visibility.
    * Entity ID comes from ev.detail.device_card.entity_id.
    *
    * @param ev - The CustomEvent with detail.device_card.expand and detail.device_card.entity_id
    */
-  private readonly _onLlCustom = (ev: Event): void => {
+  private readonly _handleLLCustomEvent = (ev: Event): void => {
     const ce = ev as CustomEvent<{
       device_card?: { expand?: boolean; entity_id?: string };
     }>;
@@ -52,20 +42,6 @@ export class DeviceCardRow extends HassConfigMixin<typeof LitElement, Config>(
     ev.stopPropagation();
     this._expanded = !this._expanded;
   };
-
-  override connectedCallback(): void {
-    super.connectedCallback();
-    this.addEventListener('ll-custom', this._onLlCustom);
-
-    void resolvePoatCardHelpers(globalThis.loadCardHelpers).then((helpers) => {
-      this._cardHelpers = helpers;
-    });
-  }
-
-  override disconnectedCallback(): void {
-    this.removeEventListener('ll-custom', this._onLlCustom);
-    super.disconnectedCallback();
-  }
 
   /**
    * Returns the component's styles
@@ -79,11 +55,6 @@ export class DeviceCardRow extends HassConfigMixin<typeof LitElement, Config>(
    * @returns {TemplateResult} The rendered HTML template
    */
   override render(): TemplateResult | typeof nothing {
-    // Avoid rendering sections until helpers are resolved; this keeps all downstream rendering sync.
-    if (!this._cardHelpers) {
-      return nothing;
-    }
-
     let statusClassName: string | undefined;
 
     if (this.entity.isProblemEntity) {
@@ -104,6 +75,7 @@ export class DeviceCardRow extends HassConfigMixin<typeof LitElement, Config>(
         statusClassName,
         this._expanded ? 'expanded-row' : '',
       ].join(' ')}"
+      @ll-custom=${this._handleLLCustomEvent}
     >
       <div class="row-content">
         ${entityRow(

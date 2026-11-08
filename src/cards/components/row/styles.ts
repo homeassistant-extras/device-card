@@ -14,13 +14,27 @@ export const styles = css`
   /* Container for a row */
   .row {
     position: relative;
-    border-radius: 3px;
+    isolation: isolate;
     cursor: pointer;
-    transition: background-color 0.2s ease;
   }
 
-  .row:hover {
-    background-color: var(--secondary-background-color);
+  /* Hover highlight: rounded, bleeds slightly past the row so it isn't flush */
+  .row::before {
+    content: '';
+    position: absolute;
+    inset: 0 -8px;
+    border-radius: 8px;
+    background-color: var(--primary-text-color);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  @media (hover: hover) {
+    .row:hover::before {
+      opacity: 0.06;
+    }
   }
 
   .row.expanded-row {

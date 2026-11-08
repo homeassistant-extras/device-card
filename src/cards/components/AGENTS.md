@@ -3,7 +3,7 @@
 Reusable Lit sub-components used inside `<device-card>`. Each subfolder defines its own custom element with co-located styles.
 
 - **`section/`** — `<device-card-section>`: one collapsible section (controls, sensors, configuration, diagnostic, …). Owns its own expand/collapse state so toggling does not re-render sibling sections. Defaults to `hasFeature(config, 'expanded')`.
-- **`row/`** — `<device-card-row>`: one entity row. Owns its own attribute-detail expansion state. Listens for `ll-custom` events with `detail.device_card.expand` and `entity_id` matching this row to toggle. Resolves HA `loadCardHelpers` once before rendering.
+- **`row/`** — `<device-card-row>`: one entity row. Owns its own attribute-detail expansion state. Binds `@ll-custom` on the row wrapper; toggles when `detail.device_card.expand` and `entity_id` match this row. Card helpers are preloaded from `src/index.ts` (`entityRow` returns `nothing` until ready).
 
 ## Conventions
 

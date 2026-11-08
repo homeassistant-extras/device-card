@@ -9,6 +9,13 @@ import { expect } from 'chai';
 import { html, nothing, type TemplateResult } from 'lit';
 import { stub } from 'sinon';
 
+const tapOrHold = (action: 'tap' | 'hold') =>
+  new window.CustomEvent('action', {
+    detail: { action },
+    bubbles: true,
+    composed: true,
+  });
+
 describe('device-card-header.ts', () => {
   let mockHass: HomeAssistant;
   let mockDevice: Device;
@@ -21,7 +28,6 @@ describe('device-card-header.ts', () => {
     device: mockDevice,
     hass: mockHass,
     collapse: false,
-    onCollapseToggle: () => {},
     entity: nothing as TemplateResult | typeof nothing,
   });
 
@@ -40,8 +46,13 @@ describe('device-card-header.ts', () => {
     hasFeatureStub = stub(featureModule, 'hasFeature');
     localizeStub = stub(localizeModule, 'localize');
     hasFeatureStub.returns(false);
-    localizeStub.callsFake((_, key: string) =>
-      key === 'card.expand' ? 'Expand' : 'Collapse',
+    localizeStub.callsFake(
+      (_, key: string) =>
+        ({
+          'card.expand': 'Expand',
+          'card.collapse': 'Collapse',
+          'card.hold_for_device': 'Hold to open device page',
+        })[key] ?? key,
     );
   });
 
@@ -166,6 +177,29 @@ describe('device-card-header.ts', () => {
       expect(el.getAttribute('title')).to.equal('Expand');
     });
 
+    it('should add the hold hint to the tooltip when device has an id', async () => {
+      mockDevice = { ...mockDevice, id: 'device_1' };
+      const el = await fixture(
+        deviceCardHeader(defaultParams()) as TemplateResult,
+      );
+      expect(el.getAttribute('title')).to.equal(
+        'Collapse\nHold to open device page',
+      );
+    });
+
+    it('should add the hold hint under Expand when collapsed', async () => {
+      mockDevice = { ...mockDevice, id: 'device_1' };
+      const el = await fixture(
+        deviceCardHeader({
+          ...defaultParams(),
+          collapse: true,
+        }) as TemplateResult,
+      );
+      expect(el.getAttribute('title')).to.equal(
+        'Expand\nHold to open device page',
+      );
+    });
+
     it('should add collapsed class when collapse is true', async () => {
       const result = deviceCardHeader({
         ...defaultParams(),
@@ -173,17 +207,6 @@ describe('device-card-header.ts', () => {
       });
       const el = await fixture(result as TemplateResult);
       expect(el.classList.contains('collapsed')).to.be.true;
-    });
-
-    it('should call onCollapseToggle when header is clicked', async () => {
-      let toggled = false;
-      const result = deviceCardHeader({
-        ...defaultParams(),
-        onCollapseToggle: () => (toggled = true),
-      });
-      const el = await fixture(result as TemplateResult);
-      (el as HTMLElement).click();
-      expect(toggled).to.be.true;
     });
 
     it('should include entity in header', async () => {
@@ -195,6 +218,83 @@ describe('device-card-header.ts', () => {
       const el = await fixture(result as TemplateResult);
       const pinned = el.querySelector('.pinned-state');
       expect(pinned?.textContent).to.equal('75%');
+    });
+  });
+
+  describe('actions', () => {
+    const hassActions = (el: Element) => {
+      const events: CustomEvent[] = [];
+      el.addEventListener('hass-action', (e) => events.push(e as CustomEvent));
+      return events;
+    };
+
+    const collapseTap = {
+      action: 'fire-dom-event',
+      device_card: { collapse: true },
+    };
+    const navigate = {
+      action: 'navigate',
+      navigation_path: '/config/devices/device/device_1',
+    };
+
+    beforeEach(() => {
+      mockDevice = { ...mockDevice, id: 'device_1' };
+    });
+
+    it('should bind the action handler with hold when device has an id', async () => {
+      const el = await fixture(
+        deviceCardHeader(defaultParams()) as TemplateResult,
+      );
+      expect((el as any).actionHandler.options).to.deep.equal({
+        hasHold: true,
+      });
+    });
+
+    it('should bind the action handler without hold when device has no id', async () => {
+      mockDevice = { ...mockDevice, id: undefined };
+      const el = await fixture(
+        deviceCardHeader(defaultParams()) as TemplateResult,
+      );
+      expect((el as any).actionHandler.options).to.deep.equal({
+        hasHold: false,
+      });
+    });
+
+    it('should forward a tap as hass-action with the header configs', async () => {
+      const el = await fixture(
+        deviceCardHeader(defaultParams()) as TemplateResult,
+      );
+      const events = hassActions(el);
+      el.dispatchEvent(tapOrHold('tap'));
+      expect(events).to.have.length(1);
+      expect(events[0]!.detail).to.deep.equal({
+        config: { tap_action: collapseTap, hold_action: navigate },
+        action: 'tap',
+      });
+    });
+
+    it('should forward a hold as hass-action with the header configs', async () => {
+      const el = await fixture(
+        deviceCardHeader(defaultParams()) as TemplateResult,
+      );
+      const events = hassActions(el);
+      el.dispatchEvent(tapOrHold('hold'));
+      expect(events[0]!.detail).to.deep.equal({
+        config: { tap_action: collapseTap, hold_action: navigate },
+        action: 'hold',
+      });
+    });
+
+    it('should omit hold_action when device has no id', async () => {
+      mockDevice = { ...mockDevice, id: undefined };
+      const el = await fixture(
+        deviceCardHeader(defaultParams()) as TemplateResult,
+      );
+      const events = hassActions(el);
+      el.dispatchEvent(tapOrHold('hold'));
+      expect(events[0]!.detail.config).to.deep.equal({
+        tap_action: collapseTap,
+      });
     });
   });
 

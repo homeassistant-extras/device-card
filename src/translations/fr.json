@@ -8,7 +8,8 @@
     "device_card_name": "Carte d'Appareil",
     "device_card_description": "Une carte pour résumer le statut d'un Appareil.",
     "integration_card_name": "Carte d'Intégration",
-    "integration_card_description": "Une carte pour afficher tous les appareils d'une intégration spécifique."
+    "integration_card_description": "Une carte pour afficher tous les appareils d'une intégration spécifique.",
+    "hold_for_device": "Maintenir pour ouvrir la page de l'appareil"
   },
   "sections": {
     "controls": "Contrôles",

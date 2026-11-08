@@ -272,6 +272,59 @@ describe('card.ts', () => {
       deviceStub.restore();
     });
 
+    it('should toggle collapse when the header is tapped', async () => {
+      // Stand-in for HA 2026.11's hass-action listener: fire-dom-event is
+      // re-fired as ll-custom from the element that sent the action.
+      const haRoot = (ev: Event) => {
+        const { config, action } = (ev as CustomEvent).detail;
+        const actionConfig = config[`${action}_action`];
+        if (actionConfig?.action === 'fire-dom-event') {
+          ev.composedPath()[0]!.dispatchEvent(
+            new window.CustomEvent('ll-custom', {
+              detail: actionConfig,
+              bubbles: true,
+              composed: true,
+            }),
+          );
+        }
+      };
+      document.addEventListener('hass-action', haRoot);
+      try {
+        const el = await fixture(card.render() as TemplateResult);
+        el.querySelector('.card-header')!.dispatchEvent(
+          new window.CustomEvent('action', {
+            detail: { action: 'tap' },
+            bubbles: true,
+            composed: true,
+          }),
+        );
+        expect((card as any).collapse).to.be.true;
+      } finally {
+        document.removeEventListener('hass-action', haRoot);
+      }
+    });
+
+    it('should toggle collapse on ll-custom collapse event', async () => {
+      const el = await fixture(card.render() as TemplateResult);
+      const outer = new window.CustomEvent('ll-custom', { bubbles: true });
+      let escaped = false;
+      el.parentElement!.addEventListener('ll-custom', () => (escaped = true));
+
+      el.querySelector('.card-header')!.dispatchEvent(
+        new window.CustomEvent('ll-custom', {
+          detail: { device_card: { collapse: true } },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+      expect((card as any).collapse).to.be.true;
+      expect(escaped).to.be.false;
+
+      el.dispatchEvent(outer);
+      expect((card as any).collapse).to.be.true;
+      expect(escaped).to.be.true;
+    });
+
     it('should not render sections when collapsed', async () => {
       card.setConfig({
         device_id: 'device_1',

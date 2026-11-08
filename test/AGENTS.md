@@ -16,6 +16,10 @@ To run a specific test file, prefer the repo's Mocha setup and test TypeScript c
 TS_NODE_PROJECT='./tsconfig.test.json' npx mocha test/path/to/specific.spec.ts
 ```
 
+## Shared setup
+
+`test/setup.ts` (loaded via `.mocharc.json`) stubs Home Assistant's global `<action-handler>` element so the `actionHandler` directive can bind under JSDOM. The stub records bound options on `element.actionHandler.options`; simulate gestures by dispatching an `action` event (`{ detail: { action: 'tap' | 'hold' } }`) built with `window.CustomEvent`. There is no HA `hass-action` handler under test, so assert on the `hass-action` payload, and dispatch `ll-custom` directly to test what the card does with a `fire-dom-event`.
+
 ## `yarn test` failing with `ERR_MODULE_NOT_FOUND`
 
 If `yarn test` fails with an error like:

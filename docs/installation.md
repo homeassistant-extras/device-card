@@ -1,5 +1,7 @@
 # Installation
 
+Requires Home Assistant **2026.11.0** or newer.
+
 ## HACS (Recommended)
 
 1. Open HACS in your Home Assistant instance

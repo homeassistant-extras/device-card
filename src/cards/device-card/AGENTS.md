@@ -13,4 +13,5 @@ The `custom:device-card` Lovelace card: a single-device view that groups the dev
 
 - The `_config` setter does a `fast-deep-equal` check before reassigning to avoid spurious re-renders.
 - `_hass` is **not** a Lit `@state` — updates flow through the mixin and are dispatched manually in `shouldUpdate`.
+- Header gestures go through HA, not local click handlers: the header binds `actionHandler` and forwards each gesture as a `hass-action` with configs from `@delegates/utils/header-actions` (tap → `fire-dom-event` `device_card.collapse`, hold → navigate to `/config/devices/device/<id>`). HA re-fires the tap as `ll-custom` from the header (HA 2026.11+ only, hence the `hacs.json` minimum), which `<ha-card>` handles with `@ll-custom` to toggle `collapse`.
 - Don't move section/row expansion state into the top-level card; it lives in the child components so toggling one row doesn't re-render the whole device.

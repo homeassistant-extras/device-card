@@ -6,7 +6,7 @@ The Integration Card automatically finds and displays all devices from a selecte
 - Creating dedicated dashboards for specific systems in your home
 - Monitoring the status of all devices in an integration at once
 
-![Integration picker](../assets/integration-picker.png)
+![Integration picker](../assets/integration-picker.webp)
 
 ## Quick Start
 

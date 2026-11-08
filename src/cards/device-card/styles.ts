@@ -18,15 +18,19 @@ export const styles = css`
   }
 
   .card-header {
+    position: relative;
+    isolation: isolate;
     padding: 0px 0px 10px 16px;
     line-height: 35px;
     border-bottom: 1px solid var(--divider-color);
     margin-bottom: 8px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    /* long-press opens the device page; don't select text on hold */
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   /* Remove bottom border when collapsed */
@@ -35,8 +39,26 @@ export const styles = css`
     margin-bottom: 0;
   }
 
-  .card-header:hover {
-    background-color: var(--secondary-background-color);
+  /*
+   * Hover highlight: a rounded layer that bleeds a little past the header's
+   * edges so it doesn't hug the text, and stops short of the divider.
+   */
+  .card-header::before {
+    content: '';
+    position: absolute;
+    inset: -6px -8px 4px -8px;
+    border-radius: 10px;
+    background-color: var(--primary-text-color);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  @media (hover: hover) {
+    .card-header:hover::before {
+      opacity: 0.06;
+    }
   }
 
   .title {

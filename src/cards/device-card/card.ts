@@ -2,6 +2,7 @@ import { getOrderedSections } from '@/helpers/device-section';
 import '@cards/components/section/section';
 import { getDevice } from '@delegates/utils/get-device';
 import { hasProblem } from '@delegates/utils/has-problem';
+import type { HeaderCollapseDetail } from '@delegates/utils/header-actions';
 import { styles } from '@device/styles';
 import { hasFeature } from '@homeassistant-extras/hass/common/config/feature';
 import { HassConfigMixin } from '@homeassistant-extras/hass/mixins/hass-config-mixin';
@@ -46,6 +47,19 @@ export class DeviceCard extends HassUpdateMixin(HassConfigMixin(LitElement)) {
    */
   @state()
   private collapse = false;
+
+  /**
+   * Toggles collapse when the header's `fire-dom-event` tap action comes
+   * back from Home Assistant as `ll-custom`.
+   */
+  private readonly _handleLLCustomEvent = (ev: Event): void => {
+    const detail = (ev as CustomEvent<HeaderCollapseDetail>).detail;
+    if (!detail?.device_card?.collapse) {
+      return;
+    }
+    ev.stopPropagation();
+    this.collapse = !this.collapse;
+  };
 
   /**
    * Returns the component's styles
@@ -124,12 +138,14 @@ export class DeviceCard extends HassUpdateMixin(HassConfigMixin(LitElement)) {
       device: this._device,
       hass: this._hass,
       collapse: this.collapse,
-      onCollapseToggle: () => (this.collapse = !this.collapse),
       entity,
     });
 
     return html`
-      <ha-card class="${problem ? 'problem' : ''}">
+      <ha-card
+        class="${problem ? 'problem' : ''}"
+        @ll-custom=${this._handleLLCustomEvent}
+      >
         ${headerContent}
         ${
           this.collapse

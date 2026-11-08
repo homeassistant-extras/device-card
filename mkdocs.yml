@@ -47,8 +47,8 @@ theme:
     - content.code.copy
   icon:
     repo: fontawesome/brands/github
-  logo: assets/cards.png
-  favicon: assets/cards.png
+  logo: assets/cards.webp
+  favicon: assets/cards.webp
 
 plugins:
   - search

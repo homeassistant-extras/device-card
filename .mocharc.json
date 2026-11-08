@@ -2,7 +2,8 @@
   "require": [
     "ts-node/register",
     "tsconfig-paths/register",
-    "@homeassistant-extras/config/mocha/setup.card"
+    "@homeassistant-extras/config/mocha/setup.card",
+    "./test/setup.ts"
   ],
   "extensions": ["ts"],
   "spec": ["test/**/*.spec.ts"],

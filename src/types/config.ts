@@ -101,6 +101,9 @@ export interface DeviceSortConfig {
  * Represents the states of various sensors in a Z-Wave device
  */
 export interface Device {
+  /** The Home Assistant device registry ID */
+  id?: string;
+
   /** The name of the device */
   name?: string;
 
